@@ -32,6 +32,8 @@
             android:label="@string/app_name"/>
         <activity android:name="com.example.kirstiebooras.RegisterActivity"
             android:label="@string/app_name"/>
+        <activity android:name="com.example.kirstiebooras.SigninActivity"
+            android:label="@string/app_name"/>
         <meta-data android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/app_id"/>
     </application>

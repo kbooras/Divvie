@@ -17,6 +17,10 @@ import com.parse.integratingfacebooktutorial.R;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Displays the screen for a user to sign in, register, or
+ * sign in through Facebook.
+ */
 public class SigninRegisterActivity extends Activity {
 
     private Dialog progressDialog;
