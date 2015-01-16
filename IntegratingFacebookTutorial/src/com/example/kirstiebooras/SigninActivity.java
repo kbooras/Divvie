@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -48,10 +49,12 @@ public class SigninActivity extends Activity {
                 @Override
                 public void done(ParseUser parseUser, ParseException e) {
                     if (e == null) {
+                        Log.v("signin", "success!");
                         Intent intent = new Intent(getApplicationContext(),
                                 UserDetailsActivity.class);
                         startActivity(intent);
                     } else {
+                        Log.v("signin", "failed " + e.toString());
                         new AlertDialog.Builder(getApplicationContext())
                                 .setIconAttribute(android.R.attr.alertDialogIcon)
                                 .setTitle("Login")

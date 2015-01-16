@@ -51,8 +51,8 @@ public class SigninRegisterActivity extends Activity {
         startActivity(intent);
     }
     public void onSignInClick(View v) {
-        //Intent intent = new Intent(this, UserDetailsActivity.class);
-        //startActivity(intent);
+        Intent intent = new Intent(this, SigninActivity.class);
+        startActivity(intent);
     }
 
     public void onFacebookSignInClick(View v) {
