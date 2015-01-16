@@ -18,7 +18,7 @@
         android:theme="@style/AppTheme"
         android:name="com.example.kirstiebooras.DivvieApplication" >
         <activity
-            android:name="com.example.kirstiebooras.LoginActivity"
+            android:name="com.example.kirstiebooras.SigninRegisterActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop" >
             <intent-filter>

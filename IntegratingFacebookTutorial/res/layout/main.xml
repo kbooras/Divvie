@@ -3,22 +3,39 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
-        android:gravity="center"
-        android:text="@string/login_intro"
-        android:textSize="18sp" />
 
-    <Button
-        android:layout_width="wrap_content"
+    <ImageView
+        android:layout_width="158dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="100dp"
+        android:src="@drawable/divvie_logo_pink"
+        android:layout_marginTop="150dp" />
 
-        android:text="@string/com_facebook_loginview_log_in_button"
+    <Button
+        android:layout_width="248dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textColor="#ffffff"
+        android:background="@drawable/round_button"
+        android:text="Sign In"
+        android:layout_marginTop="8dp"
+        android:onClick="onSignInClick"/>
+
+    <Button
+        android:layout_width="248dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textColor="#ffffff"
+        android:background="@drawable/round_button"
+        android:text="Register"
+        android:layout_marginTop="8dp"
+        android:onClick="onRegisterClick"/>
+    <Button
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+
+        android:text="Sign in with Facebook"
         android:textColor="@color/com_facebook_loginview_text_color"
         android:textSize="@dimen/com_facebook_loginview_text_size"
         android:textStyle="bold"
@@ -30,6 +47,7 @@
         android:paddingTop="@dimen/com_facebook_loginview_padding_top"
         android:paddingRight="@dimen/com_facebook_loginview_padding_right"
         android:paddingBottom="@dimen/com_facebook_loginview_padding_bottom"
-        android:onClick="onLoginClick"/>
+        android:onClick="onFacebookSignInClick"
+        android:layout_marginTop="8dp" />
     
 </LinearLayout>

@@ -2,9 +2,8 @@
 <resources>
     <string name="app_id">714497798663603</string>
 
-    <string name="app_name">Facebook Profile</string>
+    <string name="app_name">divvie</string>
     <string name="action_settings">Settings</string>
-    <string name="login_intro">Check out your Facebook profile by logging in with the button below!</string>
     <string name="gender">Gender</string>
     <string name="email">Email</string>
 </resources>
