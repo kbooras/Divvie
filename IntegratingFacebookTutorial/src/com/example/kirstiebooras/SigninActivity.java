@@ -55,16 +55,16 @@ public class SigninActivity extends Activity {
                         startActivity(intent);
                     } else {
                         Log.v("signin", "failed " + e.toString());
-                        new AlertDialog.Builder(getApplicationContext())
+                        new AlertDialog.Builder(SigninActivity.this)
                                 .setIconAttribute(android.R.attr.alertDialogIcon)
                                 .setTitle("Login")
                                 .setMessage("Email or password invalid.")
                                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        finish();
                                     }
-                                });
+                                })
+                                .show();
                     }
                 }
             });
