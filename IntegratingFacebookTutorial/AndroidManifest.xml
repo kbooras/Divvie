@@ -19,6 +19,7 @@
         android:name="com.example.kirstiebooras.DivvieApplication" >
         <activity
             android:name="com.example.kirstiebooras.HomeActivity"
+            android:logo="@drawable/divvie_logo_white"
             android:label="@string/app_name"
             android:theme="@style/DivvieTheme"
             android:launchMode="singleTop" >
