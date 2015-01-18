@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:layout_gravity="center">
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:src="@drawable/divvie_logo_pink"
-        android:layout_marginTop="150dp" />
+        android:src="@drawable/divvie_logo_pink"/>
 
     <EditText
         android:id="@+id/email"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
         android:layout_marginTop="17dp"
         android:inputType="textEmailAddress"
         android:hint="@string/email"/>
@@ -24,7 +24,6 @@
         android:id="@+id/password"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
         android:layout_marginTop="11dp"
         android:inputType="textPassword"
         android:hint="@string/password"/>
@@ -33,7 +32,6 @@
         android:id="@+id/reenterPassword"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
         android:layout_marginTop="11dp"
         android:inputType="textPassword"
         android:hint="@string/reenterPassword"/>
@@ -41,11 +39,10 @@
     <Button
         android:layout_width="248dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:textColor="#ffffff"
+        android:layout_marginTop="8dp"
         android:background="@drawable/round_button"
         android:text="@string/register"
-        android:layout_marginTop="8dp"
+        android:textColor="#ffffff"
         android:onClick="onRegisterClick"/>
 
 </LinearLayout>
