@@ -13,6 +13,13 @@
         android:src="@drawable/divvie_logo_pink"/>
 
     <EditText
+        android:id="@+id/fullName"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="17dp"
+        android:hint="@string/full_name"/>
+
+    <EditText
         android:id="@+id/email"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
@@ -34,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="11dp"
         android:inputType="textPassword"
-        android:hint="@string/reenterPassword"/>
+        android:hint="@string/reenter_password"/>
 
     <Button
         android:layout_width="248dp"

@@ -21,13 +21,16 @@ public class RegisterActivity extends Activity {
     static final String TAG = "Register";
 
     public EditText email;
+    public EditText fullName;
     public EditText password;
     public EditText reenterPassword;
     public String emailTxt;
+    public String fullNameTxt;
     public String passwordTxt;
     public String reenterPasswordTxt;
     final int EMAIL_TAKEN = 203;
     final int USERNAME_TAKEN = 202;
+    final String FULL_NAME = "fullName";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +39,7 @@ public class RegisterActivity extends Activity {
         setContentView(R.layout.register_activity);
 
         email = (EditText) findViewById(R.id.email);
+        fullName = (EditText) findViewById(R.id.fullName);
         password = (EditText) findViewById(R.id.password);
         reenterPassword = (EditText) findViewById(R.id.reenterPassword);
 
@@ -43,11 +47,12 @@ public class RegisterActivity extends Activity {
 
     public void onRegisterClick(View v) {
         emailTxt = email.getText().toString();
+        fullNameTxt = fullName.getText().toString();
         passwordTxt = password.getText().toString();
         reenterPasswordTxt = reenterPassword.getText().toString();
 
         // User must fill up the form
-        if (emailTxt.equals("") || passwordTxt.equals("")) {
+        if (emailTxt.equals("") || fullNameTxt.equals("") || passwordTxt.equals("")) {
             Toast.makeText(getApplicationContext(), "Please complete the register form",
                     Toast.LENGTH_LONG).show();
         } else if (passwordTxt.length() < 6) {
@@ -65,6 +70,7 @@ public class RegisterActivity extends Activity {
             user.setUsername(emailTxt);
             user.setPassword(passwordTxt);
             user.setEmail(emailTxt);
+            user.put(FULL_NAME, fullNameTxt);
             user.signUpInBackground(new SignUpCallback() {
                 @Override
                 public void done(com.parse.ParseException e) {
