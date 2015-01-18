@@ -85,24 +85,7 @@ public class SigninActivity extends Activity {
                 .setPositiveButton("Reset", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String resetPasswordEmailTxt = resetPasswordEmail.getText().toString();
-                        ParseUser.requestPasswordResetInBackground(resetPasswordEmailTxt,
-                                new RequestPasswordResetCallback() {
-                                    public void done(ParseException e) {
-                                        if (e == null) {
-                                            // An email was successfully sent with reset
-                                            // instructions.
-                                            Toast.makeText(getApplicationContext(),
-                                                    "Reset email sent!",
-                                                    Toast.LENGTH_LONG);
-                                            Log.v(TAG, "reset email sent!");
-                                        } else {
-                                            // Something went wrong. Look at the ParseException
-                                            // to see what's up.
-                                            Log.v(TAG, String.valueOf(e.getCode()));
-                                            displayResetErrorMessage(e.getCode());
-                                        }
-                                    }
-                                });
+                        resetPassword(resetPasswordEmailTxt);
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -110,6 +93,27 @@ public class SigninActivity extends Activity {
                         // Do nothing.
                     }
                 }).show();
+    }
+
+    public void resetPassword(String resetPasswordEmailTxt) {
+        ParseUser.requestPasswordResetInBackground(resetPasswordEmailTxt,
+                new RequestPasswordResetCallback() {
+                    public void done(ParseException e) {
+                        if (e == null) {
+                            // An email was successfully sent with reset
+                            // instructions.
+                            Toast.makeText(getApplicationContext(),
+                                    "Reset email sent!",
+                                    Toast.LENGTH_LONG);
+                            Log.v(TAG, "reset email sent!");
+                        } else {
+                            // Something went wrong. Look at the ParseException
+                            // to see what's up.
+                            Log.v(TAG, String.valueOf(e.getCode()));
+                            displayResetErrorMessage(e.getCode());
+                        }
+                    }
+                });
     }
 
     public void displayResetErrorMessage(int errorCode) {
