@@ -17,7 +17,7 @@
         android:layout_gravity="center_horizontal"
         android:textColor="#ffffff"
         android:background="@drawable/round_button"
-        android:text="Sign In"
+        android:text="@string/signin"
         android:layout_marginTop="8dp"
         android:onClick="onSignInClick"/>
 
@@ -27,7 +27,7 @@
         android:layout_gravity="center_horizontal"
         android:textColor="#ffffff"
         android:background="@drawable/round_button"
-        android:text="Register"
+        android:text="@string/register"
         android:layout_marginTop="8dp"
         android:onClick="onRegisterClick"/>
     <Button

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="NoActionBar" parent="@android:style/Theme.Holo.Light.NoActionBar">
+        <!-- Inherits the Holo theme with no action bar; no other styles needed. -->
+    </style>
+
+    <style name="DivvieTheme" parent="@android:style/Theme.Holo.Light">
+        <item name="android:actionBarStyle">@style/TealActionBar</item>
+    </style>
+
+    <style name="TealActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">#62C8BD</item>
+    </style>
+
+</resources>

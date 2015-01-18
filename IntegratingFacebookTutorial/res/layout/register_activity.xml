@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:layout_width="158dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:src="@drawable/divvie_logo_pink"
@@ -44,7 +44,7 @@
         android:layout_gravity="center_horizontal"
         android:textColor="#ffffff"
         android:background="@drawable/round_button"
-        android:text="Register"
+        android:text="@string/register"
         android:layout_marginTop="8dp"
         android:onClick="onRegisterClick"/>
 

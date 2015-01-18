@@ -30,7 +30,7 @@ public class SigninRegisterActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.main);
+        setContentView(R.layout.signin_register_activity);
 
         ParseUser currentUser = ParseUser.getCurrentUser();
         if (currentUser == null) {

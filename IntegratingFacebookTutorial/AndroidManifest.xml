@@ -20,6 +20,7 @@
         <activity
             android:name="com.example.kirstiebooras.HomeActivity"
             android:label="@string/app_name"
+            android:theme="@style/DivvieTheme"
             android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,11 +29,14 @@
             </intent-filter>
         </activity>
         <activity android:name="com.example.kirstiebooras.RegisterActivity"
-            android:label="@string/app_name"/>
+            android:label="@string/app_name"
+            android:theme="@style/NoActionBar"/>
         <activity android:name="com.example.kirstiebooras.SigninActivity"
-            android:label="@string/app_name"/>
+            android:label="@string/app_name"
+            android:theme="@style/NoActionBar"/>
         <activity android:name="com.example.kirstiebooras.SigninRegisterActivity"
-            android:label="@string/app_name"/>
+            android:label="@string/app_name"
+            android:theme="@style/NoActionBar"/>
         <activity
             android:name="com.example.kirstiebooras.UserDetailsActivity"
             android:label="@string/app_name"/>

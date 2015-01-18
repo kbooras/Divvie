@@ -25,7 +25,7 @@ public class HomeActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.pending_transactions);
+        setContentView(R.layout.home_activity);
 
         // Check if there is a currently logged in user
         ParseUser currentUser = ParseUser.getCurrentUser();
