@@ -3,7 +3,6 @@ package com.example.kirstiebooras;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -13,13 +12,13 @@ import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 import com.parse.integratingfacebooktutorial.R;
 
-import java.text.ParseException;
-
 /**
  * Displays screen for a user to register for an account.
  * Created by kirstiebooras on 1/15/15.
  */
 public class RegisterActivity extends Activity {
+
+    static final String TAG = "Register";
 
     public EditText email;
     public EditText password;
@@ -70,15 +69,16 @@ public class RegisterActivity extends Activity {
                 @Override
                 public void done(com.parse.ParseException e) {
                     if (e == null) {
-                        Log.v("register", "Success!");
-                        Intent intent = new Intent(getApplicationContext(), UserDetailsActivity.class);
+                        Log.v(TAG, "Sign up success!");
+                        Intent intent = new Intent(getApplicationContext(),
+                                HomeActivity.class);
                         startActivity(intent);
                     } else if (e.getCode() == EMAIL_TAKEN || e.getCode() == USERNAME_TAKEN) {
                         Toast.makeText(getApplicationContext(),
                                 "There is already an account with this email",
                                 Toast.LENGTH_LONG).show();
                     } else {
-                        Log.v("register", "Failed :(");
+                        Log.v(TAG, "Sign up failed :(");
 
                     }
                 }

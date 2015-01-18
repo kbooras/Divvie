@@ -38,18 +38,18 @@ public class UserDetailsActivity extends Activity {
         userGenderView = (TextView) findViewById(R.id.userGender);
         userEmailView = (TextView) findViewById(R.id.userEmail);
 
-        /* Fetch Facebook user info if the session is active
+        // Fetch Facebook user info if the session is active
         Session session = ParseFacebookUtils.getSession();
         if (session != null && session.isOpened()) {
             makeMeRequest();
-        }*/
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        /*ParseUser currentUser = ParseUser.getCurrentUser();
+        ParseUser currentUser = ParseUser.getCurrentUser();
         if (currentUser != null) {
             // Check if the user is currently logged
             // and show any cached content
@@ -58,7 +58,7 @@ public class UserDetailsActivity extends Activity {
             // If the user is not logged in, go to the
             // activity showing the login view.
             startLoginActivity();
-        }*/
+        }
     }
 
     private void makeMeRequest() {

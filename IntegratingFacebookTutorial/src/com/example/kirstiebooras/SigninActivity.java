@@ -22,6 +22,8 @@ import com.parse.integratingfacebooktutorial.R;
  */
 public class SigninActivity extends Activity {
 
+    static final String TAG = "Signin";
+
     public EditText email;
     public EditText password;
     public String emailTxt;
@@ -49,12 +51,12 @@ public class SigninActivity extends Activity {
                 @Override
                 public void done(ParseUser parseUser, ParseException e) {
                     if (e == null) {
-                        Log.v("signin", "success!");
+                        Log.v(TAG, "Sign in success!");
                         Intent intent = new Intent(getApplicationContext(),
-                                UserDetailsActivity.class);
+                                HomeActivity.class);
                         startActivity(intent);
                     } else {
-                        Log.v("signin", "failed " + e.toString());
+                        Log.v(TAG, "Sign in failed :(" + e.toString());
                         new AlertDialog.Builder(SigninActivity.this)
                                 .setIconAttribute(android.R.attr.alertDialogIcon)
                                 .setTitle("Login")

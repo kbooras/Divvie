@@ -23,6 +23,7 @@ import java.util.List;
  */
 public class SigninRegisterActivity extends Activity {
 
+    static final String TAG = "SigninRegister";
     private Dialog progressDialog;
 
     @Override
@@ -31,13 +32,17 @@ public class SigninRegisterActivity extends Activity {
 
         setContentView(R.layout.main);
 
-        // Check if there is a currently logged in user
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        if (currentUser == null) {
+            Log.v(TAG, "No current user");
+        }
+        /* Check if there is a currently logged in user
         // and it's linked to a Facebook account.
         ParseUser currentUser = ParseUser.getCurrentUser();
         if ((currentUser != null) && ParseFacebookUtils.isLinked(currentUser)) {
             // Go to the user info activity
             showUserDetailsActivity();
-        }
+        }*/
     }
 
     @Override
@@ -67,12 +72,12 @@ public class SigninRegisterActivity extends Activity {
             public void done(ParseUser user, ParseException err) {
                 progressDialog.dismiss();
                 if (user == null) {
-                    Log.d(DivvieApplication.TAG, "Uh oh. The user cancelled the Facebook login.");
+                    Log.d(TAG, "Uh oh. The user cancelled the Facebook login.");
                 } else if (user.isNew()) {
-                    Log.d(DivvieApplication.TAG, "User signed up and logged in through Facebook!");
+                    Log.d(TAG, "User signed up and logged in through Facebook!");
                     showUserDetailsActivity();
                 } else {
-                    Log.d(DivvieApplication.TAG, "User logged in through Facebook!");
+                    Log.d(TAG, "User logged in through Facebook!");
                     showUserDetailsActivity();
                 }
             }
