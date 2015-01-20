@@ -34,6 +34,9 @@ public class GroupsFragment extends Fragment {
         groupQuery.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, ParseException e) {
+                //Query should generate group listview using an array adapter
+
+                //For loop should be deleted and is for testing purposes
                 for(int i = 0; i < parseObjects.size(); i++) {
                     String group = parseObjects.get(0).get("name").toString();
                     new AlertDialog.Builder(getActivity())
@@ -45,6 +48,7 @@ public class GroupsFragment extends Fragment {
                                 }
                             }).show();
                 }
+
             }
         });
     }
