@@ -4,7 +4,11 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.widget.EditText;
 
+import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.integratingfacebooktutorial.R;
+
+import java.util.Arrays;
 
 /**
  * Activity to create a new group of users.
@@ -43,9 +47,19 @@ public class CreateGroupActivity extends Activity {
         member2Txt = member2.getText().toString();
         member3Txt = member3.getText().toString();
         member4Txt = member4.getText().toString();
+        String[] memberEmails = {member1Txt, member2Txt, member3Txt, member4Txt};
+        createParseObjectGroup(groupNameTxt, memberEmails);
+        finish();
+    }
 
-        String[] emails = {member1Txt, member2Txt, member3Txt, member4Txt};
-
-
+    public void createParseObjectGroup(String name, String[] memberEmails){
+        ParseObject newGroup = new ParseObject("Group");
+        newGroup.put("name", name);
+        newGroup.addAll("users", Arrays.asList(memberEmails));
+        try {
+            newGroup.save();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 }
