@@ -52,7 +52,7 @@ public class CreateGroupActivity extends Activity {
         for (int i = 0 ; i < memberEmails.length; i++) {
             if(isValidEmail(memberEmails[i])){
                 //Emails not valid message
-                break;
+                return;
             }
         }
         createParseObjectGroup(groupNameTxt, memberEmails);
