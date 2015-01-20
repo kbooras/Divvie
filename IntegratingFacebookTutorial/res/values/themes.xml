@@ -5,10 +5,13 @@
     </style>
 
     <style name="DivvieTheme" parent="@android:style/Theme.Holo.Light">
-        <item name="android:actionBarStyle">@style/TealActionBar</item>
+        <item name="android:actionBarStyle">@style/DivvieTheme.ActionBar</item>
+        <item name="android:actionBarTabStyle">@style/DivvieTheme.ActionBar.TabView</item>
+        <item name="android:actionBarTabBarStyle">@style/DivvieTheme.ActionBar.TabBar</item>
+        <item name="android:actionBarTabTextStyle">@style/DivvieTheme.ActionBar.TabText</item>
     </style>
 
-    <style name="TealActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
+    <style name="DivvieTheme.ActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
         <item name="android:background">#62C8BD</item>
         <item name="android:titleTextStyle">@style/NoTitleText</item>
         <item name="android:subtitleTextStyle">@style/NoTitleText</item>
@@ -17,6 +20,20 @@
     <style name="NoTitleText">
         <item name="android:textSize">0sp</item>
         <item name="android:textColor">#00000000</item>
+    </style>
+
+    <style name="DivvieTheme.ActionBar.TabView" parent="android:style/Widget.Holo.ActionBar.TabView">
+        <item name="android:background">@drawable/tab_bar_background</item>
+    </style>
+
+    <style name="DivvieTheme.ActionBar.TabBar" parent="android:style/Widget.Holo.ActionBar.TabBar">
+        <item name="android:background">#E6E6E6</item>
+    </style>
+
+    <style name="DivvieTheme.ActionBar.TabText" parent="android:style/Widget.Holo.ActionBar.TabText">
+        <item name="android:textColor">#B3B3B3</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
 </resources>
