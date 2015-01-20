@@ -49,6 +49,12 @@ public class CreateGroupActivity extends Activity {
         member3Txt = member3.getText().toString();
         member4Txt = member4.getText().toString();
         String[] memberEmails = {member1Txt, member2Txt, member3Txt, member4Txt};
+        for (int i = 0 ; i < memberEmails.length; i++) {
+            if(isValidEmail(memberEmails[i])){
+                //Emails not valid message
+                break;
+            }
+        }
         createParseObjectGroup(groupNameTxt, memberEmails);
         finish();
     }
@@ -62,5 +68,9 @@ public class CreateGroupActivity extends Activity {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+    }
+
+    private boolean isValidEmail(CharSequence emailTxt) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(emailTxt).matches();
     }
 }
