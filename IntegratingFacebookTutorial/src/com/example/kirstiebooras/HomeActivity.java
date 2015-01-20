@@ -1,7 +1,6 @@
 package com.example.kirstiebooras;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +14,8 @@ import android.view.MenuItem;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
+
+import java.lang.reflect.Method;
 
 /**
  * Shows the pending group transactions the user has.
@@ -68,6 +69,8 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
             }
         });
 
+        setTabsBelowActionBar();
+
         checkForCurrentUser();
     }
 
@@ -117,6 +120,21 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         super.onResume();
 
         checkForCurrentUser();
+    }
+
+    // Adds the tabs below the action bar
+    public void setTabsBelowActionBar() {
+        try {
+            final ActionBar actionBar = getActionBar();
+            final Method setHasEmbeddedTabsMethod = actionBar.getClass()
+                    .getDeclaredMethod("setHasEmbeddedTabs", boolean.class);
+            setHasEmbeddedTabsMethod.setAccessible(true);
+            setHasEmbeddedTabsMethod.invoke(actionBar, false);
+        }
+        catch(final Exception e) {
+            // Handle issues as needed: log, warn user, fallback etc
+            // This error is safe to ignore, standard tabs will appear.
+        }
     }
 
     // Check if there is a currently logged in user
