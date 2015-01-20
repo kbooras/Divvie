@@ -69,6 +69,8 @@ public class CreateGroupActivity extends Activity {
         try {
             newGroup.save();
         } catch (ParseException e) {
+            // Display error message.
+            displayCreateGroupFailedMessage();
             e.printStackTrace();
         }
     }
@@ -78,10 +80,20 @@ public class CreateGroupActivity extends Activity {
     }
 
     public void displayInvalidEmailMessage (int emailNumber) {
-
         new AlertDialog.Builder(this)
-                .setTitle("Reset Password Failed")
+                .setTitle("Invalid Email")
                 .setMessage("Email " + emailNumber + " is invalid. Correct this and try again.")
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // Do nothing.
+                    }
+                }).show();
+    }
+
+    public void displayCreateGroupFailedMessage () {
+        new AlertDialog.Builder(this)
+                .setTitle("Create Group Failed")
+                .setMessage("Create group failed. Please try again later.")
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         // Do nothing.
