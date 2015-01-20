@@ -2,6 +2,7 @@ package com.example.kirstiebooras;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 
 import com.parse.ParseException;
@@ -41,7 +42,7 @@ public class CreateGroupActivity extends Activity {
 
     }
 
-    public void onCreateGroupClick() {
+    public void onCreateGroupClick(View v) {
         groupNameTxt = groupName.getText().toString();
         member1Txt = member1.getText().toString();
         member2Txt = member2.getText().toString();
