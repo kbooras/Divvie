@@ -97,7 +97,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
                 if (currentFragment == 0) {
                     //Create intent for creating Transaction
                 } else {
-                    Intent intent = new Intent(this, createGroupActivity.class);
+                    Intent intent = new Intent(this, CreateGroupActivity.class);
                     startActivity(intent);
                 }
                 break;
