@@ -1,6 +1,8 @@
 package com.example.kirstiebooras;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -50,8 +52,9 @@ public class CreateGroupActivity extends Activity {
         member4Txt = member4.getText().toString();
         String[] memberEmails = {member1Txt, member2Txt, member3Txt, member4Txt};
         for (int i = 0 ; i < memberEmails.length; i++) {
-            if(isValidEmail(memberEmails[i])){
+            if(!isValidEmail(memberEmails[i])){
                 //Emails not valid message
+                displayInvalidEmailMessage(i+1);
                 return;
             }
         }
@@ -72,5 +75,17 @@ public class CreateGroupActivity extends Activity {
 
     private boolean isValidEmail(CharSequence emailTxt) {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(emailTxt).matches();
+    }
+
+    public void displayInvalidEmailMessage (int emailNumber) {
+
+        new AlertDialog.Builder(this)
+                .setTitle("Reset Password Failed")
+                .setMessage("Email " + emailNumber + " is invalid. Correct this and try again.")
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // Do nothing.
+                    }
+                }).show();
     }
 }
