@@ -4,8 +4,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -15,20 +18,27 @@ import java.util.Arrays;
 
 /**
  * Activity to create a new group of users.
+ * An unlimited number of group members is allowed, so EditTexts for email addresses are
+ * created dynamically.
  * Created by kirstiebooras on 1/20/15.
  */
 public class CreateGroupActivity extends Activity {
 
+    private LinearLayout layout;
     private EditText groupName;
-    private EditText member1;
-    private EditText member2;
-    private EditText member3;
-    private EditText member4;
+    private EditText groupMember1;
+    private EditText groupMember2;
+    private int editTextCount;
+    private int editTextWidth;
+    private int editTextMarginTop;
+    private String editTextText;
+    private static final float EDIT_TEXT_WIDTH_DP = 250.0f;
+    private static final float EDIT_TEXT_MARGIN_TOP_DP = 11.0f;
+
     private String groupNameTxt;
-    private String member1Txt;
-    private String member2Txt;
-    private String member3Txt;
-    private String member4Txt;
+    private String groupMember1Txt;
+    private String groupMember2Txt;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,24 +46,46 @@ public class CreateGroupActivity extends Activity {
 
         setContentView(R.layout.create_group_activity);
 
-        groupName = (EditText) findViewById(R.id.groupName);
-        member1 = (EditText) findViewById(R.id.member1);
-        member2 = (EditText) findViewById(R.id.member2);
-        member3 = (EditText) findViewById(R.id.member3);
-        member4 = (EditText) findViewById(R.id.member4);
+        final float scale = getResources().getDisplayMetrics().density;
+        editTextWidth = (int) (EDIT_TEXT_WIDTH_DP * scale + 0.5f);
+        editTextMarginTop = (int) (EDIT_TEXT_MARGIN_TOP_DP * scale + 0.5f);
+        editTextText = getResources().getString(R.string.email) + " ";
 
+        layout = (LinearLayout) findViewById(R.id.layout);
+        groupName = (EditText) findViewById(R.id.groupName);
+        groupMember1 = (EditText) findViewById(R.id.email1);
+        groupMember2 = (EditText) findViewById(R.id.email2);
+
+        editTextCount = 2;
+    }
+
+    public void onAddEditTextClick(View v) {
+        layout.addView(createNewEditTextView(), editTextCount);
+    }
+
+    private EditText createNewEditTextView() {
+        final LayoutParams lparams = new LayoutParams(editTextWidth, LayoutParams.WRAP_CONTENT);
+        lparams.setMargins(0, editTextMarginTop, 0, 0);
+
+        final EditText editText = new EditText(this);
+        editTextCount++;
+
+        editText.setId(editTextCount);
+        editText.setLayoutParams(lparams);
+        editText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        editText.setHint(editTextText + editTextCount);
+
+        return editText;
     }
 
     public void onCreateGroupClick(View v) {
         groupNameTxt = groupName.getText().toString();
-        member1Txt = member1.getText().toString();
-        member2Txt = member2.getText().toString();
-        member3Txt = member3.getText().toString();
-        member4Txt = member4.getText().toString();
-        String[] memberEmails = {member1Txt, member2Txt, member3Txt, member4Txt};
+        groupMember1Txt = groupMember1.getText().toString();
+
+        String[] memberEmails = {groupMember1Txt};
         for (int i = 0 ; i < memberEmails.length; i++) {
             if(!isValidEmail(memberEmails[i])){
-                //Emails not valid message
+                // Display invalid email message
                 displayInvalidEmailMessage(i+1);
                 return;
             }
