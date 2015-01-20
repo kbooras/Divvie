@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -14,7 +15,9 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.integratingfacebooktutorial.R;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Activity to create a new group of users.
@@ -34,11 +37,8 @@ public class CreateGroupActivity extends Activity {
     private String editTextText;
     private static final float EDIT_TEXT_WIDTH_DP = 250.0f;
     private static final float EDIT_TEXT_MARGIN_TOP_DP = 11.0f;
-
-    private String groupNameTxt;
-    private String groupMember1Txt;
-    private String groupMember2Txt;
-
+    public static final String TAG = "CreateGroupActivity";
+    private List<EditText> allEditTexts = new ArrayList<EditText>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +60,7 @@ public class CreateGroupActivity extends Activity {
     }
 
     public void onAddEditTextClick(View v) {
+        // Dynamically adds a new EditText below the last EditText.
         layout.addView(createNewEditTextView(), editTextCount);
     }
 
@@ -68,6 +69,7 @@ public class CreateGroupActivity extends Activity {
         lparams.setMargins(0, editTextMarginTop, 0, 0);
 
         final EditText editText = new EditText(this);
+        Log.v(TAG, "Created EditText " + editTextCount);
         editTextCount++;
 
         editText.setId(editTextCount);
@@ -75,14 +77,24 @@ public class CreateGroupActivity extends Activity {
         editText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         editText.setHint(editTextText + editTextCount);
 
+        allEditTexts.add(editText);
         return editText;
     }
 
     public void onCreateGroupClick(View v) {
-        groupNameTxt = groupName.getText().toString();
-        groupMember1Txt = groupMember1.getText().toString();
+        String groupNameTxt = groupName.getText().toString();
+        String groupMember1Txt = groupMember1.getText().toString();
+        String groupMember2Txt = groupMember2.getText().toString();
 
-        String[] memberEmails = {groupMember1Txt};
+        // Create an array of all emails added in the EditTexts.
+        String[] memberEmails = new String[allEditTexts.size() + 2];
+        memberEmails[0] = groupMember1Txt;
+        memberEmails[1] = groupMember2Txt;
+        for(int i=0; i < allEditTexts.size(); i++){
+            memberEmails[i+2] = allEditTexts.get(i).getText().toString();
+        }
+
+        // Check each email is valid.
         for (int i = 0 ; i < memberEmails.length; i++) {
             if(!isValidEmail(memberEmails[i])){
                 // Display invalid email message
@@ -90,6 +102,7 @@ public class CreateGroupActivity extends Activity {
                 return;
             }
         }
+
         createParseObjectGroup(groupNameTxt, memberEmails);
         finish();
     }
@@ -100,9 +113,11 @@ public class CreateGroupActivity extends Activity {
         newGroup.addAll("users", Arrays.asList(memberEmails));
         try {
             newGroup.save();
+            Log.v(TAG, "Saved new group successfully!");
         } catch (ParseException e) {
             // Display error message.
             displayCreateGroupFailedMessage();
+            Log.v(TAG, "Save new group failed :(");
             e.printStackTrace();
         }
     }
