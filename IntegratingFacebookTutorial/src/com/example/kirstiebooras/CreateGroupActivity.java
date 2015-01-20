@@ -34,5 +34,15 @@ public class CreateGroupActivity extends Activity {
         member2 = (EditText) findViewById(R.id.member2);
         member3 = (EditText) findViewById(R.id.member3);
         member4 = (EditText) findViewById(R.id.member4);
+
+    }
+
+    public void onCreateGroupClick() {
+        groupNameTxt = groupName.getText().toString();
+        member1Txt = member1.getText().toString();
+        member2Txt = member2.getText().toString();
+        member3Txt = member3.getText().toString();
+        member4Txt = member4.getText().toString();
+
     }
 }
