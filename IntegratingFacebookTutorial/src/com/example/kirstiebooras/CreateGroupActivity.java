@@ -44,5 +44,8 @@ public class CreateGroupActivity extends Activity {
         member3Txt = member3.getText().toString();
         member4Txt = member4.getText().toString();
 
+        String[] emails = {member1Txt, member2Txt, member3Txt, member4Txt};
+
+
     }
 }
