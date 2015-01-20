@@ -29,6 +29,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.example.kirstiebooras.CreateGroupActivity"
+            android:label="@string/app_name"
+            android:theme="@style/NoActionBar"/>
         <activity android:name="com.example.kirstiebooras.RegisterActivity"
             android:label="@string/app_name"
             android:theme="@style/NoActionBar"/>
