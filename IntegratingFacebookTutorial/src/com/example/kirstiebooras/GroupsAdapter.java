@@ -1,9 +1,6 @@
 package com.example.kirstiebooras;
 
 import android.content.Context;
-import android.text.InputType;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +14,7 @@ import com.parse.integratingfacebooktutorial.R;
 import java.util.ArrayList;
 
 /**
+ * Custom ArrayAdapter to load a user's group info into the groups fragment.
  * Created by kirstiebooras on 1/20/15.
  */
 public class GroupsAdapter extends ArrayAdapter<ParseObject> {
@@ -33,7 +31,7 @@ public class GroupsAdapter extends ArrayAdapter<ParseObject> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View rowView = null;
+        View rowView;
         if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             rowView = inflater.inflate(R.layout.groups_list_row, parent, false);
@@ -67,7 +65,7 @@ public class GroupsAdapter extends ArrayAdapter<ParseObject> {
         textView.setId(textViewNumber);
         textView.setLayoutParams(lparams);
         textView.setText(member);
-
+        // TODO set font size and color
         return textView;
     }
 }
