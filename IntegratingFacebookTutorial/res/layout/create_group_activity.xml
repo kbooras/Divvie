@@ -12,8 +12,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginLeft="16dp"
         android:textColor="#62C8BD"
-        android:textSize="20sp"
-        android:textStyle="bold"
+        android:textSize="30sp"
         android:text="@string/create_new_group_text"/>
 
     <EditText

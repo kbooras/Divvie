@@ -3,7 +3,6 @@ package com.example.kirstiebooras;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,6 +75,7 @@ public class GroupsAdapter extends ArrayAdapter<ParseObject> {
         textView.setText(member);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
         textView.setTextColor(Color.parseColor("#5C5C5C"));
+
         return textView;
     }
 }
