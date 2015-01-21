@@ -6,12 +6,14 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -31,42 +33,39 @@ import java.util.List;
 public class GroupsFragment extends ListFragment {
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.groups_fragment, container,
-                false);
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-        final List<String> groups = new ArrayList<String>();
+        // Get data
+        final ArrayList<ParseObject> groups = new ArrayList<ParseObject>();
 
-        ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Group");
-        groupQuery.whereEqualTo("users", ParseUser.getCurrentUser().getEmail());
-        groupQuery.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> parseObjects, ParseException e) {
-                //Query should generate group listview using an array adapter
+        if (ParseUser.getCurrentUser() != null) {
+            Log.v("current: ", ParseUser.getCurrentUser().getEmail());
+            ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Group");
+            groupQuery.whereEqualTo("users", ParseUser.getCurrentUser().getEmail());
+            groupQuery.findInBackground(new FindCallback<ParseObject>() {
+                @Override
+                public void done(List<ParseObject> parseObjects, ParseException e) {
+                    //Query should generate group listview using an array adapter
+                    for (int i = 0; i < parseObjects.size(); i++) {
+                        Log.v("groups: ", parseObjects.get(i).get("name").toString() +
+                                parseObjects.get(i).get("users").toString());
+                        //groups.add(parseObjects.get(0));
+                        groups.add(parseObjects.get(i));
+                        final GroupsAdapter adapter = new GroupsAdapter(getActivity().getBaseContext(),
+                                groups);
+                        setListAdapter(adapter);
 
-                // TODO For loop should be deleted and is for testing purposes
-
-                for (int i = 0; i < parseObjects.size(); i++) {
-                    groups.add(parseObjects.get(0).get("name").toString());
-
-                    String group = parseObjects.get(0).get("name").toString();
-                    new AlertDialog.Builder(getActivity())
-                            .setTitle("Group message ! test")
-                            .setMessage(group)
-                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    // Do nothing.
-                                }
-                            }).show();
+                    }
                 }
-            }
+            });
+        }
 
-
-        });
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
-                android.R.layout.simple_list_item_1, groups);
-        setListAdapter(adapter);
-        return rootView;
     }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        // do something with the data
+    }
+
 }
