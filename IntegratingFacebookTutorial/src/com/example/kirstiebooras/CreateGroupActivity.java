@@ -4,8 +4,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -13,6 +18,7 @@ import android.widget.LinearLayout.LayoutParams;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
 
 import java.util.ArrayList;
@@ -35,7 +41,7 @@ public class CreateGroupActivity extends Activity {
     private int editTextWidth;
     private int editTextMarginTop;
     private String editTextText;
-    private static final float EDIT_TEXT_WIDTH_DP = 250.0f;
+    private static final float EDIT_TEXT_WIDTH_DP = 328.0f;
     private static final float EDIT_TEXT_MARGIN_TOP_DP = 11.0f;
     public static final String TAG = "CreateGroupActivity";
     private List<EditText> allEditTexts = new ArrayList<EditText>();
@@ -45,6 +51,8 @@ public class CreateGroupActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.create_group_activity);
+
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         final float scale = getResources().getDisplayMetrics().density;
         editTextWidth = (int) (EDIT_TEXT_WIDTH_DP * scale + 0.5f);
@@ -59,14 +67,41 @@ public class CreateGroupActivity extends Activity {
         editTextCount = 2;
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.secondary_items, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.logout:
+                ParseUser.logOut();
+                Log.v(TAG, "User signed out!");
+                //startSigninRegisterActivity();
+                return true;
+
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     public void onAddEditTextClick(View v) {
         // Dynamically adds a new EditText below the last EditText.
-        layout.addView(createNewEditTextView(), editTextCount);
+        // +1 because starts at index 0 and the TextView is above all EditTexts
+        layout.addView(createNewEditTextView(), editTextCount + 1);
     }
 
     private EditText createNewEditTextView() {
         final LayoutParams lparams = new LayoutParams(editTextWidth, LayoutParams.WRAP_CONTENT);
         lparams.setMargins(0, editTextMarginTop, 0, 0);
+        lparams.setLayoutDirection(Gravity.CENTER_HORIZONTAL);
 
         final EditText editText = new EditText(this);
         Log.v(TAG, "Created EditText " + editTextCount);

@@ -9,6 +9,15 @@
         <item name="android:actionBarTabStyle">@style/DivvieTheme.ActionBar.TabView</item>
         <item name="android:actionBarTabBarStyle">@style/DivvieTheme.ActionBar.TabBar</item>
         <item name="android:actionBarTabTextStyle">@style/DivvieTheme.ActionBar.TabText</item>
+        <item name="android:logo">@drawable/divvie_logo_white</item>
+    </style>
+
+    <style name="DivvieThemeSecondary" parent="@android:style/Theme.Holo.Light">
+        <item name="android:actionBarStyle">@style/DivvieTheme.ActionBar</item>
+        <item name="android:actionBarTabStyle">@style/DivvieTheme.ActionBar.TabView</item>
+        <item name="android:actionBarTabBarStyle">@style/DivvieTheme.ActionBar.TabBar</item>
+        <item name="android:actionBarTabTextStyle">@style/DivvieTheme.ActionBar.TabText</item>
+        <item name="android:logo">@drawable/white_logo_with_padding</item>
     </style>
 
     <style name="DivvieTheme.ActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
