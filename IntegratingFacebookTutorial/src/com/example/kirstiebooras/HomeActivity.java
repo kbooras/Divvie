@@ -27,6 +27,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
     private ActionBar actionBar;
     private TabsFragmentPagerAdapter tabsAdapter;
     private ViewPager viewPager;
+    public static float SCALE;
     public static final String TAG = "Home";
 
     @Override
@@ -34,6 +35,9 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.home_activity);
+
+        // Used to set font dp in fragments
+        SCALE = getResources().getDisplayMetrics().density;
 
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         tabsAdapter = new TabsFragmentPagerAdapter(getSupportFragmentManager());

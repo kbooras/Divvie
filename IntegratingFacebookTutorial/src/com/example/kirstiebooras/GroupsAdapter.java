@@ -1,6 +1,9 @@
 package com.example.kirstiebooras;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,15 +60,22 @@ public class GroupsAdapter extends ArrayAdapter<ParseObject> {
     }
 
     private TextView createTextView(String member, int textViewNumber) {
+        final float SCALE = HomeActivity.SCALE;
+        int padding = (int) (4.0f * SCALE + 0.5f);
+        int margin = (int) (16.0f * SCALE + 0.5f);
+
         final LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-
+        lparams.setMargins(margin, 0, margin, 0);
         final TextView textView = new TextView(context);
 
         textView.setId(textViewNumber);
         textView.setLayoutParams(lparams);
+        textView.setPadding(0,padding,0,padding);
+
         textView.setText(member);
-        // TODO set font size and color
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+        textView.setTextColor(Color.parseColor("#5C5C5C"));
         return textView;
     }
 }

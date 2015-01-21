@@ -28,6 +28,9 @@ public class GroupsFragment extends ListFragment {
 
         // Get data
         final ArrayList<ParseObject> groups = new ArrayList<ParseObject>();
+        final GroupsAdapter adapter = new GroupsAdapter(getActivity().getBaseContext(),
+                groups);
+        setListAdapter(adapter);
 
         if (ParseUser.getCurrentUser() != null) {
             Log.v("current: ", ParseUser.getCurrentUser().getEmail());
@@ -40,13 +43,9 @@ public class GroupsFragment extends ListFragment {
                     for (int i = 0; i < parseObjects.size(); i++) {
                         Log.v("groups: ", parseObjects.get(i).get("name").toString() +
                                 parseObjects.get(i).get("users").toString());
-                        //groups.add(parseObjects.get(0));
                         groups.add(parseObjects.get(i));
-                        final GroupsAdapter adapter = new GroupsAdapter(getActivity().getBaseContext(),
-                                groups);
-                        setListAdapter(adapter);
-
                     }
+                    adapter.notifyDataSetChanged();
                 }
             });
         }
