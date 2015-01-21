@@ -101,7 +101,7 @@ public class CreateGroupActivity extends Activity {
     private EditText createNewEditTextView() {
         final LayoutParams lparams = new LayoutParams(editTextWidth, LayoutParams.WRAP_CONTENT);
         lparams.setMargins(0, editTextMarginTop, 0, 0);
-        lparams.setLayoutDirection(Gravity.CENTER_HORIZONTAL);
+        lparams.gravity = Gravity.CENTER_HORIZONTAL;
 
         final EditText editText = new EditText(this);
         Log.v(TAG, "Created EditText " + editTextCount);

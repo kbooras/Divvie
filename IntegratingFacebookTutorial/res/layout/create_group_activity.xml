@@ -13,7 +13,8 @@
         android:layout_marginLeft="16dp"
         android:textColor="#62C8BD"
         android:textSize="20sp"
-        android:text="Create a New Group"/>
+        android:textStyle="bold"
+        android:text="@string/create_new_group_text"/>
 
     <EditText
         android:id="@+id/groupName"
