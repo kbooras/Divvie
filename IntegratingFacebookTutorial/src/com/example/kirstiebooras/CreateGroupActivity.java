@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
@@ -23,6 +24,7 @@ import com.parse.integratingfacebooktutorial.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -35,8 +37,6 @@ public class CreateGroupActivity extends Activity {
 
     private LinearLayout layout;
     private EditText groupName;
-    private EditText groupMember1;
-    private EditText groupMember2;
     private int editTextCount;
     private int editTextWidth;
     private int editTextMarginTop;
@@ -61,8 +61,11 @@ public class CreateGroupActivity extends Activity {
 
         layout = (LinearLayout) findViewById(R.id.layout);
         groupName = (EditText) findViewById(R.id.groupName);
-        groupMember1 = (EditText) findViewById(R.id.email1);
-        groupMember2 = (EditText) findViewById(R.id.email2);
+        EditText groupMember1 = (EditText) findViewById(R.id.email1);
+        EditText groupMember2 = (EditText) findViewById(R.id.email2);
+
+        allEditTexts.add(groupMember1);
+        allEditTexts.add(groupMember2);
 
         editTextCount = 2;
     }
@@ -80,7 +83,6 @@ public class CreateGroupActivity extends Activity {
             case R.id.logout:
                 ParseUser.logOut();
                 Log.v(TAG, "User signed out!");
-                //startSigninRegisterActivity();
                 return true;
 
             case android.R.id.home:
@@ -99,6 +101,7 @@ public class CreateGroupActivity extends Activity {
     }
 
     private EditText createNewEditTextView() {
+        // TODO add ability to remove a text view
         final LayoutParams lparams = new LayoutParams(editTextWidth, LayoutParams.WRAP_CONTENT);
         lparams.setMargins(0, editTextMarginTop, 0, 0);
         lparams.gravity = Gravity.CENTER_HORIZONTAL;
@@ -118,37 +121,44 @@ public class CreateGroupActivity extends Activity {
 
     public void onCreateGroupClick(View v) {
         String groupNameTxt = groupName.getText().toString();
-        String groupMember1Txt = groupMember1.getText().toString();
-        String groupMember2Txt = groupMember2.getText().toString();
 
-        // Create an array of all emails added in the EditTexts.
-        String[] memberEmails = new String[allEditTexts.size() + 2];
-        memberEmails[0] = groupMember1Txt;
-        memberEmails[1] = groupMember2Txt;
+        // Create an array of all emails added in the EditTexts + the current user.
+        String[] memberEmails = new String[allEditTexts.size() + 1];
+        memberEmails[0] = ParseUser.getCurrentUser().getEmail();
+
+        // Check that each email is valid and add to the array of members
+        String email;
         for(int i=0; i < allEditTexts.size(); i++){
-            memberEmails[i+2] = allEditTexts.get(i).getText().toString();
-        }
-
-        // Check each email is valid.
-        for (int i = 0 ; i < memberEmails.length; i++) {
-            if(!isValidEmail(memberEmails[i])){
+            email = allEditTexts.get(i).getText().toString();
+            if (!isValidEmail(email)){
                 // Display invalid email message
                 displayInvalidEmailMessage(i+1);
                 return;
+            } else {
+                memberEmails[i+1] = email;
             }
+        }
+
+        // Check for duplicate emails.
+        HashSet<String> set = new HashSet<String>(Arrays.asList(memberEmails));
+        if (set.size() < memberEmails.length) {
+            // Display repeated email message
+            displayRepeatedEmailMessage();
+            return;
         }
 
         createParseObjectGroup(groupNameTxt, memberEmails);
         finish();
     }
 
-    public void createParseObjectGroup(String name, String[] memberEmails){
+    private void createParseObjectGroup(String name, String[] memberEmails){
         ParseObject newGroup = new ParseObject("Group");
         newGroup.put("name", name);
         newGroup.addAll("users", Arrays.asList(memberEmails));
         try {
             newGroup.save();
             Log.v(TAG, "Saved new group successfully!");
+            // Update the ArrayAdapter
         } catch (ParseException e) {
             // Display error message.
             displayCreateGroupFailedMessage();
@@ -161,7 +171,7 @@ public class CreateGroupActivity extends Activity {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(emailTxt).matches();
     }
 
-    public void displayInvalidEmailMessage (int emailNumber) {
+    private void displayInvalidEmailMessage (int emailNumber) {
         new AlertDialog.Builder(this)
                 .setTitle("Invalid Email")
                 .setMessage("Email " + emailNumber + " is invalid. Correct this and try again.")
@@ -172,10 +182,21 @@ public class CreateGroupActivity extends Activity {
                 }).show();
     }
 
-    public void displayCreateGroupFailedMessage () {
+    private void displayCreateGroupFailedMessage () {
         new AlertDialog.Builder(this)
                 .setTitle("Create Group Failed")
                 .setMessage("Create group failed. Please try again later.")
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // Do nothing.
+                    }
+                }).show();
+    }
+
+    private void displayRepeatedEmailMessage() {
+        new AlertDialog.Builder(this)
+                .setTitle("Duplicate Email ")
+                .setMessage("Hmm, you seem to have a duplicate email. Correct this and try again.")
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         // Do nothing.

@@ -94,7 +94,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
                 ParseUser.logOut();
                 Log.v(TAG, "User signed out!");
                 startSigninRegisterActivity();
-                break;
+                return true;
 
             case R.id.add:
                 int currentFragment = viewPager.getCurrentItem();
@@ -104,10 +104,10 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
                     Intent intent = new Intent(this, CreateGroupActivity.class);
                     startActivity(intent);
                 }
-                break;
+                return true;
+            default:
+                return false;
         }
-
-        return true;
     }
 
     @Override
