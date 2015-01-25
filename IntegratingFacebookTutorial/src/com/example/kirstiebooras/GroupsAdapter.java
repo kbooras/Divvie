@@ -37,21 +37,23 @@ public class GroupsAdapter extends ArrayAdapter<ParseObject> {
         if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             rowView = inflater.inflate(R.layout.groups_list_row, parent, false);
-            LinearLayout ll = (LinearLayout) rowView.findViewById(R.id.layout);
-            TextView textView = (TextView) rowView.findViewById(R.id.groupName);
-
-            // We retrieve the object from the list
-            ParseObject group = groups.get(position);
-            if (group != null) {
-                textView.setText(group.getString("name"));
-                ArrayList<String> members = (ArrayList<String>) group.get("users");
-                // Create a TextView for each member
-                for (int i = 0; i < members.size(); i++) {
-                    ll.addView(createTextView(members.get(i), i));
-                }
-            }
         } else {
             rowView = convertView;
+        }
+
+        TextView textView = (TextView) rowView.findViewById(R.id.groupName);
+        LinearLayout membersLayout = (LinearLayout) rowView.findViewById(R.id.membersLayout);
+        membersLayout.removeAllViews();
+
+        // We retrieve the object from the list
+        ParseObject group = groups.get(position);
+        if (group != null) {
+            textView.setText(group.getString("name"));
+            ArrayList<String> members = (ArrayList<String>) group.get("users");
+            // Create a TextView for each member
+            for (int i = 0; i < members.size(); i++) {
+               membersLayout.addView(createTextView(members.get(i), i));
+            }
         }
 
         return rowView;

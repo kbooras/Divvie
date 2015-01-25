@@ -19,5 +19,12 @@
         android:textColor="#3B3B3B"
         android:text="Group name"/>
 
+    <LinearLayout
+        android:id="@+id/membersLayout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </LinearLayout>
+
 
 </LinearLayout>

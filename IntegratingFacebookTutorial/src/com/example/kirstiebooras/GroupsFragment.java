@@ -40,11 +40,8 @@ public class GroupsFragment extends ListFragment {
                 @Override
                 public void done(List<ParseObject> parseObjects, ParseException e) {
                     //Query should generate group listview using an array adapter
-                    for (int i = 0; i < parseObjects.size(); i++) {
-                        Log.v("groups: ", parseObjects.get(i).get("name").toString() +
-                                parseObjects.get(i).get("users").toString());
-                        groups.add(parseObjects.get(i));
-                    }
+                    groups.clear();
+                    groups.addAll(parseObjects);
                     adapter.notifyDataSetChanged();
                 }
             });
