@@ -3,6 +3,7 @@ package com.example.kirstiebooras;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.text.InputType;
@@ -16,7 +17,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
@@ -41,6 +41,7 @@ public class CreateGroupActivity extends Activity {
     private int editTextWidth;
     private int editTextMarginTop;
     private String editTextText;
+    private static Resources res;
     private static final float EDIT_TEXT_WIDTH_DP = 328.0f;
     private static final float EDIT_TEXT_MARGIN_TOP_DP = 11.0f;
     public static final String TAG = "CreateGroupActivity";
@@ -53,6 +54,8 @@ public class CreateGroupActivity extends Activity {
         setContentView(R.layout.create_group_activity);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
+
+        res = getResources();
 
         final float scale = getResources().getDisplayMetrics().density;
         editTextWidth = (int) (EDIT_TEXT_WIDTH_DP * scale + 0.5f);
@@ -138,7 +141,7 @@ public class CreateGroupActivity extends Activity {
         HashSet<String> set = new HashSet<String>(Arrays.asList(memberEmails));
         if (set.size() < memberEmails.length) {
             // Display repeated email message
-            displayRepeatedEmailMessage();
+            displayDuplicateEmailMessage();
             return;
         }
 
@@ -168,9 +171,10 @@ public class CreateGroupActivity extends Activity {
 
     private void displayInvalidEmailMessage (int emailNumber) {
         new AlertDialog.Builder(this)
-                .setTitle("Invalid Email")
-                .setMessage("Email " + emailNumber + " is invalid. Correct this and try again.")
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                .setTitle(res.getString(R.string.group_invalid_email_alert_title))
+                .setMessage(res.getString(R.string.email_space) + emailNumber
+                        + res.getString(R.string.group_invalid_email_alert_message))
+                .setPositiveButton(res.getString(R.string.ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         // Do nothing.
                     }
@@ -179,20 +183,20 @@ public class CreateGroupActivity extends Activity {
 
     private void displayCreateGroupFailedMessage () {
         new AlertDialog.Builder(this)
-                .setTitle("Create Group Failed")
-                .setMessage("Create group failed. Please try again later.")
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                .setTitle(res.getString(R.string.create_group_failed_alert_title))
+                .setMessage(res.getString(R.string.create_group_failed_alert_message))
+                .setPositiveButton(res.getString(R.string.ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         // Do nothing.
                     }
                 }).show();
     }
 
-    private void displayRepeatedEmailMessage() {
+    private void displayDuplicateEmailMessage() {
         new AlertDialog.Builder(this)
-                .setTitle("Duplicate Email ")
-                .setMessage("Hmm, you seem to have a duplicate email. Correct this and try again.")
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                .setTitle(res.getString(R.string.duplicate_email_alert_title))
+                .setMessage(res.getString(R.string.duplicate_email_alert_message))
+                .setPositiveButton(res.getString(R.string.ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         // Do nothing.
                     }

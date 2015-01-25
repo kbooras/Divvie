@@ -47,13 +47,17 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         actionBar = getActionBar();
 
         // Home button should not be enabled, since there is no hierarchical parent.
-        actionBar.setHomeButtonEnabled(false);
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(false);
+        }
 
         // Specify there will be tabs
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        actionBar.addTab(actionBar.newTab().setText("Transactions").setTabListener(this));
-        actionBar.addTab(actionBar.newTab().setText("Groups").setTabListener(this));
+        actionBar.addTab(actionBar.newTab().setText(
+                getResources().getString(R.string.transactions)).setTabListener(this));
+        actionBar.addTab(actionBar.newTab().setText(
+                getResources().getString(R.string.groups)).setTabListener(this));
 
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 

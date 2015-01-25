@@ -2,6 +2,7 @@ package com.example.kirstiebooras;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,25 +19,23 @@ import com.parse.integratingfacebooktutorial.R;
  */
 public class RegisterActivity extends Activity {
 
-    static final String TAG = "Register";
+    private static final String TAG = "Register";
 
-    public EditText email;
-    public EditText fullName;
-    public EditText password;
-    public EditText reenterPassword;
-    public String emailTxt;
-    public String fullNameTxt;
-    public String passwordTxt;
-    public String reenterPasswordTxt;
-    final int EMAIL_TAKEN = 203;
-    final int USERNAME_TAKEN = 202;
-    final String FULL_NAME = "fullName";
+    private EditText email;
+    private EditText fullName;
+    private EditText password;
+    private EditText reenterPassword;
+    private static Resources res;
+    private final int EMAIL_TAKEN = 203;
+    private final int USERNAME_TAKEN = 202;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.register_activity);
+
+        res = getResources();
 
         email = (EditText) findViewById(R.id.email);
         fullName = (EditText) findViewById(R.id.fullName);
@@ -46,23 +45,27 @@ public class RegisterActivity extends Activity {
     }
 
     public void onRegisterClick(View v) {
-        emailTxt = email.getText().toString();
-        fullNameTxt = fullName.getText().toString();
-        passwordTxt = password.getText().toString();
-        reenterPasswordTxt = reenterPassword.getText().toString();
+        String emailTxt = email.getText().toString();
+        String fullNameTxt = fullName.getText().toString();
+        String passwordTxt = password.getText().toString();
+        String reenterPasswordTxt = reenterPassword.getText().toString();
 
         // User must fill up the form
         if (emailTxt.equals("") || fullNameTxt.equals("") || passwordTxt.equals("")) {
-            Toast.makeText(getApplicationContext(), "Please complete the register form",
+            Toast.makeText(getApplicationContext(),
+                    res.getString(R.string.complete_form_toast),
                     Toast.LENGTH_LONG).show();
         } else if (passwordTxt.length() < 6) {
-            Toast.makeText(getApplicationContext(), "Password must be at least 6 characters.",
+            Toast.makeText(getApplicationContext(),
+                    res.getString(R.string.password_length_toast),
                     Toast.LENGTH_LONG).show();
         } else if (!isValidEmail(emailTxt)) {
-            Toast.makeText(getApplicationContext(), "Please enter a valid email.",
+            Toast.makeText(getApplicationContext(),
+                    res.getString(R.string.enter_valid_email_toast),
                     Toast.LENGTH_LONG).show();
         } else if (!passwordTxt.equals(reenterPasswordTxt)){
-            Toast.makeText(getApplicationContext(), "Passwords do not match",
+            Toast.makeText(getApplicationContext(),
+                    res.getString(R.string.password_match_toast),
                     Toast.LENGTH_LONG).show();
         } else {
             // Save new user data into Parse.com Data Storage
@@ -70,7 +73,7 @@ public class RegisterActivity extends Activity {
             user.setUsername(emailTxt);
             user.setPassword(passwordTxt);
             user.setEmail(emailTxt);
-            user.put(FULL_NAME, fullNameTxt);
+            user.put("fullName", fullNameTxt);
             user.signUpInBackground(new SignUpCallback() {
                 @Override
                 public void done(com.parse.ParseException e) {
@@ -81,7 +84,7 @@ public class RegisterActivity extends Activity {
                         startActivity(intent);
                     } else if (e.getCode() == EMAIL_TAKEN || e.getCode() == USERNAME_TAKEN) {
                         Toast.makeText(getApplicationContext(),
-                                "There is already an account with this email",
+                                res.getString(R.string.account_email_exists_toast),
                                 Toast.LENGTH_LONG).show();
                     } else {
                         Log.v(TAG, "Sign up failed :(");

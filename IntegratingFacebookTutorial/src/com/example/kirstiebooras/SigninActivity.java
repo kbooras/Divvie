@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,14 +24,11 @@ import com.parse.integratingfacebooktutorial.R;
  */
 public class SigninActivity extends Activity {
 
-    static final String TAG = "Signin";
+    private static final String TAG = "Signin";
 
-    public EditText email;
-    public EditText password;
-    public String emailTxt;
-    public String passwordTxt;
-    public final int INVALID_EMAIL = 125;
-    public final int EMAIL_NOT_FOUND = 205;
+    private EditText email;
+    private EditText password;
+    private static Resources res;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,16 +36,18 @@ public class SigninActivity extends Activity {
 
         setContentView(R.layout.signin_activity);
 
+        res = getResources();
+
         email = (EditText) findViewById(R.id.email);
         password = (EditText) findViewById(R.id.password);
     }
 
     public void onSignInClick(View v) {
-        emailTxt = email.getText().toString();
-        passwordTxt = password.getText().toString();
+        String emailTxt = email.getText().toString();
+        String passwordTxt = password.getText().toString();
 
         if (emailTxt.equals("") || passwordTxt.equals("")) {
-            Toast.makeText(getApplicationContext(), "Please complete the form",
+            Toast.makeText(getApplicationContext(), res.getString(R.string.complete_form_toast),
                     Toast.LENGTH_LONG).show();
         } else {
             ParseUser.logInInBackground(emailTxt, passwordTxt, new LogInCallback() {
@@ -62,12 +62,13 @@ public class SigninActivity extends Activity {
                         Log.v(TAG, "Sign in failed :(" + e.toString());
                         new AlertDialog.Builder(SigninActivity.this)
                                 .setIconAttribute(android.R.attr.alertDialogIcon)
-                                .setTitle("Login")
-                                .setMessage("Email or password invalid.")
-                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                    }
+                                .setTitle(res.getString(R.string.sign_in))
+                                .setMessage(res.getString(R.string.signin_failed_alert_message))
+                                .setPositiveButton(res.getString(R.string.ok),
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                            }
                                 })
                                 .show();
                     }
@@ -79,19 +80,21 @@ public class SigninActivity extends Activity {
     public void onForgotPasswordClick(View v) {
         final EditText resetPasswordEmail = new EditText(this);
         new AlertDialog.Builder(this)
-                .setTitle("Forgot Password")
-                .setMessage("Enter the email associated with your account")
+                .setTitle(res.getString(R.string.forgot_password_alert_title))
+                .setMessage(res.getString(R.string.forgot_password_alert_message))
                 .setView(resetPasswordEmail)
-                .setPositiveButton("Reset", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        String resetPasswordEmailTxt = resetPasswordEmail.getText().toString();
-                        resetPassword(resetPasswordEmailTxt);
-                    }
+                .setPositiveButton(res.getString(R.string.reset),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                String resetPasswordEmailTxt = resetPasswordEmail.getText().toString();
+                                resetPassword(resetPasswordEmailTxt);
+                            }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        // Do nothing.
-                    }
+                .setNegativeButton(res.getString(R.string.cancel),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                // Do nothing.
+                            }
                 }).show();
     }
 
@@ -103,8 +106,8 @@ public class SigninActivity extends Activity {
                             // An email was successfully sent with reset
                             // instructions.
                             Toast.makeText(getApplicationContext(),
-                                    "Reset email sent!",
-                                    Toast.LENGTH_LONG);
+                                    res.getString(R.string.reset_success_toast),
+                                    Toast.LENGTH_LONG).show();
                             Log.v(TAG, "reset email sent!");
                         } else {
                             // Something went wrong. Look at the ParseException
@@ -118,18 +121,20 @@ public class SigninActivity extends Activity {
 
     public void displayResetErrorMessage(int errorCode) {
         String message;
+        int INVALID_EMAIL = 125;
+        int EMAIL_NOT_FOUND = 205;
         if (errorCode == INVALID_EMAIL) {
-            message = "The email you entered was invalid";
+            message = res.getString(R.string.reset_invalid_email_alert_message);
         } else if (errorCode == EMAIL_NOT_FOUND) {
-            message = "The email you entered is not associated with an account";
+            message = res.getString((R.string.reset_no_account_alert_message));
         } else {
-            message = "The reset password failed. Please try again later.";
+            message = res.getString((R.string.reset_failed_alert_message));
         }
 
         new AlertDialog.Builder(this)
-                .setTitle("Reset Password Failed")
+                .setTitle(res.getString((R.string.reset_failed_alert_title)))
                 .setMessage(message)
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                .setPositiveButton(res.getString((R.string.ok)), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         // Do nothing.
                     }
