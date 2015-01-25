@@ -22,16 +22,27 @@ import java.util.List;
  */
 public class GroupsFragment extends ListFragment {
 
+    private ArrayList<ParseObject> groups;
+    private GroupsAdapter adapter;
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        // Get data
-        final ArrayList<ParseObject> groups = new ArrayList<ParseObject>();
-        final GroupsAdapter adapter = new GroupsAdapter(getActivity().getBaseContext(),
-                groups);
+        groups = new ArrayList<ParseObject>();
+        adapter = new GroupsAdapter(getActivity().getBaseContext(), groups);
         setListAdapter(adapter);
 
+        getDataFromParse();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getDataFromParse();
+    }
+
+    private void getDataFromParse() {
         if (ParseUser.getCurrentUser() != null) {
             Log.v("current: ", ParseUser.getCurrentUser().getEmail());
             ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Group");
@@ -46,7 +57,6 @@ public class GroupsFragment extends ListFragment {
                 }
             });
         }
-
     }
 
     @Override
