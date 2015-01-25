@@ -40,7 +40,6 @@ public class CreateGroupActivity extends Activity {
     private int editTextCount;
     private int editTextWidth;
     private int editTextMarginTop;
-    private String editTextText;
     private static Resources res;
     private static final float EDIT_TEXT_WIDTH_DP = 328.0f;
     private static final float EDIT_TEXT_MARGIN_TOP_DP = 11.0f;
@@ -60,7 +59,6 @@ public class CreateGroupActivity extends Activity {
         final float scale = getResources().getDisplayMetrics().density;
         editTextWidth = (int) (EDIT_TEXT_WIDTH_DP * scale + 0.5f);
         editTextMarginTop = (int) (EDIT_TEXT_MARGIN_TOP_DP * scale + 0.5f);
-        editTextText = getResources().getString(R.string.email) + " ";
 
         layout = (LinearLayout) findViewById(R.id.layout);
         groupName = (EditText) findViewById(R.id.groupName);
@@ -111,7 +109,7 @@ public class CreateGroupActivity extends Activity {
 
         editText.setLayoutParams(lparams);
         editText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-        editText.setHint(editTextText + editTextCount);
+        editText.setHint(String.format(res.getString(R.string.create_group_email), editTextCount));
 
         allEditTexts.add(editText);
         return editText;
@@ -172,8 +170,8 @@ public class CreateGroupActivity extends Activity {
     private void displayInvalidEmailMessage (int emailNumber) {
         new AlertDialog.Builder(this)
                 .setTitle(res.getString(R.string.group_invalid_email_alert_title))
-                .setMessage(res.getString(R.string.email_space) + emailNumber
-                        + res.getString(R.string.group_invalid_email_alert_message))
+                .setMessage(String.format(res.getString(R.string.group_invalid_email_alert_message),
+                        emailNumber))
                 .setPositiveButton(res.getString(R.string.ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         // Do nothing.
