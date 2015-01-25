@@ -61,13 +61,9 @@ public class CreateGroupActivity extends Activity {
 
         layout = (LinearLayout) findViewById(R.id.layout);
         groupName = (EditText) findViewById(R.id.groupName);
-        EditText groupMember1 = (EditText) findViewById(R.id.email1);
-        EditText groupMember2 = (EditText) findViewById(R.id.email2);
+        allEditTexts.add((EditText) findViewById(R.id.email1));
 
-        allEditTexts.add(groupMember1);
-        allEditTexts.add(groupMember2);
-
-        editTextCount = 2;
+        editTextCount = 1;
     }
 
     @Override
@@ -110,7 +106,6 @@ public class CreateGroupActivity extends Activity {
         Log.v(TAG, "Created EditText " + editTextCount);
         editTextCount++;
 
-        editText.setId(editTextCount);
         editText.setLayoutParams(lparams);
         editText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         editText.setHint(editTextText + editTextCount);
