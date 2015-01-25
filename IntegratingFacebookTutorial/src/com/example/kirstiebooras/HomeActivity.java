@@ -25,7 +25,6 @@ import java.lang.reflect.Method;
 public class HomeActivity extends FragmentActivity implements ActionBar.TabListener {
 
     private ActionBar actionBar;
-    private TabsFragmentPagerAdapter tabsAdapter;
     private ViewPager viewPager;
     public static float SCALE;
     public static final String TAG = "Home";
@@ -40,7 +39,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         SCALE = getResources().getDisplayMetrics().density;
 
         viewPager = (ViewPager) findViewById(R.id.viewPager);
-        tabsAdapter = new TabsFragmentPagerAdapter(getSupportFragmentManager());
+        TabsFragmentPagerAdapter tabsAdapter = new TabsFragmentPagerAdapter(getSupportFragmentManager());
 
         viewPager.setAdapter(tabsAdapter);
 
@@ -140,7 +139,6 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
     // Adds the tabs below the action bar
     public void setTabsBelowActionBar() {
         try {
-            final ActionBar actionBar = getActionBar();
             final Method setHasEmbeddedTabsMethod = actionBar.getClass()
                     .getDeclaredMethod("setHasEmbeddedTabs", boolean.class);
             setHasEmbeddedTabsMethod.setAccessible(true);
