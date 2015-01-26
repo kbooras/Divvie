@@ -102,7 +102,8 @@ public class CreateGroupActivity extends Activity {
     public void onAddEditTextClick(View v) {
         // Dynamically adds a new EditText below the last EditText.
         // +1 because starts at index 0 and the TextView is above all EditTexts
-        mLayout.addView(createNewEmailView(), mEmailViewCount + 1);
+
+        mLayout.addView( createNewEmailView(), mEmailViewCount + 1);
     }
 
     private FrameLayout createNewEmailView() {
@@ -119,10 +120,13 @@ public class CreateGroupActivity extends Activity {
         frame.setId(FRAME_LAYOUT_ID_CONSTANT + mEmailViewCount);
 
         // Create the EditText
-        frame.addView(createEditText());
+        //frame.addView(createEditText());
 
         // Create the delete button
-        frame.addView(createDeleteButton());
+        //frame.addView(createDeleteButton());
+
+        View d = View.inflate(getBaseContext(),R.layout.add_anoher_new_layout,null);
+        frame.addView(d);
 
         return frame;
     }
@@ -163,6 +167,7 @@ public class CreateGroupActivity extends Activity {
                 // TODO: remove EditText from the array of emails
             }
         });
+
 
         return button;
     }
