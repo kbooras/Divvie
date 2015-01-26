@@ -37,10 +37,10 @@ import java.util.List;
 public class CreateGroupActivity extends Activity {
 
     private static final String TAG = "CreateGroupActivity";
-    
+
     private LinearLayout mLayout;
     private EditText mGroupName;
-    private int mEditTextCount;
+    private int mEmailViewCount;
     private int mEditTextWidth;
     private int mEditTextMarginTop;
     private int mButtonSize;
@@ -49,8 +49,9 @@ public class CreateGroupActivity extends Activity {
     private static final float EDIT_TEXT_WIDTH_DP = 328.0f;
     private static final float EDIT_TEXT_MARGIN_TOP_DP = 11.0f;
     private static final float BUTTON_SIZE_DP = 35.0f;
-    private static final int EDIT_TEXT_ID_CONSTANT = 1000;
-    private static final int BUTTON_ID_CONSTANT = 2000;
+    private static final int FRAME_LAYOUT_ID_CONSTANT = 1000;
+    private static final int EDIT_TEXT_ID_CONSTANT = 2000;
+    private static final int BUTTON_ID_CONSTANT = 3000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +72,7 @@ public class CreateGroupActivity extends Activity {
         mGroupName = (EditText) findViewById(R.id.groupName);
         mAllEditTexts.add((EditText) findViewById(R.id.email1));
 
-        mEditTextCount = 1;
+        mEmailViewCount = 1;
     }
 
     @Override
@@ -101,10 +102,13 @@ public class CreateGroupActivity extends Activity {
     public void onAddEditTextClick(View v) {
         // Dynamically adds a new EditText below the last EditText.
         // +1 because starts at index 0 and the TextView is above all EditTexts
-        mLayout.addView(createNewEmailView(), mEditTextCount + 1);
+        mLayout.addView(createNewEmailView(), mEmailViewCount + 1);
     }
 
     private FrameLayout createNewEmailView() {
+        mEmailViewCount++;
+        Log.v(TAG, "Create email view " + mEmailViewCount);
+
         // Create FrameLayout which holds EditText and delete button
         final FrameLayout frame = new FrameLayout(this);
         final LinearLayout.LayoutParams frameParams = new LinearLayout.LayoutParams(
@@ -112,14 +116,13 @@ public class CreateGroupActivity extends Activity {
         frameParams.setMargins(0, mEditTextMarginTop, 0, 0);
         frameParams.gravity = Gravity.CENTER_HORIZONTAL;
         frame.setLayoutParams(frameParams);
+        frame.setId(FRAME_LAYOUT_ID_CONSTANT + mEmailViewCount);
 
         // Create the EditText
         frame.addView(createEditText());
 
         // Create the delete button
         frame.addView(createDeleteButton());
-
-        // TODO Hide delete button from previous EditText
 
         return frame;
     }
@@ -128,11 +131,7 @@ public class CreateGroupActivity extends Activity {
         final FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
         final EditText editText = new EditText(this);
-
-        Log.v(TAG, "Created EditText " + mEditTextCount);
-        mEditTextCount++;
-
-        editText.setId(EDIT_TEXT_ID_CONSTANT + mEditTextCount);
+        editText.setId(EDIT_TEXT_ID_CONSTANT + mEmailViewCount);
         editText.setLayoutParams(params);
 
         int paddingLeft = editText.getPaddingLeft();
@@ -140,7 +139,7 @@ public class CreateGroupActivity extends Activity {
         editText.setPadding(paddingLeft, 0, mButtonSize, paddingBottom);
         editText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         editText.setHint(String.format(mResources.getString(R.string.create_group_email),
-                mEditTextCount));
+                mEmailViewCount));
         mAllEditTexts.add(editText);
 
         return editText;
@@ -150,14 +149,18 @@ public class CreateGroupActivity extends Activity {
         final FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(mButtonSize,
                 mButtonSize, Gravity.RIGHT);
         final Button button = new Button(this);
-        button.setId(BUTTON_ID_CONSTANT + mEditTextCount);
+        button.setId(BUTTON_ID_CONSTANT + mEmailViewCount);
         button.setLayoutParams(params);
         button.setBackgroundResource(R.drawable.edittext_delete_btn);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.v(TAG, "Clicked delete EditText" + view.getId());
-                // TODO Remove the EditText and add delete button to previous EditText
+                // TODO: Delete this EditText and adjust the others accordingly
+                // FrameLayout frame = (FrameLayout) findViewById(FRAME_LAYOUT_ID_CONSTANT
+                //         + mEmailViewCount);
+                // frame.setVisibility(View.GONE);
+                // TODO: remove EditText from the array of emails
             }
         });
 
