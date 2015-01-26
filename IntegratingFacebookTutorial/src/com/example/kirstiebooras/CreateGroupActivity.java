@@ -13,9 +13,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -40,10 +41,15 @@ public class CreateGroupActivity extends Activity {
     private int editTextCount;
     private int editTextWidth;
     private int editTextMarginTop;
+    private int editTextPaddingLeft;
+    private int buttonSize;
     private static Resources res;
     private static final float EDIT_TEXT_WIDTH_DP = 328.0f;
     private static final float EDIT_TEXT_MARGIN_TOP_DP = 11.0f;
-    public static final String TAG = "CreateGroupActivity";
+    private static final float BUTTON_SIZE_DP = 35.0f;
+    private static final String TAG = "CreateGroupActivity";
+    private static final int EDIT_TEXT_ID_CONSTANT = 1000;
+    private static final int BUTTON_ID_CONSTANT = 2000;
     private List<EditText> allEditTexts = new ArrayList<EditText>();
 
     @Override
@@ -59,6 +65,7 @@ public class CreateGroupActivity extends Activity {
         final float scale = getResources().getDisplayMetrics().density;
         editTextWidth = (int) (EDIT_TEXT_WIDTH_DP * scale + 0.5f);
         editTextMarginTop = (int) (EDIT_TEXT_MARGIN_TOP_DP * scale + 0.5f);
+        buttonSize = (int) (BUTTON_SIZE_DP * scale + 0.5f);
 
         layout = (LinearLayout) findViewById(R.id.layout);
         groupName = (EditText) findViewById(R.id.groupName);
@@ -94,25 +101,47 @@ public class CreateGroupActivity extends Activity {
     public void onAddEditTextClick(View v) {
         // Dynamically adds a new EditText below the last EditText.
         // +1 because starts at index 0 and the TextView is above all EditTexts
-        layout.addView(createNewEditTextView(), editTextCount + 1);
+        layout.addView(createNewEmailView(), editTextCount + 1);
     }
 
-    private EditText createNewEditTextView() {
-        // TODO add ability to remove a text view
-        final LayoutParams lparams = new LayoutParams(editTextWidth, LayoutParams.WRAP_CONTENT);
-        lparams.setMargins(0, editTextMarginTop, 0, 0);
-        lparams.gravity = Gravity.CENTER_HORIZONTAL;
+    private FrameLayout createNewEmailView() {
+        // Create FrameLayout which holds EditText and delete button
+        final FrameLayout frame = new FrameLayout(this);
+        final LinearLayout.LayoutParams frameParams = new LinearLayout.LayoutParams(
+                editTextWidth, LinearLayout.LayoutParams.WRAP_CONTENT);
+        frameParams.setMargins(0, editTextMarginTop, 0, 0);
+        frameParams.gravity = Gravity.CENTER_HORIZONTAL;
+        frame.setLayoutParams(frameParams);
 
+
+        //Create the EditText
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
         final EditText editText = new EditText(this);
+        editText.setId(EDIT_TEXT_ID_CONSTANT + editTextCount);
+        editText.setLayoutParams(params);
+
+        int paddingLeft = editText.getPaddingLeft();
+        int paddingBottom = editText.getPaddingBottom();
+        editText.setPadding(paddingLeft, 0, buttonSize, paddingBottom);
+        editText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        editText.setHint(String.format(res.getString(R.string.create_group_email), editTextCount+1));
+        allEditTexts.add(editText);
+        frame.addView(editText);
+
+
+        // Create the delete button
+        params = new FrameLayout.LayoutParams(buttonSize, buttonSize, Gravity.RIGHT);
+        final Button button = new Button(this);
+        button.setId(BUTTON_ID_CONSTANT + editTextCount);
+        button.setLayoutParams(params);
+        button.setBackgroundResource(R.drawable.edittext_delete_btn);
+        frame.addView(button);
+
         Log.v(TAG, "Created EditText " + editTextCount);
         editTextCount++;
 
-        editText.setLayoutParams(lparams);
-        editText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-        editText.setHint(String.format(res.getString(R.string.create_group_email), editTextCount));
-
-        allEditTexts.add(editText);
-        return editText;
+        return frame;
     }
 
     public void onCreateGroupClick(View v) {
