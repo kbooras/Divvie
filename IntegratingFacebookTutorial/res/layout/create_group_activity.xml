@@ -23,28 +23,15 @@
         android:layout_gravity="center_horizontal"
         android:hint="@string/group_name"/>
 
-    <FrameLayout
+    <EditText
+        android:id="@+id/email1"
         android:layout_width="328dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="11dp">
-
-        <EditText
-            android:id="@+id/email1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingRight="35dp"
-            android:inputType="textEmailAddress"
-            android:hint="@string/email_1"
-            android:singleLine="true"/>
-
-        <Button
-            android:id="@+id/delete_email_1"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_gravity="right"
-            android:background="@drawable/edittext_delete_btn" />
-    </FrameLayout>
+        android:layout_marginTop="11dp"
+        android:inputType="textEmailAddress"
+        android:hint="@string/email_1"
+        android:singleLine="true"/>
 
     <TextView
         android:layout_width="wrap_content"

@@ -136,6 +136,12 @@ public class CreateGroupActivity extends Activity {
         button.setId(BUTTON_ID_CONSTANT + editTextCount);
         button.setLayoutParams(params);
         button.setBackgroundResource(R.drawable.edittext_delete_btn);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.v("button", "clicked " + view.getId());
+            }
+        });
         frame.addView(button);
 
         Log.v(TAG, "Created EditText " + editTextCount);
