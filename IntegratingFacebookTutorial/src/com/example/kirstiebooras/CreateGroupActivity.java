@@ -126,6 +126,7 @@ public class CreateGroupActivity extends Activity {
         //frame.addView(createDeleteButton());
 
         View d = View.inflate(getBaseContext(),R.layout.add_anoher_new_layout,null);
+
         frame.addView(d);
 
         return frame;
