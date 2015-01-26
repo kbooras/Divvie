@@ -26,9 +26,9 @@ public class SigninActivity extends Activity {
 
     private static final String TAG = "Signin";
 
-    private EditText email;
-    private EditText password;
-    private static Resources res;
+    private EditText mEmail;
+    private EditText mPassword;
+    private Resources mResources;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,18 +36,18 @@ public class SigninActivity extends Activity {
 
         setContentView(R.layout.signin_activity);
 
-        res = getResources();
+        mResources = getResources();
 
-        email = (EditText) findViewById(R.id.email);
-        password = (EditText) findViewById(R.id.password);
+        mEmail = (EditText) findViewById(R.id.email);
+        mPassword = (EditText) findViewById(R.id.password);
     }
 
     public void onSignInClick(View v) {
-        String emailTxt = email.getText().toString();
-        String passwordTxt = password.getText().toString();
+        String emailTxt = mEmail.getText().toString();
+        String passwordTxt = mPassword.getText().toString();
 
         if (emailTxt.equals("") || passwordTxt.equals("")) {
-            Toast.makeText(getApplicationContext(), res.getString(R.string.complete_form_toast),
+            Toast.makeText(getApplicationContext(), mResources.getString(R.string.complete_form_toast),
                     Toast.LENGTH_LONG).show();
         } else {
             ParseUser.logInInBackground(emailTxt, passwordTxt, new LogInCallback() {
@@ -62,9 +62,9 @@ public class SigninActivity extends Activity {
                         Log.v(TAG, "Sign in failed :(" + e.toString());
                         new AlertDialog.Builder(SigninActivity.this)
                                 .setIconAttribute(android.R.attr.alertDialogIcon)
-                                .setTitle(res.getString(R.string.sign_in))
-                                .setMessage(res.getString(R.string.signin_failed_alert_message))
-                                .setPositiveButton(res.getString(R.string.ok),
+                                .setTitle(mResources.getString(R.string.sign_in))
+                                .setMessage(mResources.getString(R.string.signin_failed_alert_message))
+                                .setPositiveButton(mResources.getString(R.string.ok),
                                         new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
@@ -80,17 +80,17 @@ public class SigninActivity extends Activity {
     public void onForgotPasswordClick(View v) {
         final EditText resetPasswordEmail = new EditText(this);
         new AlertDialog.Builder(this)
-                .setTitle(res.getString(R.string.forgot_password_alert_title))
-                .setMessage(res.getString(R.string.forgot_password_alert_message))
+                .setTitle(mResources.getString(R.string.forgot_password_alert_title))
+                .setMessage(mResources.getString(R.string.forgot_password_alert_message))
                 .setView(resetPasswordEmail)
-                .setPositiveButton(res.getString(R.string.reset),
+                .setPositiveButton(mResources.getString(R.string.reset),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 String resetPasswordEmailTxt = resetPasswordEmail.getText().toString();
                                 resetPassword(resetPasswordEmailTxt);
                             }
                 })
-                .setNegativeButton(res.getString(R.string.cancel),
+                .setNegativeButton(mResources.getString(R.string.cancel),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 // Do nothing.
@@ -106,7 +106,7 @@ public class SigninActivity extends Activity {
                             // An email was successfully sent with reset
                             // instructions.
                             Toast.makeText(getApplicationContext(),
-                                    res.getString(R.string.reset_success_toast),
+                                    mResources.getString(R.string.reset_success_toast),
                                     Toast.LENGTH_LONG).show();
                             Log.v(TAG, "reset email sent!");
                         } else {
@@ -124,17 +124,17 @@ public class SigninActivity extends Activity {
         int INVALID_EMAIL = 125;
         int EMAIL_NOT_FOUND = 205;
         if (errorCode == INVALID_EMAIL) {
-            message = res.getString(R.string.reset_invalid_email_alert_message);
+            message = mResources.getString(R.string.reset_invalid_email_alert_message);
         } else if (errorCode == EMAIL_NOT_FOUND) {
-            message = res.getString((R.string.reset_no_account_alert_message));
+            message = mResources.getString((R.string.reset_no_account_alert_message));
         } else {
-            message = res.getString((R.string.reset_failed_alert_message));
+            message = mResources.getString((R.string.reset_failed_alert_message));
         }
 
         new AlertDialog.Builder(this)
-                .setTitle(res.getString((R.string.reset_failed_alert_title)))
+                .setTitle(mResources.getString((R.string.reset_failed_alert_title)))
                 .setMessage(message)
-                .setPositiveButton(res.getString((R.string.ok)), new DialogInterface.OnClickListener() {
+                .setPositiveButton(mResources.getString((R.string.ok)), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         // Do nothing.
                     }

@@ -22,16 +22,16 @@ import java.util.List;
  */
 public class GroupsFragment extends ListFragment {
 
-    private ArrayList<ParseObject> groups;
-    private GroupsAdapter adapter;
+    private ArrayList<ParseObject> mGroups;
+    private GroupsAdapter mAdapter;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        groups = new ArrayList<ParseObject>();
-        adapter = new GroupsAdapter(getActivity().getBaseContext(), groups);
-        setListAdapter(adapter);
+        mGroups = new ArrayList<ParseObject>();
+        mAdapter = new GroupsAdapter(getActivity().getBaseContext(), mGroups);
+        setListAdapter(mAdapter);
 
         getDataFromParse();
     }
@@ -51,9 +51,9 @@ public class GroupsFragment extends ListFragment {
                 @Override
                 public void done(List<ParseObject> parseObjects, ParseException e) {
                     //Query should generate group listview using an array adapter
-                    groups.clear();
-                    groups.addAll(parseObjects);
-                    adapter.notifyDataSetChanged();
+                    mGroups.clear();
+                    mGroups.addAll(parseObjects);
+                    mAdapter.notifyDataSetChanged();
                 }
             });
         }

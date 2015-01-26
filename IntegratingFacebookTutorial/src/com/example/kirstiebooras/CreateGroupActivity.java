@@ -36,6 +36,8 @@ import java.util.List;
  */
 public class CreateGroupActivity extends Activity {
 
+    private static final String TAG = "CreateGroupActivity";
+    
     private LinearLayout mLayout;
     private EditText mGroupName;
     private int mEditTextCount;
@@ -43,11 +45,10 @@ public class CreateGroupActivity extends Activity {
     private int mEditTextMarginTop;
     private int mButtonSize;
     private List<EditText> mAllEditTexts = new ArrayList<EditText>();
-    private static Resources mResources;
+    private Resources mResources;
     private static final float EDIT_TEXT_WIDTH_DP = 328.0f;
     private static final float EDIT_TEXT_MARGIN_TOP_DP = 11.0f;
     private static final float BUTTON_SIZE_DP = 35.0f;
-    private static final String TAG = "CreateGroupActivity";
     private static final int EDIT_TEXT_ID_CONSTANT = 1000;
     private static final int BUTTON_ID_CONSTANT = 2000;
 
@@ -118,7 +119,7 @@ public class CreateGroupActivity extends Activity {
         // Create the delete button
         frame.addView(createDeleteButton());
 
-        // Hide delete button from previous EditText
+        // TODO Hide delete button from previous EditText
 
         return frame;
     }
@@ -156,7 +157,7 @@ public class CreateGroupActivity extends Activity {
             @Override
             public void onClick(View view) {
                 Log.v(TAG, "Clicked delete EditText" + view.getId());
-                // Remove the EditText and add delete button to previous EditText
+                // TODO Remove the EditText and add delete button to previous EditText
             }
         });
 

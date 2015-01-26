@@ -21,14 +21,14 @@ import java.util.ArrayList;
  */
 public class GroupsAdapter extends ArrayAdapter<ParseObject> {
 
-    private final Context context;
-    private final ArrayList<ParseObject> groups;
+    private final Context mContext;
+    private final ArrayList<ParseObject> mGroups;
 
 
     public GroupsAdapter(Context context, ArrayList<ParseObject> groups) {
         super(context, R.layout.groups_list_row, groups);
-        this.context = context;
-        this.groups = groups;
+        mContext = context;
+        mGroups = groups;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class GroupsAdapter extends ArrayAdapter<ParseObject> {
         membersLayout.removeAllViews();
 
         // We retrieve the object from the list
-        ParseObject group = groups.get(position);
+        ParseObject group = mGroups.get(position);
         if (group != null) {
             textView.setText(group.getString("name"));
             ArrayList<String> members = (ArrayList<String>) group.get("users");
@@ -60,14 +60,14 @@ public class GroupsAdapter extends ArrayAdapter<ParseObject> {
     }
 
     private TextView createTextView(String member, int textViewNumber) {
-        final float SCALE = HomeActivity.SCALE;
+        final float SCALE = HomeActivity.sScale;
         int padding = (int) (4.0f * SCALE + 0.5f);
         int margin = (int) (16.0f * SCALE + 0.5f);
 
         final LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         lparams.setMargins(margin, 0, margin, 0);
-        final TextView textView = new TextView(context);
+        final TextView textView = new TextView(mContext);
 
         textView.setId(textViewNumber);
         textView.setLayoutParams(lparams);

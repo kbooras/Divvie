@@ -24,10 +24,10 @@ import java.lang.reflect.Method;
  */
 public class HomeActivity extends FragmentActivity implements ActionBar.TabListener {
 
-    private ActionBar actionBar;
-    private ViewPager viewPager;
-    public static float SCALE;
-    public static final String TAG = "Home";
+    private ActionBar mActionBar;
+    private ViewPager mViewPager;
+    public static float sScale;
+    private static final String TAG = "Home";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,33 +36,33 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         setContentView(R.layout.home_activity);
 
         // Used to set font dp in fragments
-        SCALE = getResources().getDisplayMetrics().density;
+        sScale = getResources().getDisplayMetrics().density;
 
-        viewPager = (ViewPager) findViewById(R.id.viewPager);
+        mViewPager = (ViewPager) findViewById(R.id.viewPager);
         TabsFragmentPagerAdapter tabsAdapter = new TabsFragmentPagerAdapter(getSupportFragmentManager());
 
-        viewPager.setAdapter(tabsAdapter);
+        mViewPager.setAdapter(tabsAdapter);
 
-        actionBar = getActionBar();
+        mActionBar = getActionBar();
 
         // Home button should not be enabled, since there is no hierarchical parent.
-        if (actionBar != null) {
-            actionBar.setHomeButtonEnabled(false);
+        if (mActionBar != null) {
+            mActionBar.setHomeButtonEnabled(false);
         }
 
         // Specify there will be tabs
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        actionBar.addTab(actionBar.newTab().setText(
+        mActionBar.addTab(mActionBar.newTab().setText(
                 getResources().getString(R.string.transactions)).setTabListener(this));
-        actionBar.addTab(actionBar.newTab().setText(
+        mActionBar.addTab(mActionBar.newTab().setText(
                 getResources().getString(R.string.groups)).setTabListener(this));
 
-        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
             @Override
             public void onPageSelected(int i) {
-                actionBar.setSelectedNavigationItem(i);
+                mActionBar.setSelectedNavigationItem(i);
             }
 
             @Override
@@ -100,7 +100,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
                 return true;
 
             case R.id.add:
-                int currentFragment = viewPager.getCurrentItem();
+                int currentFragment = mViewPager.getCurrentItem();
                 if (currentFragment == 0) {
                     //Create intent for creating Transaction
                 } else {
@@ -115,7 +115,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction arg1) {
-        viewPager.setCurrentItem(tab.getPosition());
+        mViewPager.setCurrentItem(tab.getPosition());
     }
 
     @Override
@@ -139,10 +139,10 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
     // Adds the tabs below the action bar
     public void setTabsBelowActionBar() {
         try {
-            final Method setHasEmbeddedTabsMethod = actionBar.getClass()
+            final Method setHasEmbeddedTabsMethod = mActionBar.getClass()
                     .getDeclaredMethod("setHasEmbeddedTabs", boolean.class);
             setHasEmbeddedTabsMethod.setAccessible(true);
-            setHasEmbeddedTabsMethod.invoke(actionBar, false);
+            setHasEmbeddedTabsMethod.invoke(mActionBar, false);
         }
         catch(final Exception e) {
             // Handle issues as needed: log, warn user, fallback etc

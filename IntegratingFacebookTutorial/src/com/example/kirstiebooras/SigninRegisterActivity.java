@@ -23,8 +23,8 @@ import java.util.List;
  */
 public class SigninRegisterActivity extends Activity {
 
-    static final String TAG = "SigninRegister";
-    private Dialog progressDialog;
+    private static final String TAG = "SigninRegister";
+    private Dialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +61,7 @@ public class SigninRegisterActivity extends Activity {
     }
 
     public void onFacebookSignInClick(View v) {
-        progressDialog = ProgressDialog.show(SigninRegisterActivity.this, "", "Logging in...", true);
+        mProgressDialog = ProgressDialog.show(SigninRegisterActivity.this, "", "Logging in...", true);
 
         List<String> permissions = Arrays.asList("public_profile", "email");
         // NOTE: for extended permissions, like "user_about_me", your app must be reviewed by the Facebook team
@@ -70,7 +70,7 @@ public class SigninRegisterActivity extends Activity {
         ParseFacebookUtils.logIn(permissions, this, new LogInCallback() {
             @Override
             public void done(ParseUser user, ParseException err) {
-                progressDialog.dismiss();
+                mProgressDialog.dismiss();
                 if (user == null) {
                     Log.d(TAG, "Uh oh. The user cancelled the Facebook login.");
                 } else if (user.isNew()) {

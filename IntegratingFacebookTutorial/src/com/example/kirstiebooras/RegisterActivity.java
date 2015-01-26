@@ -21,13 +21,13 @@ public class RegisterActivity extends Activity {
 
     private static final String TAG = "Register";
 
-    private EditText email;
-    private EditText fullName;
-    private EditText password;
-    private EditText reenterPassword;
-    private static Resources res;
-    private final int EMAIL_TAKEN = 203;
-    private final int USERNAME_TAKEN = 202;
+    private EditText mEmail;
+    private EditText mFullName;
+    private EditText mPassword;
+    private EditText mReenterPassword;
+    private Resources mResources;
+    private static final int EMAIL_TAKEN = 203;
+    private static final int USERNAME_TAKEN = 202;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,37 +35,37 @@ public class RegisterActivity extends Activity {
 
         setContentView(R.layout.register_activity);
 
-        res = getResources();
+        mResources = getResources();
 
-        email = (EditText) findViewById(R.id.email);
-        fullName = (EditText) findViewById(R.id.fullName);
-        password = (EditText) findViewById(R.id.password);
-        reenterPassword = (EditText) findViewById(R.id.reenterPassword);
+        mEmail = (EditText) findViewById(R.id.email);
+        mFullName = (EditText) findViewById(R.id.fullName);
+        mPassword = (EditText) findViewById(R.id.password);
+        mReenterPassword = (EditText) findViewById(R.id.reenterPassword);
 
     }
 
     public void onRegisterClick(View v) {
-        String emailTxt = email.getText().toString();
-        String fullNameTxt = fullName.getText().toString();
-        String passwordTxt = password.getText().toString();
-        String reenterPasswordTxt = reenterPassword.getText().toString();
+        String emailTxt = mEmail.getText().toString();
+        String fullNameTxt = mFullName.getText().toString();
+        String passwordTxt = mPassword.getText().toString();
+        String reenterPasswordTxt = mReenterPassword.getText().toString();
 
         // User must fill up the form
         if (emailTxt.equals("") || fullNameTxt.equals("") || passwordTxt.equals("")) {
             Toast.makeText(getApplicationContext(),
-                    res.getString(R.string.complete_form_toast),
+                    mResources.getString(R.string.complete_form_toast),
                     Toast.LENGTH_LONG).show();
         } else if (passwordTxt.length() < 6) {
             Toast.makeText(getApplicationContext(),
-                    res.getString(R.string.password_length_toast),
+                    mResources.getString(R.string.password_length_toast),
                     Toast.LENGTH_LONG).show();
         } else if (!isValidEmail(emailTxt)) {
             Toast.makeText(getApplicationContext(),
-                    res.getString(R.string.enter_valid_email_toast),
+                    mResources.getString(R.string.enter_valid_email_toast),
                     Toast.LENGTH_LONG).show();
         } else if (!passwordTxt.equals(reenterPasswordTxt)){
             Toast.makeText(getApplicationContext(),
-                    res.getString(R.string.password_match_toast),
+                    mResources.getString(R.string.password_match_toast),
                     Toast.LENGTH_LONG).show();
         } else {
             // Save new user data into Parse.com Data Storage
@@ -84,7 +84,7 @@ public class RegisterActivity extends Activity {
                         startActivity(intent);
                     } else if (e.getCode() == EMAIL_TAKEN || e.getCode() == USERNAME_TAKEN) {
                         Toast.makeText(getApplicationContext(),
-                                res.getString(R.string.account_email_exists_toast),
+                                mResources.getString(R.string.account_email_exists_toast),
                                 Toast.LENGTH_LONG).show();
                     } else {
                         Log.v(TAG, "Sign up failed :(");
