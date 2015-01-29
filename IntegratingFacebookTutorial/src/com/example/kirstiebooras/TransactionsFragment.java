@@ -1,25 +1,29 @@
 package com.example.kirstiebooras;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
+import android.support.v4.app.ListFragment;
 import android.view.View;
-import android.view.ViewGroup;
-
-import com.parse.integratingfacebooktutorial.R;
+import android.widget.ListView;
 
 /**
  * Fragment representing the transactions view.
  * Displays all group transactions, who has paid, and who still owes.
  * Created by kirstiebooras on 1/19/15.
  */
-public class TransactionsFragment extends Fragment {
+public class TransactionsFragment extends ListFragment {
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.transactions_fragment, container, false);
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        // do something with the data
     }
 }

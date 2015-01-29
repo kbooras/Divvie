@@ -102,7 +102,8 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
             case R.id.add:
                 int currentFragment = mViewPager.getCurrentItem();
                 if (currentFragment == 0) {
-                    //Create intent for creating Transaction
+                    Intent intent = new Intent(this, CreateTransactionActivity.class);
+                    startActivity(intent);
                 } else {
                     Intent intent = new Intent(this, CreateGroupActivity.class);
                     startActivity(intent);
