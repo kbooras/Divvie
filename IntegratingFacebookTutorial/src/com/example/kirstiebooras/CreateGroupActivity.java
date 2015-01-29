@@ -22,12 +22,9 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 
 /**
  * Activity to create a new group of users.
