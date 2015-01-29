@@ -24,6 +24,8 @@ import com.parse.integratingfacebooktutorial.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -40,14 +42,8 @@ public class CreateGroupActivity extends Activity {
     private LinearLayout mLayout;
     private EditText mGroupName;
     private int mEmailViewCount;
-    private int mEditTextWidth;
-    private int mEditTextMarginTop;
-    private int mButtonSize;
-    private List<EditText> mAllEditTexts = new ArrayList<EditText>();
+    private HashMap<Integer, EditText> mAllEditTexts = new HashMap<Integer, EditText>();
     private Resources mResources;
-    private static final float EDIT_TEXT_WIDTH_DP = 328.0f;
-    private static final float EDIT_TEXT_MARGIN_TOP_DP = 11.0f;
-    private static final float BUTTON_SIZE_DP = 35.0f;
     private static final int LAYOUT_ID_CONSTANT = 1000;
     private static final int EDIT_TEXT_ID_CONSTANT = 2000;
     private static final int BUTTON_ID_CONSTANT = 3000;
@@ -62,14 +58,9 @@ public class CreateGroupActivity extends Activity {
 
         mResources = getResources();
 
-        final float scale = getResources().getDisplayMetrics().density;
-        mEditTextWidth = (int) (EDIT_TEXT_WIDTH_DP * scale + 0.5f);
-        mEditTextMarginTop = (int) (EDIT_TEXT_MARGIN_TOP_DP * scale + 0.5f);
-        mButtonSize = (int) (BUTTON_SIZE_DP * scale + 0.5f);
-
         mLayout = (LinearLayout) findViewById(R.id.layout);
         mGroupName = (EditText) findViewById(R.id.groupName);
-        mAllEditTexts.add((EditText) findViewById(R.id.email1));
+        mAllEditTexts.put(1, (EditText) findViewById(R.id.email1));
 
         mEmailViewCount = 1;
     }
@@ -110,7 +101,7 @@ public class CreateGroupActivity extends Activity {
         Log.v(TAG, "Create email view " + mEmailViewCount);
 
         final LinearLayout ll = new LinearLayout(this);
-        final LayoutParams params = new LinearLayout.LayoutParams(mEditTextWidth,
+        final LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT);
         params.gravity = Gravity.CENTER_HORIZONTAL;
         ll.setLayoutParams(params);
@@ -122,6 +113,8 @@ public class CreateGroupActivity extends Activity {
         editText.setHint(String.format(mResources.getString(R.string.create_group_email),
                 mEmailViewCount));
 
+        mAllEditTexts.put(mEmailViewCount, editText);
+
         Button button = (Button) ll.findViewById(R.id.deleteButton);
         button.setId(BUTTON_ID_CONSTANT + mEmailViewCount);
 
@@ -131,10 +124,11 @@ public class CreateGroupActivity extends Activity {
     public void onDeleteClick(View view) {
         int emailRow = view.getId() - BUTTON_ID_CONSTANT;
         Log.v(TAG, "Delete email row " + emailRow);
-        // TODO: Delete this EditText and adjust the others accordingly
         LinearLayout ll = (LinearLayout) findViewById(LAYOUT_ID_CONSTANT + emailRow);
         ll.setVisibility(View.GONE);
-        // TODO: remove EditText from the array of emails
+        // Delete the EditText from the hashmap
+        mAllEditTexts.remove(emailRow);
+        // TODO: Adjust the numbers of the other EditTexts
     }
 
     public void onCreateGroupClick(View v) {
@@ -146,15 +140,17 @@ public class CreateGroupActivity extends Activity {
 
         // Check that each email is valid and add to the array of members
         String email;
-        for(int i=0; i < mAllEditTexts.size(); i++){
-            email = mAllEditTexts.get(i).getText().toString();
+        int i = 1;
+        for (EditText text : mAllEditTexts.values()) {
+            email = text.getText().toString();
             if (!isValidEmail(email)){
                 // Display invalid email message
-                displayInvalidEmailMessage(i+1);
+                displayInvalidEmailMessage(i);
                 return;
             } else {
-                memberEmails[i+1] = email;
+                memberEmails[i] = email;
             }
+            i++;
         }
 
         // Check for duplicate emails.
