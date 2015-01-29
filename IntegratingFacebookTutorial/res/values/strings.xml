@@ -49,5 +49,9 @@
     <string name="duplicate_email_alert_message">
         Hmm, you seem to have a duplicate email. Correct this and try again.
     </string>
+    <string name="createTransaction">Create Transaction</string>
+    <string name="bill">Bill</string>
+    <string name="transactionDescriptionHint">Enter a description</string>
+    <string name="transactionAmountHint">$0.00</string>
 
 </resources>
