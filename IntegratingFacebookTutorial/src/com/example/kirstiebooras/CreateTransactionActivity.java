@@ -2,7 +2,11 @@ package com.example.kirstiebooras;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -33,6 +37,8 @@ public class CreateTransactionActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_transaction_activity);
 
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+
         RelativeLayout rl = (RelativeLayout) findViewById(R.id.relativeLayout);
         Spinner spinner = (Spinner) rl.findViewById(R.id.groupsDropDown);
 
@@ -43,6 +49,30 @@ public class CreateTransactionActivity extends Activity {
         spinner.setAdapter(mAdapter);
 
         getGroupsFromParse();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.secondary_items, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.logout:
+                ParseUser.logOut();
+                Log.v(TAG, "User signed out!");
+                return true;
+
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
