@@ -120,8 +120,8 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
         ArrayList<Boolean> paid = (ArrayList<Boolean>) group.get("paid");
         int notPaid = 0;
 
-        for (int i = 0; i < paid.size(); i++) {
-            if (!paid.get(i)) {
+        for (Boolean p : paid) {
+            if (!p) {
                 notPaid++;
             }
         }
