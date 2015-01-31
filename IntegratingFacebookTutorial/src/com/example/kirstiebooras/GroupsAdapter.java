@@ -59,6 +59,7 @@ public class GroupsAdapter extends ArrayAdapter<ParseObject> {
         return rowView;
     }
 
+    // TODO change this to XML
     private TextView createTextView(String member, int textViewNumber) {
         final float SCALE = HomeActivity.sScale;
         int padding = (int) (4.0f * SCALE + 0.5f);

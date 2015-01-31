@@ -55,4 +55,12 @@
     <string name="transactionAmountHint">$0.00</string>
     <string name="splitBill">Split Bill</string>
 
+    <string name="transaction_group_owes_you">%1$s owes you</string>
+    <string name="transaction_you_owe_group">You owe %1$s</string>
+    <string name="transaction_description">for %1$s</string>
+    <string name="transaction_amount_owed">%1$s%2$s owed</string>
+    <string name="complete">Complete</string>
+    <string name="pay_now">Pay Now</string>
+    <string name="paid">Paid</string>
+
 </resources>

@@ -82,7 +82,8 @@ public class CreateTransactionActivity extends Activity {
         final String personOwed = ParseUser.getCurrentUser().getEmail();
 
         ParseObject group = (ParseObject) mSpinner.getSelectedItem();
-        final String groupID = group.getObjectId();
+        final String groupId = group.getObjectId();
+        final String groupName = group.toString();
 
         EditText description = (EditText) findViewById(R.id.description);
         final String descriptionTxt = description.getText().toString();
@@ -92,7 +93,7 @@ public class CreateTransactionActivity extends Activity {
         final double amountValue = Double.valueOf(amount.getText().toString());
 
         ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Group");
-        groupQuery.whereEqualTo("objectId", groupID);
+        groupQuery.whereEqualTo("objectId", groupId);
         groupQuery.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, ParseException e) {
@@ -103,8 +104,8 @@ public class CreateTransactionActivity extends Activity {
                 BigDecimal bd = new BigDecimal(dividedAmount);
                 String charge = bd.setScale(2,BigDecimal.ROUND_FLOOR).toString();
 
-                createTransactionParseObject(groupID, personOwed, descriptionTxt, amountValue,
-                        members, Double.valueOf(charge));
+                createTransactionParseObject(groupId, groupName, personOwed, descriptionTxt,
+                        amountValue, members, Double.valueOf(charge));
 
                 // TODO: send emails after you create the object
                 finish();
@@ -112,12 +113,14 @@ public class CreateTransactionActivity extends Activity {
         });
     }
 
-    private void createTransactionParseObject(String groupID, String personOwed,
-                                              String descriptionTxt, double amountValue,
-                                              ArrayList<String> members, double splitAmount) {
+    private void createTransactionParseObject(String groupId, String groupName,
+                                              String personOwed, String descriptionTxt,
+                                              double amountValue, ArrayList<String> members,
+                                              double splitAmount) {
         ParseObject newTransaction = new ParseObject("Transaction");
 
-        newTransaction.put("groupID", groupID);
+        newTransaction.put("groupId", groupId);
+        newTransaction.put("groupName", groupName);
         newTransaction.put("personOwed", personOwed);
         newTransaction.put("description", descriptionTxt);
         newTransaction.put("totalAmount", amountValue);

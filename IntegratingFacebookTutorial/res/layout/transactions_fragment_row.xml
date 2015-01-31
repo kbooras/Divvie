@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="16dp">
+
+    <TextView
+        android:id="@+id/transactionGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_marginBottom="4dp"
+        android:gravity="center_vertical"
+        android:textSize="20sp"
+        android:textColor="#3B3B3B"
+        android:text="Group owes you"/>
+
+    <TextView
+        android:id="@+id/transactionDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_below="@+id/transactionGroup"
+        android:gravity="center_vertical"
+        android:textSize="16sp"
+        android:textColor="#5C5C5C"
+        android:text="for Transaction name"/>
+
+    <TextView
+        android:id="@+id/transactionAmount"
+        android:layout_width="fill_parent"
+        android:layout_height="30dp"
+        android:layout_marginBottom="4dp"
+        android:layout_toRightOf="@+id/transactionDescription"
+        android:gravity="right|center_vertical"
+        android:textSize="20sp"
+        android:textColor="#83CD6E"
+        android:text="$Amount"/>
+
+    <TextView
+        android:id="@+id/amountStatus"
+        android:layout_width="fill_parent"
+        android:layout_height="30dp"
+        android:layout_below="@+id/transactionAmount"
+        android:layout_toRightOf="@+id/transactionGroup"
+        android:gravity="right|center_vertical"
+        android:textSize="16sp"
+        android:textColor="#F2447E"
+        android:text="$Owed"/>
+
+</RelativeLayout>
