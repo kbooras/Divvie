@@ -7,7 +7,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
@@ -31,6 +34,7 @@ public class CreateTransactionActivity extends Activity {
 
     private ArrayAdapter<String> mAdapter;
     private List<String> mGroupsList;
+    private Spinner mSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,13 +44,13 @@ public class CreateTransactionActivity extends Activity {
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
         RelativeLayout rl = (RelativeLayout) findViewById(R.id.relativeLayout);
-        Spinner spinner = (Spinner) rl.findViewById(R.id.groupsDropDown);
+        mSpinner = (Spinner) rl.findViewById(R.id.groupsDropDown);
 
         mGroupsList = new ArrayList<String>();
         mAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, mGroupsList);
         mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(mAdapter);
+        mSpinner.setAdapter(mAdapter);
 
         getGroupsFromParse();
     }
@@ -75,6 +79,45 @@ public class CreateTransactionActivity extends Activity {
         }
     }
 
+    public void onSplitBillClick() {
+        String personOwed = ParseUser.getCurrentUser().getObjectId();
+        String group = mSpinner.getSelectedItem().toString();
+        EditText description = (EditText) findViewById(R.id.description);
+        String descriptionTxt = description.getText().toString();
+        EditText amount = (EditText) findViewById(R.id.amount);
+        Double amountValue = Double.valueOf(amount.getText().toString());
+
+        // TODO: add the group id instead of group name
+        // Create a transaction
+        ParseObject newTransaction = new ParseObject("Transaction");
+        newTransaction.put("personOwedID", personOwed);
+        newTransaction.put("group", group);
+        newTransaction.put("description", descriptionTxt);
+        newTransaction.put("totalAmount", amountValue);
+        /*try {
+            newTransaction.saveInBackground();
+            Log.v(TAG, "Saved new transaction");
+        } catch (ParseException e) {
+            Log.v(TAG, "Save new transaction failed");
+            e.printStackTrace();
+        }*/
+
+        // Create charges for other users
+        splitBill(personOwed, group, descriptionTxt, amountValue);
+    }
+
+    private void splitBill(String personOwed, String group, String description, Double amount) {
+        ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Group");
+        groupQuery.whereEqualTo("objectID", group);
+        groupQuery.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> parseObjects, ParseException e) {
+                // TODO: charge all members of the group an equal amount
+                // TODO: account for odd numbers when splitting
+            }
+        });
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -89,7 +132,8 @@ public class CreateTransactionActivity extends Activity {
             groupQuery.findInBackground(new FindCallback<ParseObject>() {
                 @Override
                 public void done(List<ParseObject> parseObjects, ParseException e) {
-                    //Query should generate Spinner data using an array adapter
+                    // Query should generate Spinner data using an array adapter
+                    // Create a key-value pairing the name to the object id so we can get the id
                     mGroupsList.clear();
                     for (ParseObject obj : parseObjects) {
                         if (obj != null) {

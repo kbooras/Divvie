@@ -62,6 +62,6 @@
         android:background="@drawable/round_button"
         android:textColor="#ffffff"
         android:text="Split Bill"
-        android:onClick="onCreateGroupClick"/>
+        android:onClick="onSplitBillClick"/>
 
 </LinearLayout>

@@ -2,8 +2,7 @@ package com.example.kirstiebooras;
 
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.view.View;
-import android.widget.ListView;
+
 
 /**
  * Fragment representing the transactions view.
@@ -22,8 +21,5 @@ public class TransactionsFragment extends ListFragment {
         super.onResume();
     }
 
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        // do something with the data
-    }
+
 }
