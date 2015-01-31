@@ -1,55 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/layout"
-    android:orientation="vertical"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginLeft="16dp"
-        android:textColor="#62C8BD"
-        android:textSize="30sp"
-        android:text="@string/create_new_group_text"/>
+    <LinearLayout
+        android:id="@+id/layout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/groupName"
-        android:layout_width="328dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="11dp"
-        android:layout_gravity="center_horizontal"
-        android:hint="@string/group_name"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="16dp"
+            android:textColor="#62C8BD"
+            android:textSize="30sp"
+            android:text="@string/create_new_group_text"/>
 
-    <EditText
-        android:id="@+id/email1"
-        android:layout_width="328dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="11dp"
-        android:inputType="textEmailAddress"
-        android:hint="@string/email_1"/>
+        <EditText
+            android:id="@+id/groupName"
+            android:layout_width="328dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="11dp"
+            android:layout_gravity="center_horizontal"
+            android:hint="@string/group_name"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="115dp"
-        android:text="@string/create_group_add_another"
-        android:clickable="true"
-        android:onClick="onAddEditTextClick"/>
+        <EditText
+            android:id="@+id/email1"
+            android:layout_width="328dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="11dp"
+            android:inputType="textEmailAddress"
+            android:hint="@string/email_1"/>
 
-    <Button
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/round_button"
-        android:textColor="#ffffff"
-        android:text="@string/create_group"
-        android:onClick="onCreateGroupClick"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="115dp"
+            android:text="@string/create_group_add_another"
+            android:clickable="true"
+            android:onClick="onAddEditTextClick"/>
 
-</LinearLayout>
+        <Button
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/round_button"
+            android:textColor="#ffffff"
+            android:text="@string/create_group"
+            android:onClick="onCreateGroupClick"/>
+
+    </LinearLayout>
+
+</ScrollView>

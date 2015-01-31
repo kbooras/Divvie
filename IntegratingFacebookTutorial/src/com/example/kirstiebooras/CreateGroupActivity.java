@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.ScrollView;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -36,6 +37,7 @@ public class CreateGroupActivity extends Activity {
 
     private static final String TAG = "CreateGroupActivity";
 
+    private ScrollView mScrollView;
     private LinearLayout mLayout;
     private EditText mGroupName;
     private int mEmailViewCount;
@@ -55,8 +57,9 @@ public class CreateGroupActivity extends Activity {
 
         mResources = getResources();
 
-        mLayout = (LinearLayout) findViewById(R.id.layout);
-        mGroupName = (EditText) findViewById(R.id.groupName);
+        mScrollView = (ScrollView) findViewById(R.id.scroll);
+        mLayout = (LinearLayout) mScrollView.findViewById(R.id.layout);
+        mGroupName = (EditText) mScrollView.findViewById(R.id.groupName);
         mAllEditTexts.put(1, (EditText) findViewById(R.id.email1));
 
         mEmailViewCount = 1;
