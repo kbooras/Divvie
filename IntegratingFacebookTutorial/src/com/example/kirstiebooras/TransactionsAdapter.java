@@ -23,16 +23,14 @@ import java.util.Locale;
  */
 public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
 
-    private final Context mContext;
     private final ArrayList<ParseObject> mTransactions;
     private Resources res;
     private String mSymbol;
 
     public TransactionsAdapter(Context context, ArrayList<ParseObject> transactions) {
         super(context, R.layout.transactions_fragment_row, transactions);
-        mContext = context;
         mTransactions = transactions;
-        res = mContext.getResources();
+        res = context.getResources();
         mSymbol = Currency.getInstance(Locale.getDefault()).getSymbol();
     }
 
@@ -93,8 +91,9 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
 
     // Return string based on if user has paid or not
     private void setPaidStatus(TextView text, ParseObject group) {
-        // TODO: use conditional formatting for the colors
+        @SuppressWarnings("unchecked")
         ArrayList<String> members = (ArrayList<String>) group.get("members");
+        @SuppressWarnings("unchecked")
         ArrayList<Boolean> paid = (ArrayList<Boolean>) group.get("paid");
 
         int i;
@@ -115,8 +114,8 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
 
     // Return string based on if transaction is complete or not
     private void setAmountStillOwed(TextView text, ParseObject group) {
-        // TODO: use conditional formatting for the colors
         double splitAmount = group.getNumber("splitAmount").doubleValue();
+        @SuppressWarnings("unchecked")
         ArrayList<Boolean> paid = (ArrayList<Boolean>) group.get("paid");
         int notPaid = 0;
 
