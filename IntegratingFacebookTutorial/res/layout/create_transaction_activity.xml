@@ -19,21 +19,23 @@
     <RelativeLayout
         android:id="@+id/relativeLayout"
         android:layout_width="328dp"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_marginTop="11dp">
 
         <TextView
             android:id="@+id/billText"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
             android:textSize="25sp"
             android:text="@string/bill"/>
 
         <Spinner
             android:id="@+id/groupsDropDown"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_toRightOf="@+id/billText"
+            android:paddingLeft="10dp"
             android:spinnerMode="dropdown">
         </Spinner>
 

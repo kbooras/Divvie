@@ -5,8 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.parse.ParseObject;
@@ -15,6 +13,8 @@ import com.parse.integratingfacebooktutorial.R;
 import java.util.ArrayList;
 
 /**
+ * Adapter for the spinner in CreateTransactionActivity.
+ * Holds an array of ParseObjects and displays the value corresponding to "name".
  * Created by kirstiebooras on 1/30/15.
  */
 public class GroupsSpinnerAdapter extends ArrayAdapter<ParseObject> {
