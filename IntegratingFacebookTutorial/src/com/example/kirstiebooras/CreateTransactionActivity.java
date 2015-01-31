@@ -47,7 +47,6 @@ public class CreateTransactionActivity extends Activity {
         mSpinner = (Spinner) rl.findViewById(R.id.groupsDropDown);
 
         mGroupsList = new ArrayList<ParseObject>();
-        // TODO fix formatting of array adapter
         mAdapter = new GroupsSpinnerAdapter(getApplicationContext(), mGroupsList);
         mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(mAdapter);
@@ -87,6 +86,7 @@ public class CreateTransactionActivity extends Activity {
 
         EditText description = (EditText) findViewById(R.id.description);
         final String descriptionTxt = description.getText().toString();
+        // TODO: validate edit text value. Maybe create monetary input
 
         EditText amount = (EditText) findViewById(R.id.amount);
         final double amountValue = Double.valueOf(amount.getText().toString());
@@ -105,6 +105,8 @@ public class CreateTransactionActivity extends Activity {
 
                 createTransactionParseObject(groupID, personOwed, descriptionTxt, amountValue,
                         members, Double.valueOf(charge));
+
+                // TODO: send emails after you create the object
                 finish();
             }
         });
