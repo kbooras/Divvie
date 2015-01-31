@@ -7,22 +7,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
 
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,9 +32,8 @@ public class CreateTransactionActivity extends Activity {
     private static final String TAG = "CreateTransactionActivity";
 
     private ArrayAdapter<ParseObject> mAdapter;
-    private List<String> mGroupsList;
+    private ArrayList<ParseObject> mGroupsList;
     private Spinner mSpinner;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +46,7 @@ public class CreateTransactionActivity extends Activity {
         mSpinner = (Spinner) rl.findViewById(R.id.groupsDropDown);
 
         mGroupsList = new ArrayList<ParseObject>();
+        // TODO fix formatting of array adapter
         mAdapter = new GroupsSpinnerAdapter(getApplicationContext(), mGroupsList);
         mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(mAdapter);
@@ -103,28 +99,22 @@ public class CreateTransactionActivity extends Activity {
         newTransaction.put("description", descriptionTxt);
         newTransaction.put("totalAmount", amountValue);
         newTransaction.put("amountOwed", amountValue);
-        /*try {
-            newTransaction.saveInBackground();
-            Log.v(TAG, "Saved new transaction");
-        } catch (ParseException e) {
-            Log.v(TAG, "Save new transaction failed");
-            e.printStackTrace();
-        }*/
+
+        newTransaction.saveInBackground();
+        Log.v(TAG, "Saved new transaction");
 
         // Create charges for other users
-        splitBill(transactionID, personOwed, groupID, descriptionTxt, amountValue);
+        splitBill(transactionID, personOwed, groupID, amountValue);
     }
 
     private void splitBill(final String transactionID, final String personOwed, String groupID,
-                           String description, final double amount) {
+                           final double amount) {
         // Charge every member of the group except the person owed
         ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Group");
         groupQuery.whereEqualTo("objectID", groupID);
         groupQuery.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, ParseException e) {
-                // TODO: charge all members of the group an equal amount
-                // TODO: account for odd numbers when splitting
                 ArrayList<String> members = (ArrayList<String>) parseObjects.get(0).get("users");
                 // Split the amount equally
                 double dividedAmount = amount / members.size();
@@ -138,11 +128,9 @@ public class CreateTransactionActivity extends Activity {
                         newCharge.put("user", member);
                         newCharge.put("charge", charge);
                         newCharge.put("paid", false);
-                        try {
-                            newCharge.saveInBackground();
-                        } catch (ParseException e) {
 
-                        }
+                        newCharge.saveInBackground();
+                        Log.v(TAG, "Saved individual charge.");
                     }
                 }
             }
