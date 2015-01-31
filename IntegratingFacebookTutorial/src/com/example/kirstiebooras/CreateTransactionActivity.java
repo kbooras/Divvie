@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -78,63 +79,58 @@ public class CreateTransactionActivity extends Activity {
         }
     }
 
-    public void onSplitBillClick() {
-        String personOwed = ParseUser.getCurrentUser().getEmail();
+    public void onSplitBillClick(View view) {
+        final String personOwed = ParseUser.getCurrentUser().getEmail();
 
         ParseObject group = (ParseObject) mSpinner.getSelectedItem();
-        String groupID = group.getObjectId();
+        final String groupID = group.getObjectId();
 
         EditText description = (EditText) findViewById(R.id.description);
-        String descriptionTxt = description.getText().toString();
+        final String descriptionTxt = description.getText().toString();
 
         EditText amount = (EditText) findViewById(R.id.amount);
-        double amountValue = Double.valueOf(amount.getText().toString());
+        final double amountValue = Double.valueOf(amount.getText().toString());
 
-        // Create a transaction
+        ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Group");
+        groupQuery.whereEqualTo("objectId", groupID);
+        groupQuery.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> parseObjects, ParseException e) {
+                ArrayList<String> members = (ArrayList<String>) parseObjects.get(0).get("users");
+                members.remove(personOwed);
+
+                double dividedAmount = amountValue / (members.size() + 1);
+                BigDecimal bd = new BigDecimal(dividedAmount);
+                String charge = bd.setScale(2,BigDecimal.ROUND_FLOOR).toString();
+
+                createTransactionParseObject(groupID, personOwed, descriptionTxt, amountValue,
+                        members, Double.valueOf(charge));
+                finish();
+            }
+        });
+    }
+
+    private void createTransactionParseObject(String groupID, String personOwed,
+                                              String descriptionTxt, double amountValue,
+                                              ArrayList<String> members, double splitAmount) {
         ParseObject newTransaction = new ParseObject("Transaction");
-        String transactionID = newTransaction.getObjectId();
 
         newTransaction.put("groupID", groupID);
         newTransaction.put("personOwed", personOwed);
         newTransaction.put("description", descriptionTxt);
         newTransaction.put("totalAmount", amountValue);
-        newTransaction.put("amountOwed", amountValue);
+        newTransaction.put("splitAmount", splitAmount);
+        newTransaction.put("members", members);
+
+        ArrayList<Boolean> paid = new ArrayList<Boolean>(members.size());
+        for (int i = 0; i < paid.size(); i++) {
+            paid.add(false);
+        }
+        newTransaction.put("paid", paid);
+        newTransaction.put("complete", false);
 
         newTransaction.saveInBackground();
         Log.v(TAG, "Saved new transaction");
-
-        // Create charges for other users
-        splitBill(transactionID, personOwed, groupID, amountValue);
-    }
-
-    private void splitBill(final String transactionID, final String personOwed, String groupID,
-                           final double amount) {
-        // Charge every member of the group except the person owed
-        ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Group");
-        groupQuery.whereEqualTo("objectID", groupID);
-        groupQuery.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> parseObjects, ParseException e) {
-                ArrayList<String> members = (ArrayList<String>) parseObjects.get(0).get("users");
-                // Split the amount equally
-                double dividedAmount = amount / members.size();
-                BigDecimal bd = new BigDecimal(dividedAmount);
-                String charge = bd.setScale(2,BigDecimal.ROUND_FLOOR).toString();
-                for (String member : members) {
-                    // Skip the person owed
-                    if (!member.equals(personOwed)) {
-                        ParseObject newCharge = new ParseObject("IndividualCharge");
-                        newCharge.put("transactionID", transactionID);
-                        newCharge.put("user", member);
-                        newCharge.put("charge", charge);
-                        newCharge.put("paid", false);
-
-                        newCharge.saveInBackground();
-                        Log.v(TAG, "Saved individual charge.");
-                    }
-                }
-            }
-        });
     }
 
     @Override
