@@ -22,6 +22,7 @@ import com.parse.integratingfacebooktutorial.R;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -83,7 +84,7 @@ public class CreateTransactionActivity extends Activity {
 
         ParseObject group = (ParseObject) mSpinner.getSelectedItem();
         final String groupId = group.getObjectId();
-        final String groupName = group.toString();
+        final String groupName = group.getString("name");
 
         EditText description = (EditText) findViewById(R.id.description);
         final String descriptionTxt = description.getText().toString();
@@ -127,20 +128,22 @@ public class CreateTransactionActivity extends Activity {
         newTransaction.put("splitAmount", splitAmount);
         newTransaction.put("members", members);
 
-        ArrayList<Boolean> paid = new ArrayList<Boolean>(members.size());
-        for (int i = 0; i < paid.size(); i++) {
-            paid.add(false);
+       Integer[] paid = new Integer[members.size()];
+        for (int i = 0; i < paid.length; i++) {
+            paid[i]= 0;
         }
-        newTransaction.put("paid", paid);
-        newTransaction.put("complete", false);
 
+        newTransaction.addAll("paid", Arrays.asList(paid));
+        newTransaction.put("complete", false);
         newTransaction.saveInBackground();
+
         Log.v(TAG, "Saved new transaction");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        Log.v(TAG, "Resume");
         getGroupsFromParse();
     }
 
@@ -161,6 +164,7 @@ public class CreateTransactionActivity extends Activity {
                         }
                     }
                     mAdapter.notifyDataSetChanged();
+                    Log.v(TAG, "Notify data set changed");
                 }
             });
         }
