@@ -98,8 +98,8 @@ public class CreateTransactionActivity extends Activity {
         groupQuery.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, ParseException e) {
+                @SuppressWarnings("unchecked")
                 ArrayList<String> members = (ArrayList<String>) parseObjects.get(0).get("users");
-                members.remove(personOwed);
 
                 double dividedAmount = amountValue / (members.size() + 1);
                 BigDecimal bd = new BigDecimal(dividedAmount);
@@ -128,9 +128,22 @@ public class CreateTransactionActivity extends Activity {
         newTransaction.put("splitAmount", splitAmount);
         newTransaction.put("members", members);
 
-       Integer[] paid = new Integer[members.size()];
+        // Get index of person owed in members
+        int index;
+        for (index = 0; index < members.size(); index++) {
+            if (members.get(index).equals(personOwed)) {
+                break;
+            }
+        }
+
+        // Set the personOwed as paid
+        Integer[] paid = new Integer[members.size()];
         for (int i = 0; i < paid.length; i++) {
-            paid[i]= 0;
+            if (i == index) {
+                paid[i] = 1;
+            } else {
+                paid[i]= 0;
+            }
         }
 
         newTransaction.addAll("paid", Arrays.asList(paid));
