@@ -3,6 +3,7 @@ package com.example.kirstiebooras;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,8 @@ import java.util.Locale;
  * Created by kirstiebooras on 1/31/15.
  */
 public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
+
+    private static final String TAG = "TransactionsAdapter";
 
     private final ArrayList<ParseObject> mTransactions;
     private Resources res;
@@ -52,12 +55,14 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
         // We retrieve the object from the list
         ParseObject group = mTransactions.get(position);
         if (group != null) {
-            if (group.get("personOwed") != ParseUser.getCurrentUser().getEmail()) {
+            if (!group.get("personOwed").toString().equals(ParseUser.getCurrentUser().getEmail())) {
                 // User owes the group
                 setUserOwesGroupTexts(group, transactionGroup, transactionAmount, amountStatus);
+                Log.v(TAG, "User owes the group");
             } else {
                 // The group owes user
                 setGroupOwesUserTexts(group, transactionGroup, transactionAmount, amountStatus);
+                Log.v(TAG, "The group owes the user");
             }
 
             transactionDescription.setText(String.format(
@@ -94,7 +99,7 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
         @SuppressWarnings("unchecked")
         ArrayList<String> members = (ArrayList<String>) group.get("members");
         @SuppressWarnings("unchecked")
-        ArrayList<Boolean> paid = (ArrayList<Boolean>) group.get("paid");
+        ArrayList<Integer> paid = (ArrayList<Integer>) group.get("paid");
 
         int i;
         for (i = 0; i < members.size(); i++) {
@@ -103,7 +108,7 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
             }
         }
 
-        if (paid.get(i)) {
+        if (paid.get(i) == 1) {
             text.setText(res.getString(R.string.paid));
             text.setTextColor(Color.parseColor("#5C5C5C"));
         } else {
@@ -116,11 +121,11 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
     private void setAmountStillOwed(TextView text, ParseObject group) {
         double splitAmount = group.getNumber("splitAmount").doubleValue();
         @SuppressWarnings("unchecked")
-        ArrayList<Boolean> paid = (ArrayList<Boolean>) group.get("paid");
+        ArrayList<Integer> paid = (ArrayList<Integer>) group.get("paid");
         int notPaid = 0;
 
-        for (Boolean p : paid) {
-            if (!p) {
+        for (Integer p : paid) {
+            if (p == 0) {
                 notPaid++;
             }
         }
