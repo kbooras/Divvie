@@ -80,7 +80,7 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
                 res.getString(R.string.transaction_you_owe_group),
                 group.getString("groupName")));
         transactionAmount.setTextColor(Color.parseColor("#F2447E"));
-        transactionAmount.setText(group.getNumber("splitAmount").toString());
+        transactionAmount.setText(mSymbol + group.getNumber("splitAmount").toString());
         setPaidStatus(amountStatus, group);
     }
 
