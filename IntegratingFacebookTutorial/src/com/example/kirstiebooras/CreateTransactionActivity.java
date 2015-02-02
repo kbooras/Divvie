@@ -105,7 +105,7 @@ public class CreateTransactionActivity extends Activity {
                 @SuppressWarnings("unchecked")
                 ArrayList<String> members = (ArrayList<String>) parseObjects.get(0).get("users");
 
-                double dividedAmount = amountValue / (members.size() + 1);
+                double dividedAmount = amountValue / members.size();
                 BigDecimal bd = new BigDecimal(dividedAmount);
                 String charge = bd.setScale(2,BigDecimal.ROUND_FLOOR).toString();
 
@@ -120,7 +120,7 @@ public class CreateTransactionActivity extends Activity {
                 map.put("amount", charge);
 
                 for (String email : members) {
-                    sendEmails(email, map);
+                    //sendEmails(email, map);
                 }
 
                 finish();
