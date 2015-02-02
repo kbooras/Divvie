@@ -120,7 +120,7 @@ public class CreateTransactionActivity extends Activity {
                 map.put("amount", charge);
 
                 for (String email : members) {
-                    //sendEmails(email, map);
+                    sendEmails(email, map);
                 }
 
                 finish();
