@@ -11,15 +11,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.parse.FunctionCallback;
-import com.parse.ParseCloud;
-import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
 
 /**
  * Shows the pending group transactions the user has.
@@ -84,17 +80,6 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 
         checkForCurrentUser();
 
-        ParseCloud.callFunctionInBackground("hi", new HashMap<String, Object>(), new FunctionCallback<Object>() {
-            @Override
-            public void done(Object o, ParseException e) {
-                if (e == null) {
-                    Log.v(TAG, (String)o);
-                } else {
-                    e.printStackTrace();
-                    Log.v(TAG, e.toString());
-                }
-            }
-        });
     }
 
     @Override

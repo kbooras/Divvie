@@ -14,6 +14,8 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
 import com.parse.FindCallback;
+import com.parse.FunctionCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -23,6 +25,7 @@ import com.parse.integratingfacebooktutorial.R;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -80,7 +83,8 @@ public class CreateTransactionActivity extends Activity {
     }
 
     public void onSplitBillClick(View view) {
-        final String personOwed = ParseUser.getCurrentUser().getEmail();
+        final ParseUser personOwed = ParseUser.getCurrentUser();
+        final String personOwedEmail = personOwed.getEmail();
 
         ParseObject group = (ParseObject) mSpinner.getSelectedItem();
         final String groupId = group.getObjectId();
@@ -105,10 +109,20 @@ public class CreateTransactionActivity extends Activity {
                 BigDecimal bd = new BigDecimal(dividedAmount);
                 String charge = bd.setScale(2,BigDecimal.ROUND_FLOOR).toString();
 
-                createTransactionParseObject(groupId, groupName, personOwed, descriptionTxt,
+                createTransactionParseObject(groupId, groupName, personOwedEmail, descriptionTxt,
                         amountValue, members, Double.valueOf(charge));
 
-                // TODO: send emails after you create the object
+                HashMap<String, Object> map = new HashMap<String, Object>();
+                map.put("toEmail", personOwedEmail);
+                map.put("fromName", personOwed.get("fullName"));
+                map.put("groupName", groupName);
+                map.put("chargeDescription", descriptionTxt);
+                map.put("amount", charge);
+
+                for (String email : members) {
+                    sendEmails(email, map);
+                }
+
                 finish();
             }
         });
@@ -151,6 +165,21 @@ public class CreateTransactionActivity extends Activity {
         newTransaction.saveInBackground();
 
         Log.v(TAG, "Saved new transaction");
+    }
+
+    private void sendEmails(String email, HashMap<String, Object> map) {
+        map.put("toEmail", email);
+        ParseCloud.callFunctionInBackground("sendChargeEmail", map, new FunctionCallback<Object>() {
+            @Override
+            public void done(Object o, ParseException e) {
+                if (e == null) {
+                    Log.v(TAG, (String) o);
+                } else {
+                    e.printStackTrace();
+                    Log.v(TAG, "Send email error: " + e.toString());
+                }
+            }
+        });
     }
 
     @Override

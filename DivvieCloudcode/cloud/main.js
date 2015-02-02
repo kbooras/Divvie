@@ -1,23 +1,24 @@
 
-// Use Parse.Cloud.define to define as many cloud functions as you want.
-// For example:
-Parse.Cloud.define("hello", function(request, response) {
-  response.success("Hello world!");
-});
+Parse.Cloud.define("sendChargeEmail", function(request, response) {
+  var toEmail = request.params.toEmail;
+  var toName = request.params.toName;
+  var fromName = request.params.fromName;
+  var groupName = request.params.groupName;
+  var chargeDescription = request.params.chargeDescription;
+  var amount = request.params.amount;
 
-Parse.Cloud.define("hi", function(request, response) {
   var Mandrill = require('mandrill');
   Mandrill.initialize('M5f77U0mhIWJxzMWFDhBkw');
   Mandrill.sendEmail({
     message: {
-      text: "Hello World!",
-      subject: "Using Cloud Code and Mandrill is great!",
+      text: "You have been charged " + amount + ".",
+      subject: fromName + " has charged your group " + groupName + " for " + chargeDescription + ".",
       from_email: "divvie-no-reply@parseapps.com",
       from_name: "Divvie App",
       to: [
         {
-          email: "kirstiebooras@gmail.com",
-          name: "Kirstie Booras"
+          email: toEmail,
+          name: toName
         }
       ]
     },
