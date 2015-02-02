@@ -81,6 +81,7 @@ public class RegisterActivity extends Activity {
                         Log.v(TAG, "Sign up success!");
                         Intent intent = new Intent(getApplicationContext(),
                                 HomeActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                     } else if (e.getCode() == EMAIL_TAKEN || e.getCode() == USERNAME_TAKEN) {
                         Toast.makeText(getApplicationContext(),

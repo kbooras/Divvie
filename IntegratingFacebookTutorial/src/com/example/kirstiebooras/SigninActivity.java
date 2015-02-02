@@ -57,6 +57,7 @@ public class SigninActivity extends Activity {
                         Log.v(TAG, "Sign in success!");
                         Intent intent = new Intent(getApplicationContext(),
                                 HomeActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                     } else {
                         Log.v(TAG, "Sign in failed :(" + e.toString());
