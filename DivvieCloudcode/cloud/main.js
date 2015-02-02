@@ -12,7 +12,7 @@ Parse.Cloud.define("hi", function(request, response) {
     message: {
       text: "Hello World!",
       subject: "Using Cloud Code and Mandrill is great!",
-      from_email: "kikib92@gmail.com",
+      from_email: "divvie-no-reply@parseapps.com",
       from_name: "Divvie App",
       to: [
         {
