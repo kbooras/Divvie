@@ -56,7 +56,6 @@
             android:layout_height="wrap_content"
             android:gravity="right"
             android:textSize="20sp"
-            android:textColor="#F2447E"
             android:text="$5.00 owed"/>
 
     </LinearLayout>

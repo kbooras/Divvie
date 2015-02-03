@@ -12,6 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:textColor="#3B3B3B"
         android:textSize="22sp"/>
 
     <TextView
@@ -21,6 +22,7 @@
         android:layout_toRightOf="@+id/payPerson"
         android:layout_marginTop="16dp"
         android:gravity="right"
+        android:textColor="#F2447E"
         android:textSize="22sp"/>
 
     <TextView
@@ -31,6 +33,7 @@
         android:layout_marginTop="20dp"
         android:gravity="center_horizontal"
         android:textSize="22sp"
+        android:textColor="#3B3B3B"
         android:text="@string/choose_payment_method"/>
 
     <Button
