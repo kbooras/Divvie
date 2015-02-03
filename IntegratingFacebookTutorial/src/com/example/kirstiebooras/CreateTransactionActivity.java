@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.FunctionCallback;
@@ -93,10 +94,24 @@ public class CreateTransactionActivity extends Activity {
 
         EditText description = (EditText) findViewById(R.id.description);
         final String descriptionTxt = description.getText().toString();
-        // TODO: validate edit text value. Maybe create monetary input
 
         EditText amount = (EditText) findViewById(R.id.amount);
-        final double amountValue = Double.valueOf(amount.getText().toString());
+        String amountTxt = amount.getText().toString();
+
+        if (descriptionTxt.equals("") || amountTxt == null) {
+            Toast.makeText(getApplicationContext(),
+                    getResources().getString(R.string.complete_form_toast),
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        final double amountValue = Double.valueOf(amountTxt);
+        if ((amountValue % 0.01) != 0) {
+            Toast.makeText(getApplicationContext(),
+                    getResources().getString(R.string.invalid_amount_toast),
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
 
         ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Group");
         groupQuery.whereEqualTo("objectId", groupId);

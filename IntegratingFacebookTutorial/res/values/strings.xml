@@ -49,11 +49,13 @@
     <string name="duplicate_email_alert_message">
         Hmm, you seem to have a duplicate email. Correct this and try again.
     </string>
-    <string name="createTransaction">Create Transaction</string>
+
+    <string name="create_transaction">Create Transaction</string>
     <string name="bill">Bill</string>
-    <string name="transactionDescriptionHint">Enter a description</string>
-    <string name="transactionAmountHint">$0.00</string>
-    <string name="splitBill">Split Bill</string>
+    <string name="transaction_description_hint">Enter a description</string>
+    <string name="transaction_amount_hint">$0.00</string>
+    <string name="split_bill">Split Bill</string>
+    <string name="invalid_amount_toast">The amount you entered is invalid.</string>
 
     <string name="transaction_group_owes_you">%1$s owes you</string>
     <string name="transaction_you_owe_group">You owe %1$s</string>

@@ -14,7 +14,7 @@
         android:layout_gravity="left"
         android:textColor="#62C8BD"
         android:textSize="30sp"
-        android:text="@string/createTransaction"/>
+        android:text="@string/create_transaction"/>
 
     <RelativeLayout
         android:id="@+id/relativeLayout"
@@ -46,7 +46,7 @@
         android:layout_width="328dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="11dp"
-        android:hint="@string/transactionDescriptionHint"/>
+        android:hint="@string/transaction_description_hint"/>
 
     <EditText
         android:id="@+id/amount"
@@ -54,7 +54,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="11dp"
         android:inputType="numberDecimal"
-        android:hint="@string/transactionAmountHint"/>
+        android:hint="@string/transaction_amount_hint"/>
 
     <Button
         android:layout_width="250dp"
@@ -63,7 +63,7 @@
         android:layout_marginTop="11dp"
         android:background="@drawable/round_button"
         android:textColor="#ffffff"
-        android:text="@string/splitBill"
+        android:text="@string/split_bill"
         android:onClick="onSplitBillClick"/>
 
 </LinearLayout>
