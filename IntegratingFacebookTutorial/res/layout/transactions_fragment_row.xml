@@ -28,7 +28,7 @@
 
     <TextView
         android:id="@+id/transactionAmount"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="30dp"
         android:layout_marginBottom="4dp"
         android:layout_toRightOf="@+id/transactionDescription"
@@ -37,7 +37,7 @@
 
     <TextView
         android:id="@+id/transactionStatus"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="30dp"
         android:layout_below="@+id/transactionAmount"
         android:layout_toRightOf="@+id/transactionGroup"
