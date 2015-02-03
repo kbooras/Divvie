@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="16dp"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp">
+
+    <TextView
+        android:id="@+id/groupOwesYou"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:textColor="#3B3B3B"
+        android:text="Roommates owes you"/>
+
+    <TextView
+        android:id="@+id/transactionAmount"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/groupOwesYou"
+        android:gravity="right"
+        android:textSize="22sp"
+        android:textColor="#83CD6E"
+        android:text="$15.00"/>
+
+    <TextView
+        android:id="@+id/transactionDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/groupOwesYou"
+        android:textSize="20sp"
+        android:textColor="#3B3B3B"
+        android:text="for rent"/>
+
+    <TextView
+        android:id="@+id/amountOwed"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/groupOwesYou"
+        android:layout_toRightOf="@+id/transactionDescription"
+        android:gravity="right"
+        android:textSize="20sp"
+        android:textColor="#F2447E"
+        android:text="$5.00 owed"/>
+
+</RelativeLayout>

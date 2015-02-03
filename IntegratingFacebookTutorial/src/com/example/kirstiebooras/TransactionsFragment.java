@@ -79,6 +79,9 @@ public class TransactionsFragment extends ListFragment {
                 R.string.transaction_amount_owed))) {
             // TODO popup for remind or override
             // Start ViewTransactionIncompleteActivity
+            Intent intent = new Intent(getActivity(), ViewTransactionActivity.class);
+            intent.putExtra("parseObjectId", transaction.getObjectId());
+            startActivity(intent);
         } else if (amountStatus.getText().toString().equals(res.getString(
                 R.string.complete))) {
             // Start ViewTransactionCompleteActivity
