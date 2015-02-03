@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp">
+
+    <TextView
+        android:id="@+id/payPerson"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textSize="22sp"/>
+
+    <TextView
+        android:id="@+id/payAmount"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/payPerson"
+        android:layout_marginTop="16dp"
+        android:gravity="right"
+        android:textSize="22sp"/>
+
+    <TextView
+        android:id="@+id/choosePaymentMethod"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/payPerson"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:textSize="22sp"
+        android:text="@string/choose_payment_method"/>
+
+    <Button
+        android:id="@+id/cashPayment"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/choosePaymentMethod"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/round_button"
+        android:textColor="#ffffff"
+        android:text="@string/record_cash_payment"
+        android:onClick="cashPaymentClick"/>
+
+    <Button
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/cashPayment"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="11dp"
+        android:background="@drawable/round_button"
+        android:textColor="#ffffff"
+        android:text="Pay with Venmo"/>
+
+</RelativeLayout>

@@ -63,4 +63,8 @@
     <string name="pay_now">Pay Now</string>
     <string name="paid">Paid</string>
 
+    <string name="pay_person">Pay %1$s</string>
+    <string name="choose_payment_method">Choose a payment method:</string>
+    <string name="record_cash_payment">Record cash payment</string>
+
 </resources>
