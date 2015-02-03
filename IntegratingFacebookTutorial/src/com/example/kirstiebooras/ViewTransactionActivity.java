@@ -5,15 +5,20 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
 
 import java.util.ArrayList;
@@ -27,6 +32,8 @@ import java.util.Locale;
  */
 public class ViewTransactionActivity extends Activity {
 
+    private static final String TAG = "ViewTransactionActivity";
+
     private LinearLayout mBaseLayout;
     private Resources mResources;
     private Intent mIntent;
@@ -37,8 +44,9 @@ public class ViewTransactionActivity extends Activity {
 
         setContentView(R.layout.view_transaction_activity);
 
-        mBaseLayout = (LinearLayout) findViewById(R.id.baseLayout);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
+        mBaseLayout = (LinearLayout) findViewById(R.id.baseLayout);
         mResources = getResources();
         mIntent = getIntent();
 
@@ -112,6 +120,30 @@ public class ViewTransactionActivity extends Activity {
                 status.setTextColor(Color.parseColor("#3B3B3B"));
             }
             mBaseLayout.addView(memberRow);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.secondary_items, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.logout:
+                ParseUser.logOut();
+                Log.v(TAG, "User signed out!");
+                return true;
+
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }
