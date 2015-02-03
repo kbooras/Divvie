@@ -76,7 +76,7 @@ public class ViewTransactionActivity extends Activity {
 
         group.setText(String.format(mResources.getString(R.string.transaction_group_owes_you),
                 object.getString("groupName")));
-        transactionAmount.setText(symbol + object.getNumber("totalAmount").toString());
+        transactionAmount.setText(symbol + object.getString("totalAmount"));
         transactionDescription.setText(String.format(
                 mResources.getString(R.string.transaction_description),
                 object.getString("description")));

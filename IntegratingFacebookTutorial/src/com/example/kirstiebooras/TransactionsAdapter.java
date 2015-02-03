@@ -81,7 +81,7 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
         transactionGroup.setText(String.format(
                 res.getString(R.string.transaction_you_owe_group),
                 group.getString("groupName")));
-        transactionAmount.setText(mSymbol + group.getNumber("splitAmount").toString());
+        transactionAmount.setText(mSymbol + group.getString("splitAmount"));
     }
 
     private void setGroupOwesUserTexts(ParseObject group, TextView transactionGroup,
@@ -90,7 +90,7 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
                 res.getString(R.string.transaction_group_owes_you),
                 group.getString("groupName")));
         transactionAmount.setTextColor(Color.parseColor("#83CD6E"));
-        transactionAmount.setText(mSymbol + group.getNumber("totalAmount").toString());
+        transactionAmount.setText(mSymbol + group.getString("totalAmount"));
     }
 
     // Return string based on if user has paid or not
@@ -120,7 +120,7 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
 
     // Return string based on if transaction is complete or not
     private void setAmountStillOwed(TextView statusText, ParseObject group) {
-        double splitAmount = group.getNumber("splitAmount").doubleValue();
+        double splitAmount = Double.valueOf(group.getString("splitAmount"));
         @SuppressWarnings("unchecked")
         ArrayList<Integer> paid = (ArrayList<Integer>) group.get("paid");
         int notPaid = 0;
@@ -136,7 +136,7 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
             statusText.setTextColor(Color.parseColor("#5C5C5C"));
         } else {
             statusText.setText(String.format(res.getString(R.string.transaction_amount_owed),
-                    mSymbol, String.valueOf(splitAmount * notPaid)));
+                    mSymbol, String.format("%.2f", splitAmount * notPaid)));
             statusText.setTextColor(Color.parseColor("#F2447E"));
         }
     }

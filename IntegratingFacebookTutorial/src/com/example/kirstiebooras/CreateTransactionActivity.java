@@ -113,6 +113,8 @@ public class CreateTransactionActivity extends Activity {
                     Toast.LENGTH_LONG).show();
             return;
         }
+        final String totalAmount = String.format("%.2f", amountValue);
+
 
         ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Group");
         groupQuery.whereEqualTo("objectId", groupId);
@@ -124,17 +126,17 @@ public class CreateTransactionActivity extends Activity {
 
                 double dividedAmount = amountValue / members.size();
                 BigDecimal bd = new BigDecimal(dividedAmount);
-                String charge = bd.setScale(2,BigDecimal.ROUND_FLOOR).toString();
+                String splitAmount = bd.setScale(2,BigDecimal.ROUND_FLOOR).toString();
 
                 createTransactionParseObject(groupId, groupName, personOwedEmail, descriptionTxt,
-                        amountValue, members, Double.valueOf(charge));
+                        totalAmount, members, splitAmount);
 
                 HashMap<String, Object> map = new HashMap<String, Object>();
                 map.put("toEmail", personOwedEmail);
                 map.put("fromName", personOwed.get("fullName"));
                 map.put("groupName", groupName);
                 map.put("chargeDescription", descriptionTxt);
-                map.put("amount", charge);
+                map.put("amount", splitAmount);
 
                 for (String email : members) {
                     sendEmails(email, map);
@@ -147,15 +149,15 @@ public class CreateTransactionActivity extends Activity {
 
     private void createTransactionParseObject(String groupId, String groupName,
                                               String personOwed, String descriptionTxt,
-                                              double amountValue, ArrayList<String> members,
-                                              double splitAmount) {
+                                              String totalAmount, ArrayList<String> members,
+                                              String splitAmount) {
         ParseObject newTransaction = new ParseObject("Transaction");
 
         newTransaction.put("groupId", groupId);
         newTransaction.put("groupName", groupName);
         newTransaction.put("personOwed", personOwed);
         newTransaction.put("description", descriptionTxt);
-        newTransaction.put("totalAmount", amountValue);
+        newTransaction.put("totalAmount", totalAmount);
         newTransaction.put("splitAmount", splitAmount);
         newTransaction.put("members", members);
 
@@ -177,7 +179,12 @@ public class CreateTransactionActivity extends Activity {
         newTransaction.put("paid", paid);
         newTransaction.put("datePaid", datePaid);
         newTransaction.put("complete", false);
-        newTransaction.saveInBackground();
+        try {
+            newTransaction.save();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            Log.v(TAG, e.toString());
+        }
 
         Log.v(TAG, "Saved new transaction");
     }

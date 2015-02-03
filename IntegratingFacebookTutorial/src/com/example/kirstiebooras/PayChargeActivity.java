@@ -54,12 +54,12 @@ public class PayChargeActivity extends Activity {
                 setContentView(R.layout.pay_charge_activity);
                 ParseObject object = parseObjects.get(0);
                 setViewText(object.getString("personOwed"),
-                        object.getNumber("splitAmount").doubleValue());
+                        object.getString("splitAmount"));
             }
         });
     }
 
-    private void setViewText(final String personOwed, final double splitAmount) {
+    private void setViewText(final String personOwed, final String splitAmount) {
         final TextView payPerson = (TextView) findViewById(R.id.payPerson);
         final TextView payAmount = (TextView) findViewById(R.id.payAmount);
 
