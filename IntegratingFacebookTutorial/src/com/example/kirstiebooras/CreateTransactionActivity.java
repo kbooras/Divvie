@@ -25,6 +25,7 @@ import com.parse.integratingfacebooktutorial.R;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -142,25 +143,23 @@ public class CreateTransactionActivity extends Activity {
         newTransaction.put("splitAmount", splitAmount);
         newTransaction.put("members", members);
 
-        // Get index of person owed in members
-        int index;
-        for (index = 0; index < members.size(); index++) {
-            if (members.get(index).equals(personOwed)) {
-                break;
-            }
-        }
-
-        // Set the personOwed as paid
-        Integer[] paid = new Integer[members.size()];
-        for (int i = 0; i < paid.length; i++) {
-            if (i == index) {
-                paid[i] = 1;
+        // Set paid values and date paid values. PersonOwed is set as paid.
+        ArrayList<Integer> paid = new ArrayList<Integer>(members.size());
+        ArrayList<String> datePaid = new ArrayList<String>(members.size());
+        for (int i = 0; i < members.size(); i++) {
+            if (members.get(i).equals(personOwed)) {
+                paid.add(1);
+                String month = String.valueOf(Calendar.getInstance().get(Calendar.MONTH));
+                String date = String.valueOf(Calendar.getInstance().get(Calendar.DATE));
+                datePaid.add(month + "/" + date);
             } else {
-                paid[i]= 0;
+                paid.add(0);
+                datePaid.add("");
             }
         }
 
-        newTransaction.addAll("paid", Arrays.asList(paid));
+        newTransaction.put("paid", paid);
+        newTransaction.put("datePaid", datePaid);
         newTransaction.put("complete", false);
         newTransaction.saveInBackground();
 

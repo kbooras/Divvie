@@ -23,6 +23,7 @@ import com.parse.integratingfacebooktutorial.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
@@ -121,7 +122,6 @@ public class PayChargeActivity extends Activity {
     private void markChargePaid() {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Transaction");
 
-        // Retrieve the object by id
         query.getInBackground(mTransactionObjectId, new GetCallback<ParseObject>() {
             public void done(ParseObject parseObject, ParseException e) {
                 if (e == null) {
@@ -129,21 +129,26 @@ public class PayChargeActivity extends Activity {
                     ArrayList<String> members = (ArrayList<String>) parseObject.get("members");
                     @SuppressWarnings("unchecked")
                     ArrayList<Integer> paid = (ArrayList<Integer>) parseObject.get("paid");
+                    @SuppressWarnings("unchecked")
+                    ArrayList<String> datePaid = (ArrayList<String>) parseObject.get("datePaid");
 
-                    // Mark this person as paid
                     String currentUser = ParseUser.getCurrentUser().getEmail();
                     boolean complete = true;
-                    int index;
-                    for (index = 0; index < members.size(); index++) {
-                        if (members.get(index).equals(currentUser)) {
-                            paid.set(index, 1);
-                            break;
+                    for (int i = 0; i < members.size(); i++) {
+                        if (members.get(i).equals(currentUser)) {
+                            // Mark this person as paid and set their date paid
+                            paid.set(i, 1);
+                            String month = String.valueOf(Calendar.getInstance().get(Calendar.MONTH));
+                            String date = String.valueOf(Calendar.getInstance().get(Calendar.DATE));
+                            datePaid.set(i,month + "/" + date);
                         }
-                        if (paid.get(index) == 0) {
+                        if (paid.get(i) == 0) {
+                            // Check if this transaction is complete or not
                             complete = false;
                         }
                     }
 
+                    parseObject.put("datePaid", datePaid);
                     parseObject.put("paid", paid);
                     if (complete) {
                         parseObject.put("complete", true);
