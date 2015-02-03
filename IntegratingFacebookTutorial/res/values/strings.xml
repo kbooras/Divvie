@@ -59,6 +59,7 @@
     <string name="transaction_you_owe_group">You owe %1$s</string>
     <string name="transaction_description">for %1$s</string>
     <string name="transaction_amount_owed">%1$s%2$s owed</string>
+    <string name="person_paid_you">%1$s paid you on</string>
     <string name="complete">Complete</string>
     <string name="pay_now">Pay Now</string>
     <string name="paid">Paid</string>

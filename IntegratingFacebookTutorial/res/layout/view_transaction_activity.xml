@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/baseLayout"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,42 +9,57 @@
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp">
 
-    <TextView
-        android:id="@+id/group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="22sp"
-        android:textColor="#3B3B3B"
-        android:text="Roommates owes you"/>
+    <LinearLayout
+        android:id="@+id/layout1"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/transactionAmount"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/group"
-        android:gravity="right"
-        android:textSize="22sp"
-        android:textColor="#83CD6E"
-        android:text="$15.00"/>
+        <TextView
+            android:id="@+id/group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="22sp"
+            android:textColor="#3B3B3B"
+            android:text="Roommates owes you"/>
 
-    <TextView
-        android:id="@+id/transactionDescription"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/group"
-        android:textSize="20sp"
-        android:textColor="#3B3B3B"
-        android:text="for rent"/>
+        <TextView
+            android:id="@+id/transactionAmount"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:textSize="22sp"
+            android:textColor="#83CD6E"
+            android:text="$15.00"/>
 
-    <TextView
-        android:id="@+id/transactionStatus"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/group"
-        android:layout_toRightOf="@+id/transactionDescription"
-        android:gravity="right"
-        android:textSize="20sp"
-        android:textColor="#F2447E"
-        android:text="$5.00 owed"/>
+    </LinearLayout>
 
-</RelativeLayout>
+    <LinearLayout
+        android:id="@+id/layout2"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="18dp">
+
+        <TextView
+            android:id="@+id/transactionDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="#3B3B3B"
+            android:text="for rent"/>
+
+        <TextView
+            android:id="@+id/transactionStatus"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:textSize="20sp"
+            android:textColor="#F2447E"
+            android:text="$5.00 owed"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

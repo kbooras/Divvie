@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.parse.FindCallback;
@@ -24,6 +27,7 @@ import java.util.Locale;
  */
 public class ViewTransactionActivity extends Activity {
 
+    private LinearLayout mBaseLayout;
     private Resources mResources;
     private Intent mIntent;
 
@@ -32,6 +36,8 @@ public class ViewTransactionActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.view_transaction_activity);
+
+        mBaseLayout = (LinearLayout) findViewById(R.id.baseLayout);
 
         mResources = getResources();
         mIntent = getIntent();
@@ -51,15 +57,18 @@ public class ViewTransactionActivity extends Activity {
 
     private void setViewText(ParseObject object) {
         String symbol = Currency.getInstance(Locale.getDefault()).getSymbol();
+        LinearLayout layout1 = (LinearLayout) mBaseLayout.findViewById(R.id.layout1);
+        LinearLayout layout2 = (LinearLayout) mBaseLayout.findViewById(R.id.layout2);
 
-        TextView group = (TextView) findViewById(R.id.group);
-        TextView transactionAmount = (TextView) findViewById(R.id.transactionAmount);
-        TextView transactionDescription = (TextView) findViewById(R.id.transactionDescription);
-        TextView transactionStatus = (TextView) findViewById(R.id.transactionStatus);
+        TextView group = (TextView) layout1.findViewById(R.id.group);
+        TextView transactionAmount = (TextView) layout1.findViewById(R.id.transactionAmount);
+        TextView transactionDescription = (TextView) layout2.findViewById(R.id.transactionDescription);
+        // TODO This changes
+        TextView transactionStatus = (TextView) layout2.findViewById(R.id.transactionStatus);
 
         group.setText(String.format(mResources.getString(R.string.transaction_group_owes_you),
                 object.getString("groupName")));
-        transactionAmount.setText(symbol + object.getString("totalAmount"));
+        transactionAmount.setText(symbol + object.getNumber("totalAmount").toString());
         transactionDescription.setText(String.format(
                 mResources.getString(R.string.transaction_description),
                 object.getString("description")));
@@ -74,15 +83,35 @@ public class ViewTransactionActivity extends Activity {
     }
 
     private void displayMembers(ParseObject object) {
-        // Cycle through the members array and paid array
+        // Do not display yourself
+        String symbol = Currency.getInstance(Locale.getDefault()).getSymbol();
+
+        @SuppressWarnings("unchecked")
+        ArrayList<Integer> paid = (ArrayList<Integer>) object.get("paid");
         @SuppressWarnings("unchecked")
         ArrayList<String> members = (ArrayList<String>) object.get("members");
         @SuppressWarnings("unchecked")
-        ArrayList<Integer> paid = (ArrayList<Integer>) object.get("paid");
+        ArrayList<String> datePaid = (ArrayList<String>) object.get("datePaid");
 
-        for (Integer p : paid) {
-            if (p == 0) {
+        for (int i = 0; i < paid.size(); i++) {
+            View memberRow = View.inflate(this, R.layout.view_transaction_row, null);
+            TextView member = (TextView) memberRow.findViewById(R.id.member);
+            TextView status = (TextView) memberRow.findViewById(R.id.status);
+
+            if (paid.get(i) == 0) {
+                // If they have not paid, display what they owe
+                member.setText(String.format(
+                        mResources.getString(R.string.transaction_group_owes_you), members.get(i)));
+                status.setText(symbol + object.getString("splitAmount"));
+                status.setTextColor(Color.parseColor("#3B3B3B"));
+            } else {
+                // Otherwise, display the date paid
+                member.setText(String.format(
+                        mResources.getString(R.string.person_paid_you), members.get(i)));
+                status.setText(datePaid.get(i));
+                status.setTextColor(Color.parseColor("#3B3B3B"));
             }
+            mBaseLayout.addView(memberRow);
         }
     }
 }

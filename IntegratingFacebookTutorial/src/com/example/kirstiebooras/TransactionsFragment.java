@@ -74,12 +74,10 @@ public class TransactionsFragment extends ListFragment {
             Intent intent = new Intent(getActivity(), PayChargeActivity.class);
             intent.putExtra("parseObjectId", transaction.getObjectId());
             startActivity(intent);
-        } else if (transactionStatus.getText().toString().equals(res.getString(
-                R.string.complete))) {
-            // Display complete transaction
-        } else {
+        } else if (!transactionStatus.getText().equals(res.getString(R.string.paid))) {
+            // TODO fix this if
             // TODO popup for remind or override
-            // Display incomplete transaction
+            // Display transaction
             Intent intent = new Intent(getActivity(), ViewTransactionActivity.class);
             intent.putExtra("parseObjectId", transaction.getObjectId());
             intent.putExtra("transactionStatus", transactionStatus.getText().toString());
