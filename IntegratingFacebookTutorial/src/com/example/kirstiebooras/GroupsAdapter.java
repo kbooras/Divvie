@@ -52,32 +52,22 @@ public class GroupsAdapter extends ArrayAdapter<ParseObject> {
             ArrayList<String> members = (ArrayList<String>) group.get("users");
             // Create a TextView for each member
             for (int i = 0; i < members.size(); i++) {
-               membersLayout.addView(createTextView(members.get(i), i));
+               membersLayout.addView(createMemberView(members.get(i), i));
             }
         }
 
         return rowView;
     }
 
-    // TODO change this to XML
-    private TextView createTextView(String member, int textViewNumber) {
-        final float SCALE = HomeActivity.sScale;
-        int padding = (int) (4.0f * SCALE + 0.5f);
-        int margin = (int) (16.0f * SCALE + 0.5f);
-
-        final LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lparams.setMargins(margin, 0, margin, 0);
-        final TextView textView = new TextView(mContext);
-
+    private LinearLayout createMemberView(String member, int textViewNumber) {
+        LinearLayout memberView = (LinearLayout) View.inflate(mContext, R.layout.group_member_row,
+                null);
+        TextView textView = (TextView) memberView.findViewById(R.id.member);
         textView.setId(textViewNumber);
-        textView.setLayoutParams(lparams);
-        textView.setPadding(0,padding,0,padding);
-
         textView.setText(member);
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-        textView.setTextColor(Color.parseColor("#5C5C5C"));
 
-        return textView;
+        //TODO display name if they have an account, email otherwise
+
+        return memberView;
     }
 }
