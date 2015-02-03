@@ -23,6 +23,7 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -135,8 +136,8 @@ public class CreateGroupActivity extends Activity {
         String groupNameTxt = mGroupName.getText().toString();
 
         // Create an array of all emails added in the EditTexts + the current user.
-        String[] memberEmails = new String[mAllEditTexts.size() + 1];
-        memberEmails[0] = ParseUser.getCurrentUser().getEmail();
+        ArrayList<String> memberEmails = new ArrayList<String>(mAllEditTexts.size() + 1);
+        memberEmails.add(ParseUser.getCurrentUser().getEmail());
 
         // Check that each email is valid and add to the array of members
         String email;
@@ -148,14 +149,14 @@ public class CreateGroupActivity extends Activity {
                 displayInvalidEmailMessage(i);
                 return;
             } else {
-                memberEmails[i] = email;
+                memberEmails.add(email);
             }
             i++;
         }
 
         // Check for duplicate emails.
-        HashSet<String> set = new HashSet<String>(Arrays.asList(memberEmails));
-        if (set.size() < memberEmails.length) {
+        HashSet<String> set = new HashSet<String>(memberEmails);
+        if (set.size() < memberEmails.size()) {
             // Display repeated email message
             displayDuplicateEmailMessage();
             return;
@@ -165,10 +166,10 @@ public class CreateGroupActivity extends Activity {
         finish();
     }
 
-    private void createParseObjectGroup(String name, String[] memberEmails){
+    private void createParseObjectGroup(String name, ArrayList<String> memberEmails){
         ParseObject newGroup = new ParseObject("Group");
         newGroup.put("name", name);
-        newGroup.addAll("users", Arrays.asList(memberEmails));
+        newGroup.put("users", memberEmails);
         try {
             newGroup.save();
             Log.v(TAG, "Saved new group successfully!");
