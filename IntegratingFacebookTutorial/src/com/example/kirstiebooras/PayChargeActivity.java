@@ -46,9 +46,9 @@ public class PayChargeActivity extends Activity {
 
         mTransactionObjectId = getIntent().getStringExtra("parseObjectId");
 
-        ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Transaction");
-        groupQuery.whereEqualTo("objectId", mTransactionObjectId);
-        groupQuery.findInBackground(new FindCallback<ParseObject>() {
+        ParseQuery<ParseObject> transactionQuery = ParseQuery.getQuery("Transaction");
+        transactionQuery.whereEqualTo("objectId", mTransactionObjectId);
+        transactionQuery.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, ParseException e) {
                 // Should fill in the text in the view
@@ -63,9 +63,9 @@ public class PayChargeActivity extends Activity {
         final TextView payPerson = (TextView) findViewById(R.id.payPerson);
         final TextView payAmount = (TextView) findViewById(R.id.payAmount);
 
-        ParseQuery<ParseUser> groupQuery = ParseUser.getQuery();
-        groupQuery.whereEqualTo("email", personOwed);
-        groupQuery.findInBackground(new FindCallback<ParseUser>() {
+        ParseQuery<ParseUser> userQuery = ParseUser.getQuery();
+        userQuery.whereEqualTo("email", personOwed);
+        userQuery.findInBackground(new FindCallback<ParseUser>() {
             @Override
             public void done(List<ParseUser> results, ParseException e) {
                 // Should fill in the text in the view

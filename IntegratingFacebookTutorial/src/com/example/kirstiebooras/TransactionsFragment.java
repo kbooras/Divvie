@@ -48,9 +48,9 @@ public class TransactionsFragment extends ListFragment {
 
     private void getDataFromParse() {
         if (ParseUser.getCurrentUser() != null) {
-            ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Transaction");
-            groupQuery.whereEqualTo("members", ParseUser.getCurrentUser().getEmail());
-            groupQuery.findInBackground(new FindCallback<ParseObject>() {
+            ParseQuery<ParseObject> transactionQuery = ParseQuery.getQuery("Transaction");
+            transactionQuery.whereEqualTo("members", ParseUser.getCurrentUser().getEmail());
+            transactionQuery.findInBackground(new FindCallback<ParseObject>() {
                 @Override
                 public void done(List<ParseObject> parseObjects, ParseException e) {
                     //Query should generate transaction listview using an array adapter
@@ -64,7 +64,6 @@ public class TransactionsFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        // do something with the data
         TextView transactionStatus = (TextView) v.findViewById(R.id.transactionStatus);
         Resources res = getResources();
 
@@ -76,15 +75,15 @@ public class TransactionsFragment extends ListFragment {
             intent.putExtra("parseObjectId", transaction.getObjectId());
             startActivity(intent);
         } else if (transactionStatus.getText().toString().equals(res.getString(
-                R.string.transaction_amount_owed))) {
+                R.string.complete))) {
+            // Display complete transaction
+        } else {
             // TODO popup for remind or override
-            // Start ViewTransactionIncompleteActivity
+            // Display incomplete transaction
             Intent intent = new Intent(getActivity(), ViewTransactionActivity.class);
             intent.putExtra("parseObjectId", transaction.getObjectId());
+            intent.putExtra("transactionStatus", transactionStatus.getText().toString());
             startActivity(intent);
-        } else if (transactionStatus.getText().toString().equals(res.getString(
-                R.string.complete))) {
-            // Start ViewTransactionCompleteActivity
         }
     }
 
