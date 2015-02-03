@@ -9,7 +9,7 @@
     android:layout_marginRight="16dp">
 
     <TextView
-        android:id="@+id/groupOwesYou"
+        android:id="@+id/group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="22sp"
@@ -20,7 +20,7 @@
         android:id="@+id/transactionAmount"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/groupOwesYou"
+        android:layout_toRightOf="@+id/group"
         android:gravity="right"
         android:textSize="22sp"
         android:textColor="#83CD6E"
@@ -30,16 +30,16 @@
         android:id="@+id/transactionDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/groupOwesYou"
+        android:layout_below="@+id/group"
         android:textSize="20sp"
         android:textColor="#3B3B3B"
         android:text="for rent"/>
 
     <TextView
-        android:id="@+id/amountOwed"
+        android:id="@+id/transactionStatus"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/groupOwesYou"
+        android:layout_below="@+id/group"
         android:layout_toRightOf="@+id/transactionDescription"
         android:gravity="right"
         android:textSize="20sp"

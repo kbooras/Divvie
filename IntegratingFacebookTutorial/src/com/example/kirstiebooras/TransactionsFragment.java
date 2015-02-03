@@ -65,24 +65,24 @@ public class TransactionsFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         // do something with the data
-        TextView amountStatus = (TextView) v.findViewById(R.id.amountStatus);
+        TextView transactionStatus = (TextView) v.findViewById(R.id.transactionStatus);
         Resources res = getResources();
 
         ParseObject transaction = mAdapter.getItem(position);
 
-        if (amountStatus.getText().toString().equals(res.getString(R.string.pay_now))) {
+        if (transactionStatus.getText().toString().equals(res.getString(R.string.pay_now))) {
             // Start PayChargeActivity
             Intent intent = new Intent(getActivity(), PayChargeActivity.class);
             intent.putExtra("parseObjectId", transaction.getObjectId());
             startActivity(intent);
-        } else if (amountStatus.getText().toString().equals(res.getString(
+        } else if (transactionStatus.getText().toString().equals(res.getString(
                 R.string.transaction_amount_owed))) {
             // TODO popup for remind or override
             // Start ViewTransactionIncompleteActivity
             Intent intent = new Intent(getActivity(), ViewTransactionActivity.class);
             intent.putExtra("parseObjectId", transaction.getObjectId());
             startActivity(intent);
-        } else if (amountStatus.getText().toString().equals(res.getString(
+        } else if (transactionStatus.getText().toString().equals(res.getString(
                 R.string.complete))) {
             // Start ViewTransactionCompleteActivity
         }
