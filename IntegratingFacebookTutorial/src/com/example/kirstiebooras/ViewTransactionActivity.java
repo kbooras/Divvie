@@ -91,7 +91,7 @@ public class ViewTransactionActivity extends Activity {
     }
 
     private void displayMembers(ParseObject object) {
-        // Do not display yourself
+        // TODO Do not display yourself
         String symbol = Currency.getInstance(Locale.getDefault()).getSymbol();
 
         @SuppressWarnings("unchecked")
