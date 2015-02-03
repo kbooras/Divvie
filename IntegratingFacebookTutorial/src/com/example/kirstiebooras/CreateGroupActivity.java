@@ -190,35 +190,23 @@ public class CreateGroupActivity extends Activity {
                 .setTitle(mResources.getString(R.string.group_invalid_email_alert_title))
                 .setMessage(String.format(mResources.getString(
                         R.string.group_invalid_email_alert_message), emailNumber))
-                .setPositiveButton(mResources.getString(R.string.ok),
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                // Do nothing.
-                            }
-                }).show();
+                .setPositiveButton(mResources.getString(R.string.ok), null)
+                .show();
     }
 
     private void displayCreateGroupFailedMessage () {
         new AlertDialog.Builder(this)
                 .setTitle(mResources.getString(R.string.create_group_failed_alert_title))
                 .setMessage(mResources.getString(R.string.create_group_failed_alert_message))
-                .setPositiveButton(mResources.getString(R.string.ok),
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                // Do nothing.
-                            }
-                }).show();
+                .setPositiveButton(mResources.getString(R.string.ok), null)
+                .show();
     }
 
     private void displayDuplicateEmailMessage() {
         new AlertDialog.Builder(this)
                 .setTitle(mResources.getString(R.string.duplicate_email_alert_title))
                 .setMessage(mResources.getString(R.string.duplicate_email_alert_message))
-                .setPositiveButton(mResources.getString(R.string.ok),
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                // Do nothing.
-                            }
-                }).show();
+                .setPositiveButton(mResources.getString(R.string.ok), null)
+                .show();
     }
 }

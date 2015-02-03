@@ -91,12 +91,8 @@ public class SigninActivity extends Activity {
                                 resetPassword(resetPasswordEmailTxt);
                             }
                 })
-                .setNegativeButton(mResources.getString(R.string.cancel),
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                // Do nothing.
-                            }
-                }).show();
+                .setNegativeButton(mResources.getString(R.string.cancel), null)
+                .show();
     }
 
     public void resetPassword(String resetPasswordEmailTxt) {
@@ -135,10 +131,7 @@ public class SigninActivity extends Activity {
         new AlertDialog.Builder(this)
                 .setTitle(mResources.getString((R.string.reset_failed_alert_title)))
                 .setMessage(message)
-                .setPositiveButton(mResources.getString((R.string.ok)), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        // Do nothing.
-                    }
-                }).show();
+                .setPositiveButton(mResources.getString((R.string.ok)), null)
+                .show();
     }
 }
