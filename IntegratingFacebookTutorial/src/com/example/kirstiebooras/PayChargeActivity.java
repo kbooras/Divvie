@@ -41,8 +41,6 @@ public class PayChargeActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.pay_charge_activity);
-
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
         mTransactionObjectId = getIntent().getStringExtra("parseObjectId");
@@ -53,6 +51,7 @@ public class PayChargeActivity extends Activity {
             @Override
             public void done(List<ParseObject> parseObjects, ParseException e) {
                 // Should fill in the text in the view
+                setContentView(R.layout.pay_charge_activity);
                 ParseObject object = parseObjects.get(0);
                 setViewText(object.getString("personOwed"),
                         object.getNumber("splitAmount").doubleValue());

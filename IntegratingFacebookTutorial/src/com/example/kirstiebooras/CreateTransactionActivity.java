@@ -106,7 +106,8 @@ public class CreateTransactionActivity extends Activity {
         }
 
         final double amountValue = Double.valueOf(amountTxt);
-        if ((amountValue % 0.01) != 0) {
+        if ((amountValue % 0.01) < 0.0099) {
+            Log.v(TAG, String.valueOf(amountValue % 0.01));
             Toast.makeText(getApplicationContext(),
                     getResources().getString(R.string.invalid_amount_toast),
                     Toast.LENGTH_LONG).show();
