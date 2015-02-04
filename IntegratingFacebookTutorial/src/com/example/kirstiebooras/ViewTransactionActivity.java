@@ -91,7 +91,6 @@ public class ViewTransactionActivity extends Activity {
     }
 
     private void displayMembers(ParseObject object) {
-        // TODO Do not display yourself
         String symbol = Currency.getInstance(Locale.getDefault()).getSymbol();
 
         @SuppressWarnings("unchecked")
@@ -101,7 +100,11 @@ public class ViewTransactionActivity extends Activity {
         @SuppressWarnings("unchecked")
         ArrayList<String> datePaid = (ArrayList<String>) object.get("datePaid");
 
-        for (int i = 0; i < paid.size(); i++) {
+        for (int i = 0; i < members.size(); i++) {
+            if (members.get(i).equals(ParseUser.getCurrentUser().getEmail())) {
+                // Do not display the current user as part of the transaction
+                continue;
+            }
             View memberRow = View.inflate(this, R.layout.view_transaction_row, null);
             TextView member = (TextView) memberRow.findViewById(R.id.member);
             TextView status = (TextView) memberRow.findViewById(R.id.status);
