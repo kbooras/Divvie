@@ -71,7 +71,6 @@ public class ViewTransactionActivity extends Activity {
         TextView group = (TextView) layout1.findViewById(R.id.group);
         TextView transactionAmount = (TextView) layout1.findViewById(R.id.transactionAmount);
         TextView transactionDescription = (TextView) layout2.findViewById(R.id.transactionDescription);
-        // TODO This changes
         TextView transactionStatus = (TextView) layout2.findViewById(R.id.transactionStatus);
 
         group.setText(String.format(mResources.getString(R.string.transaction_group_owes_you),

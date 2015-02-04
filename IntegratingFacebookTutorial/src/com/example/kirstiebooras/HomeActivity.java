@@ -132,7 +132,6 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 
     @Override
     protected void onResume() {
-        // TODO
         super.onResume();
 
         checkForCurrentUser();
