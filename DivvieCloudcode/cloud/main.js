@@ -26,31 +26,3 @@ Parse.Cloud.define("sendChargeEmail", function(request, response) {
         error: function(httpResponse) { response.error("Uh oh, something went wrong"); }
     });
 });
-
-/*Parse.Cloud.define("getMemberNames", function(request, response) {
-    var members = request.params.members;
-    var membersWithNames = new Array(members.length);
-
-    for (var i = 0; i < members.length; i++) {
-        Parse.Cloud.useMasterKey();
-        var query = new Parse.Query(Parse.User);
-        console.log("member to find: " + members[i]);
-        query.equalTo("email", members[i]);
-        query.find({
-            success: function(results) {
-                if (results.length == 0) {
-                    console.log("Empty results");
-                    membersWithNames[i] = members[i];
-                } else {
-                    membersWithNames[i] = results[0].get("fullName");
-                    console.log("Empty results");
-                }
-            },
-            error: function() {
-              response.error("Query failed. Error = " + error.message);
-            }
-          });
-    }
-
-    response.success(membersWithNames);
-});*/

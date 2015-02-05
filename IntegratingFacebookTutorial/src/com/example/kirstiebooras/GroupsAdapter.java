@@ -85,7 +85,6 @@ public class GroupsAdapter extends ArrayAdapter<ParseObject> {
             }
         });
 
-
         return memberView;
     }
 }
