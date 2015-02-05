@@ -10,6 +10,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.parse.FindCallback;
+import com.parse.FunctionCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -17,6 +19,7 @@ import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -49,15 +52,18 @@ public class TransactionsFragment extends ListFragment {
 
     private void getDataFromParse() {
         if (ParseUser.getCurrentUser() != null) {
-            ParseQuery<ParseObject> transactionQuery = ParseQuery.getQuery("Transaction");
-            transactionQuery.whereEqualTo("users", ParseUser.getCurrentUser().getEmail());
-            transactionQuery.findInBackground(new FindCallback<ParseObject>() {
-                @Override
-                public void done(List<ParseObject> parseObjects, ParseException e) {
-                    //Query should generate transaction listview using an array adapter
-                    mTransactions.clear();
-                    mTransactions.addAll(parseObjects);
-                    mAdapter.notifyDataSetChanged();
+            HashMap<String, Object> map = new HashMap<String, Object>();
+            map.put("currentUser", ParseUser.getCurrentUser().getEmail());
+            ParseCloud.callFunctionInBackground("getTransactionsDescending", map,
+                    new FunctionCallback<Object>() {
+                public void done(Object results, ParseException e) {
+                    if (e == null) {
+                        List<ParseObject> test = (List<ParseObject>) results;
+                        Log.v("TransactionFragment", String.valueOf(test.size()));
+                        mTransactions.clear();
+                        mTransactions.addAll((List<ParseObject>) results);
+                        mAdapter.notifyDataSetChanged();
+                    }
                 }
             });
         }

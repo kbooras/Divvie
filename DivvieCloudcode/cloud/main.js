@@ -53,3 +53,15 @@ Parse.Cloud.define("sendNewUserEmail", function(request, response) {
         error: function(httpResponse) { response.error("Uh oh, something went wrong"); }
     });
 });
+
+Parse.Cloud.define("getTransactionsDescending", function(request, response) {
+    var query = new Parse.Query("Transaction");
+    query.equalTo("users", request.params.currentUser);
+    query.descending("createdAt");
+    query.find({
+        success: function(results) { 
+            console.log("getTransactionsDescending found " + results.length + "results.");
+            response.success(results);
+        }
+    });
+});    
