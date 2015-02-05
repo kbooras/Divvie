@@ -20,6 +20,7 @@ import android.widget.ScrollView;
 
 import com.parse.FindCallback;
 import com.parse.FunctionCallback;
+import com.parse.GetCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -44,7 +45,6 @@ public class CreateGroupActivity extends Activity {
 
     private static final String TAG = "CreateGroupActivity";
 
-    private ScrollView mScrollView;
     private LinearLayout mLayout;
     private EditText mGroupName;
     private int mEmailViewCount;
@@ -64,7 +64,7 @@ public class CreateGroupActivity extends Activity {
 
         mResources = getResources();
 
-        mScrollView = (ScrollView) findViewById(R.id.scroll);
+        ScrollView mScrollView = (ScrollView) findViewById(R.id.scroll);
         mLayout = (LinearLayout) mScrollView.findViewById(R.id.layout);
         mGroupName = (EditText) mScrollView.findViewById(R.id.groupName);
         mAllEditTexts.put(1, (EditText) findViewById(R.id.email1));
@@ -140,18 +140,18 @@ public class CreateGroupActivity extends Activity {
 
     public void onCreateGroupClick(View v) {
         String groupNameTxt = mGroupName.getText().toString();
+        ParseUser current = ParseUser.getCurrentUser();
 
-        // Create an array of all emails added in the EditTexts + the current user.
+        // Create arrays of all emails and names added in the EditTexts + the current user.
         ArrayList<String> memberEmails = new ArrayList<String>(mAllEditTexts.size() + 1);
-        memberEmails.add(ParseUser.getCurrentUser().getEmail());
+        ArrayList<String> memberNames = new ArrayList<String>(mAllEditTexts.size() + 1);
+        memberEmails.add(current.getEmail());
 
         // Check that each email is valid and add to the array of members
-        String email;
         int i = 1;
         for (EditText text : mAllEditTexts.values()) {
-            email = text.getText().toString();
+            String email = text.getText().toString();
             if (!isValidEmail(email)){
-                // Display invalid email message
                 displayInvalidEmailMessage(i);
                 return;
             } else {
@@ -168,15 +168,29 @@ public class CreateGroupActivity extends Activity {
             return;
         }
 
-        createParseObjectGroup(groupNameTxt, memberEmails);
-        emailNewUsers(groupNameTxt, memberEmails);
+        // Add the corresponding name, or email if there is no existing user
+        // If there is no user, send new user email
+        for (String email : memberEmails) {
+            ParseQuery<ParseUser> userQuery = ParseUser.getQuery();
+            userQuery.whereEqualTo("email", email);
+            try {
+                ParseUser user = userQuery.getFirst();
+                memberNames.add(user.getString("fullName"));
+            } catch (ParseException e) {
+                memberNames.add(email);
+            }
+        }
+
+        createParseObjectGroup(groupNameTxt, memberEmails, memberNames);
         finish();
     }
 
-    private void createParseObjectGroup(String name, ArrayList<String> memberEmails){
+    private void createParseObjectGroup(String name, ArrayList<String> memberEmails,
+                                        ArrayList<String> memberNames){
         ParseObject newGroup = new ParseObject("Group");
         newGroup.put("name", name);
         newGroup.put("users", memberEmails);
+        newGroup.put("displayNames", memberNames);
         try {
             newGroup.save();
             Log.v(TAG, "Saved new group successfully!");
@@ -186,24 +200,6 @@ public class CreateGroupActivity extends Activity {
             displayCreateGroupFailedMessage();
             Log.v(TAG, "Save new group failed :(");
             e.printStackTrace();
-        }
-    }
-
-    private void emailNewUsers(final String groupName, ArrayList<String> memberEmails) {
-        for (final String email : memberEmails) {
-            ParseQuery<ParseUser> userQuery = ParseUser.getQuery();
-            userQuery.whereEqualTo("email", email);
-            userQuery.findInBackground(new FindCallback<ParseUser>() {
-                @Override
-                public void done(List<ParseUser> results, ParseException e) {
-                    if (results.size() == 0) {
-                        // If not found, send email
-                        sendNewUserEmail(groupName, email);
-                    } else {
-                        // Otherwise, continue
-                    }
-                }
-            });
         }
     }
 
