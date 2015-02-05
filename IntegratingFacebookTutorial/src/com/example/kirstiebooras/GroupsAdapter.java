@@ -54,6 +54,7 @@ public class GroupsAdapter extends ArrayAdapter<ParseObject> {
         ParseObject group = mGroups.get(position);
         if (group != null) {
             textView.setText(group.getString("name"));
+            @SuppressWarnings("unchecked")
             ArrayList<String> members = (ArrayList<String>) group.get("users");
             // Create a TextView for each member
             for (int i = 0; i < members.size(); i++) {
