@@ -9,10 +9,8 @@
         android:id="@+id/member"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
         android:textSize="20sp"
         android:textColor="#5C5C5C"/>
 
