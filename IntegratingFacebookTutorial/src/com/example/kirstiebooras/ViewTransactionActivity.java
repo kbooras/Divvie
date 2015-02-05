@@ -84,7 +84,7 @@ public class ViewTransactionActivity extends Activity {
         if (status.equals(mResources.getString(R.string.complete))) {
             transactionStatus.setTextColor(Color.parseColor("#5C5C5C"));
         } else {
-            transactionStatus.setTextColor(Color.parseColor("#3B3B3B"));
+            transactionStatus.setTextColor(Color.parseColor("#F2447E"));
         }
 
     }
@@ -114,7 +114,7 @@ public class ViewTransactionActivity extends Activity {
                         mResources.getString(R.string.transaction_group_owes_you),
                         displayName.get(i)));
                 status.setText(symbol + object.getString("splitAmount"));
-                status.setTextColor(Color.parseColor("#3B3B3B"));
+                status.setTextColor(Color.parseColor("#F2447E"));
             } else {
                 // Otherwise, display the date paid
                 member.setText(String.format(mResources.getString(R.string.person_paid_you),
