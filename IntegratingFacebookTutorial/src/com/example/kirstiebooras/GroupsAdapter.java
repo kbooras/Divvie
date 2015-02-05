@@ -40,7 +40,7 @@ public class GroupsAdapter extends ArrayAdapter<ParseObject> {
     public View getView(int position, View convertView, ViewGroup parent) {
         View rowView;
         if (convertView == null) {
-            LayoutInflater inflater = LayoutInflater.from(getContext());
+            LayoutInflater inflater = LayoutInflater.from(mContext);
             rowView = inflater.inflate(R.layout.groups_list_row, parent, false);
         } else {
             rowView = convertView;
