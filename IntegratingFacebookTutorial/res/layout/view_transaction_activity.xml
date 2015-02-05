@@ -20,8 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="22sp"
-            android:textColor="#3B3B3B"
-            android:text="Roommates owes you"/>
+            android:textColor="#3B3B3B"/>
 
         <TextView
             android:id="@+id/transactionAmount"
@@ -29,8 +28,7 @@
             android:layout_height="wrap_content"
             android:gravity="right"
             android:textSize="22sp"
-            android:textColor="#83CD6E"
-            android:text="$15.00"/>
+            android:textColor="#83CD6E"/>
 
     </LinearLayout>
 
@@ -47,16 +45,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20sp"
-            android:textColor="#3B3B3B"
-            android:text="for rent"/>
+            android:textColor="#3B3B3B"/>
 
         <TextView
             android:id="@+id/transactionStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="right"
-            android:textSize="20sp"
-            android:text="$5.00 owed"/>
+            android:textSize="20sp"/>
 
     </LinearLayout>
 
