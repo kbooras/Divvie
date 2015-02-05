@@ -121,36 +121,43 @@ public class CreateTransactionActivity extends Activity {
         groupQuery.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, ParseException e) {
-                @SuppressWarnings("unchecked")
-                ArrayList<String> members = (ArrayList<String>) parseObjects.get(0).get("users");
+                if (e == null) {
+                    @SuppressWarnings("unchecked")
+                    ArrayList<String> users = (ArrayList<String>) parseObjects.get(0).get("users");
+                    @SuppressWarnings("unchecked")
+                    ArrayList<String> displayNames =
+                            (ArrayList<String>) parseObjects.get(0).get("displayNames");
 
-                double dividedAmount = amountValue / members.size();
-                BigDecimal bd = new BigDecimal(dividedAmount);
-                String splitAmount = bd.setScale(2,BigDecimal.ROUND_FLOOR).toString();
+                    double dividedAmount = amountValue / users.size();
+                    BigDecimal bd = new BigDecimal(dividedAmount);
+                    String splitAmount = bd.setScale(2, BigDecimal.ROUND_FLOOR).toString();
 
-                createTransactionParseObject(groupId, groupName, personOwedEmail, descriptionTxt,
-                        totalAmount, members, splitAmount);
+                    createTransactionParseObject(groupId, groupName, personOwedEmail, descriptionTxt,
+                            totalAmount, users, displayNames, splitAmount);
 
-                HashMap<String, Object> map = new HashMap<String, Object>();
-                map.put("toEmail", personOwedEmail);
-                map.put("fromName", personOwed.get("fullName"));
-                map.put("groupName", groupName);
-                map.put("chargeDescription", descriptionTxt);
-                map.put("amount", splitAmount);
+                    HashMap<String, Object> map = new HashMap<String, Object>();
+                    map.put("toEmail", personOwedEmail);
+                    map.put("fromName", personOwed.get("fullName"));
+                    map.put("groupName", groupName);
+                    map.put("chargeDescription", descriptionTxt);
+                    map.put("amount", splitAmount);
 
-                for (String email : members) {
-                    sendEmails(email, map);
+                    for (String email : users) {
+                        sendEmails(email, map);
+                    }
+
+                    finish();
+                } else {
+                    Log.v(TAG, e.toString());
                 }
-
-                finish();
             }
         });
     }
 
     private void createTransactionParseObject(String groupId, String groupName,
                                               String personOwed, String descriptionTxt,
-                                              String totalAmount, ArrayList<String> members,
-                                              String splitAmount) {
+                                              String totalAmount, ArrayList<String> users,
+                                              ArrayList<String> displayNames, String splitAmount) {
         ParseObject newTransaction = new ParseObject("Transaction");
 
         newTransaction.put("groupId", groupId);
@@ -159,13 +166,14 @@ public class CreateTransactionActivity extends Activity {
         newTransaction.put("description", descriptionTxt);
         newTransaction.put("totalAmount", totalAmount);
         newTransaction.put("splitAmount", splitAmount);
-        newTransaction.put("members", members);
+        newTransaction.put("users", users);
+        newTransaction.put("displayNames", displayNames);
 
         // Set paid values and date paid values. PersonOwed is set as paid.
-        ArrayList<Integer> paid = new ArrayList<Integer>(members.size());
-        ArrayList<String> datePaid = new ArrayList<String>(members.size());
-        for (int i = 0; i < members.size(); i++) {
-            if (members.get(i).equals(personOwed)) {
+        ArrayList<Integer> paid = new ArrayList<Integer>(users.size());
+        ArrayList<String> datePaid = new ArrayList<String>(users.size());
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).equals(personOwed)) {
                 paid.add(1);
                 String month = String.valueOf(Calendar.getInstance().get(Calendar.MONTH));
                 String date = String.valueOf(Calendar.getInstance().get(Calendar.DATE));

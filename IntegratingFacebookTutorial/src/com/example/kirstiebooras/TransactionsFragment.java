@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -49,7 +50,7 @@ public class TransactionsFragment extends ListFragment {
     private void getDataFromParse() {
         if (ParseUser.getCurrentUser() != null) {
             ParseQuery<ParseObject> transactionQuery = ParseQuery.getQuery("Transaction");
-            transactionQuery.whereEqualTo("members", ParseUser.getCurrentUser().getEmail());
+            transactionQuery.whereEqualTo("users", ParseUser.getCurrentUser().getEmail());
             transactionQuery.findInBackground(new FindCallback<ParseObject>() {
                 @Override
                 public void done(List<ParseObject> parseObjects, ParseException e) {

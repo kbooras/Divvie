@@ -95,12 +95,12 @@ public class ViewTransactionActivity extends Activity {
         @SuppressWarnings("unchecked")
         ArrayList<Integer> paid = (ArrayList<Integer>) object.get("paid");
         @SuppressWarnings("unchecked")
-        ArrayList<String> members = (ArrayList<String>) object.get("members");
+        ArrayList<String> displayName = (ArrayList<String>) object.get("displayName");
         @SuppressWarnings("unchecked")
         ArrayList<String> datePaid = (ArrayList<String>) object.get("datePaid");
 
-        for (int i = 0; i < members.size(); i++) {
-            if (members.get(i).equals(ParseUser.getCurrentUser().getEmail())) {
+        for (int i = 0; i < displayName.size(); i++) {
+            if (displayName.get(i).equals(ParseUser.getCurrentUser().getEmail())) {
                 // Do not display the current user as part of the transaction
                 continue;
             }
@@ -110,35 +110,20 @@ public class ViewTransactionActivity extends Activity {
 
             if (paid.get(i) == 0) {
                 // If they have not paid, display what they owe
-                setMemberText(member, mResources.getString(R.string.transaction_group_owes_you),
-                        members.get(i));
+                member.setText(String.format(
+                        mResources.getString(R.string.transaction_group_owes_you),
+                        displayName.get(i)));
                 status.setText(symbol + object.getString("splitAmount"));
                 status.setTextColor(Color.parseColor("#3B3B3B"));
             } else {
                 // Otherwise, display the date paid
-                setMemberText(member, mResources.getString(R.string.person_paid_you),
-                        members.get(i));
+                member.setText(String.format(mResources.getString(R.string.person_paid_you),
+                        displayName.get(i)));
                 status.setText(datePaid.get(i));
                 status.setTextColor(Color.parseColor("#3B3B3B"));
             }
             mBaseLayout.addView(memberRow);
         }
-    }
-
-    // Display the member's name if they have an account, and their email otherwise
-    private void setMemberText(final TextView view, final String text, final String memberEmail) {
-        ParseQuery<ParseUser> userQuery = ParseUser.getQuery();
-        userQuery.whereEqualTo("email", memberEmail);
-        userQuery.findInBackground(new FindCallback<ParseUser>() {
-            @Override
-            public void done(List<ParseUser> results, ParseException e) {
-                if (results.size() == 0) {
-                    view.setText(String.format(text, memberEmail));
-                } else {
-                    view.setText(String.format(text, results.get(0).getString("fullName")));
-                }
-            }
-        });
     }
 
     @Override

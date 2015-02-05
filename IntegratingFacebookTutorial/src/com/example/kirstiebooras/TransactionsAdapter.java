@@ -53,44 +53,45 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
         TextView transactionStatus = (TextView) rowView.findViewById(R.id.transactionStatus);
 
         // We retrieve the object from the list
-        ParseObject group = mTransactions.get(position);
-        if (group != null) {
-            if (!group.get("personOwed").toString().equals(ParseUser.getCurrentUser().getEmail())) {
+        ParseObject transaction = mTransactions.get(position);
+        if (transaction != null) {
+            if (!transaction.getString("personOwed").equals(ParseUser.getCurrentUser().getEmail())) {
                 // User owes the group
-                setUserOwesGroupTexts(group, transactionGroup, transactionAmount);
-                setPaidStatus(transactionAmount, transactionStatus, group);
+                setUserOwesGroupTexts(transaction, transactionGroup, transactionAmount);
+                setPaidStatus(transactionAmount, transactionStatus, transaction);
                 Log.v(TAG, "User owes the group");
             } else {
                 // The group owes user
-                setGroupOwesUserTexts(group, transactionGroup, transactionAmount);
-                setAmountStillOwed(transactionStatus, group);
+                setGroupOwesUserTexts(transaction, transactionGroup, transactionAmount);
+                setAmountStillOwed(transactionStatus, transaction);
                 Log.v(TAG, "The group owes the user");
             }
 
             transactionDescription.setText(String.format(
                     res.getString(R.string.transaction_description),
-                    group.getString("description")));
+                    transaction.getString("description")));
+            Log.v(TAG, transaction.getString("description"));
 
         }
 
         return rowView;
     }
 
-    private void setUserOwesGroupTexts(ParseObject group, TextView transactionGroup,
+    private void setUserOwesGroupTexts(ParseObject transaction, TextView transactionGroup,
                                        TextView transactionAmount) {
         transactionGroup.setText(String.format(
                 res.getString(R.string.transaction_you_owe_group),
-                group.getString("groupName")));
-        transactionAmount.setText(mSymbol + group.getString("splitAmount"));
+                transaction.getString("groupName")));
+        transactionAmount.setText(mSymbol + transaction.getString("splitAmount"));
     }
 
-    private void setGroupOwesUserTexts(ParseObject group, TextView transactionGroup,
+    private void setGroupOwesUserTexts(ParseObject transaction, TextView transactionGroup,
                                        TextView transactionAmount) {
         transactionGroup.setText(String.format(
                 res.getString(R.string.transaction_group_owes_you),
-                group.getString("groupName")));
+                transaction.getString("groupName")));
         transactionAmount.setTextColor(Color.parseColor("#83CD6E"));
-        transactionAmount.setText(mSymbol + group.getString("totalAmount"));
+        transactionAmount.setText(mSymbol + transaction.getString("totalAmount"));
     }
 
     // Return string based on if user has paid or not
