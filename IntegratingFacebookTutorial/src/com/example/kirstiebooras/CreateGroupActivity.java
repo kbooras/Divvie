@@ -18,8 +18,12 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ScrollView;
 
+import com.parse.FindCallback;
+import com.parse.FunctionCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
 
@@ -27,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Activity to create a new group of users.
@@ -163,6 +169,7 @@ public class CreateGroupActivity extends Activity {
         }
 
         createParseObjectGroup(groupNameTxt, memberEmails);
+        emailNewUsers(groupNameTxt, memberEmails);
         finish();
     }
 
@@ -180,6 +187,44 @@ public class CreateGroupActivity extends Activity {
             Log.v(TAG, "Save new group failed :(");
             e.printStackTrace();
         }
+    }
+
+    private void emailNewUsers(final String groupName, ArrayList<String> memberEmails) {
+        for (final String email : memberEmails) {
+            ParseQuery<ParseUser> userQuery = ParseUser.getQuery();
+            userQuery.whereEqualTo("email", email);
+            userQuery.findInBackground(new FindCallback<ParseUser>() {
+                @Override
+                public void done(List<ParseUser> results, ParseException e) {
+                    if (results.size() == 0) {
+                        // If not found, send email
+                        sendNewUserEmail(groupName, email);
+                    } else {
+                        // Otherwise, continue
+                    }
+                }
+            });
+        }
+    }
+
+    private void sendNewUserEmail(String groupName, String email) {
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        String fromName = ParseUser.getCurrentUser().getString("fullName");
+        map.put("toEmail", email);
+        map.put("fromName", fromName);
+        map.put("groupName", groupName);
+
+        ParseCloud.callFunctionInBackground("sendNewUserEmail", map, new FunctionCallback<Object>() {
+            @Override
+            public void done(Object o, ParseException e) {
+                if (e == null) {
+                    Log.v(TAG, (String) o);
+                } else {
+                    e.printStackTrace();
+                    Log.v(TAG, "Send email error: " + e.toString());
+                }
+            }
+        });
     }
 
     private boolean isValidEmail(CharSequence emailTxt) {

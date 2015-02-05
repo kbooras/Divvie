@@ -11,13 +11,40 @@ Parse.Cloud.define("sendChargeEmail", function(request, response) {
     Mandrill.initialize('M5f77U0mhIWJxzMWFDhBkw');
     Mandrill.sendEmail({
         message: {
-        text: "You have been charged " + amount + ".",
-        subject: fromName + " has charged your group " + groupName + " for " + chargeDescription + ".",
+        subject: "You have been charged " + amount + ".",
+        text: fromName + " has charged your group " + groupName + " for " + chargeDescription + ".",
         from_email: "divvie-no-reply@parseapps.com",
         from_name: "Divvie App",
         to: [{
                 email: toEmail,
                 name: toName
+            }]
+        },
+        async: true
+    }, {
+        success: function(httpResponse) { response.success("Email sent!"); },
+        error: function(httpResponse) { response.error("Uh oh, something went wrong"); }
+    });
+});
+
+Parse.Cloud.define("sendNewUserEmail", function(request, response) {
+    var toEmail = request.params.toEmail;
+    var fromName = request.params.fromName;
+    var groupName = request.params.groupName;
+
+    var Mandrill = require('mandrill');
+    Mandrill.initialize('M5f77U0mhIWJxzMWFDhBkw');
+    Mandrill.sendEmail({
+        message: {
+        subject: fromName + " has added you to their group " + groupName ,
+        text: "You have been added to " + fromName + "'s group on Divvie. Download the Android " +
+        "Divvie app from the Google Play store to easily view, pay, create, and manage group " +
+        "charges.",
+        from_email: "divvie-no-reply@parseapps.com",
+        from_name: "Divvie App",
+        to: [{
+                email: toEmail,
+                name: toEmail
             }]
         },
         async: true
