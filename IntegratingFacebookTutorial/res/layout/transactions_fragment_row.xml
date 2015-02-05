@@ -6,7 +6,9 @@
     android:layout_height="match_parent"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-    android:paddingTop="16dp">
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:layout_gravity="center_horizontal">
 
     <TextView
         android:id="@+id/transactionGroup"
