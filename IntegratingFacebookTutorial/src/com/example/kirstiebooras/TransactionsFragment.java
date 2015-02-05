@@ -4,17 +4,14 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.parse.FindCallback;
 import com.parse.FunctionCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
 
@@ -56,15 +53,13 @@ public class TransactionsFragment extends ListFragment {
             map.put("currentUser", ParseUser.getCurrentUser().getEmail());
             ParseCloud.callFunctionInBackground("getTransactionsDescending", map,
                     new FunctionCallback<Object>() {
-                public void done(Object results, ParseException e) {
-                    if (e == null) {
-                        List<ParseObject> test = (List<ParseObject>) results;
-                        Log.v("TransactionFragment", String.valueOf(test.size()));
-                        mTransactions.clear();
-                        mTransactions.addAll((List<ParseObject>) results);
-                        mAdapter.notifyDataSetChanged();
-                    }
-                }
+                        public void done(Object results, ParseException e) {
+                            if (e == null) {
+                                mTransactions.clear();
+                                mTransactions.addAll((List<ParseObject>) results);
+                                mAdapter.notifyDataSetChanged();
+                            }
+                        }
             });
         }
     }

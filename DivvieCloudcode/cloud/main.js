@@ -64,4 +64,16 @@ Parse.Cloud.define("getTransactionsDescending", function(request, response) {
             response.success(results);
         }
     });
+}); 
+
+Parse.Cloud.define("getGroupsDescending", function(request, response) {
+    var query = new Parse.Query("Group");
+    query.equalTo("users", request.params.currentUser);
+    query.descending("createdAt");
+    query.find({
+        success: function(results) { 
+            console.log("getGroupsDescending found " + results.length + "results.");
+            response.success(results);
+        }
+    });
 });    
