@@ -70,7 +70,6 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
             transactionDescription.setText(String.format(
                     res.getString(R.string.transaction_description),
                     transaction.getString("description")));
-            Log.v(TAG, transaction.getString("description"));
 
         }
 

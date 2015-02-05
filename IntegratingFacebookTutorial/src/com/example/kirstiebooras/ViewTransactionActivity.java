@@ -95,7 +95,7 @@ public class ViewTransactionActivity extends Activity {
         @SuppressWarnings("unchecked")
         ArrayList<Integer> paid = (ArrayList<Integer>) object.get("paid");
         @SuppressWarnings("unchecked")
-        ArrayList<String> displayName = (ArrayList<String>) object.get("displayName");
+        ArrayList<String> displayName = (ArrayList<String>) object.get("displayNames");
         @SuppressWarnings("unchecked")
         ArrayList<String> datePaid = (ArrayList<String>) object.get("datePaid");
 
