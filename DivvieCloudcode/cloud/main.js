@@ -76,4 +76,72 @@ Parse.Cloud.define("getGroupsDescending", function(request, response) {
             response.success(results);
         }
     });
-});    
+});
+
+Parse.Cloud.define("registerUser", function(request, response) {
+    var email = request.params.email;
+    var password = request.params.password;
+    var fullName = request.params.fullName;
+
+    // Register the user
+    var newUser = new Parse.User();
+    newUser.set("username", email);
+    newUser.set("password", password);
+    newUser.set("email", email);
+    newUser.set("fullName", fullName);
+    newUser.signUp(null, {
+      success: function(user) {
+        // Replace email with their fullName in the displayNames array for any group they are in
+        var groupsQuery = new Parse.Query("Group");
+        groupsQuery.equalTo("displayNames", email);
+        groupsQuery.find({
+            success: function(results) { 
+                for (var i = 0; i < results.length; i++) {
+                    // Find them in the displayNames array and replace with their full name
+                    console.log("Results groups. " + results.length);
+                    var groupDisplayNames = results[i].get("displayNames");
+                    console.log("Results groups displayNames. " + groupDisplayNames.length);
+                    for (var j = 0; j < groupDisplayNames.length; j++) {
+                        if (groupDisplayNames[i] == email) {
+                            groupDisplayNames[i] = fullName;
+                        }
+                    }
+                }
+                console.log("Replaced displayName in groups.");
+
+                // Replace email with their fullName in the displayNames array for any transaction they are in
+                var transactionsQuery = new Parse.Query("Transaction");
+                transactionsQuery.equalTo("displayNames", email);
+                transactionsQuery.find({
+                    success: function(results) { 
+                        console.log("Results transactions. " + results.length);
+                        for (var i = 0; i < results.length; i++) {
+                            // Find them in the displayNames array and replace with their full name
+                            var transactionDisplayNames = results[i].get("displayNames");
+                            console.log("Results transactions displayNames. " + transactionDisplayNames.length);
+                            for (var j = 0; j < transactionDisplayNames.length; j++) {
+                                if (transactionDisplayNames[i] == email) {
+                                    transactionDisplayNames[i] = fullName;
+                                }
+                            }
+                        }
+                        console.log("Replaced displayName in transactions.");
+                        response.success();
+                    },
+                    error: function(results, error) {
+                        console.log("Transasctions Error: " + error.code + " " + error.message);
+                    }
+                });
+            },
+            error: function(results, error) {
+                console.log("Groups Error: " + error.code + " " + error.message);
+            }
+        });
+      },
+      error: function(user, error) {
+        // Show the error message somewhere and let the user try again.
+        console.log("Register Error: " + error.code + " " + error.message);
+        response.error(error.code);
+      }
+    });
+});

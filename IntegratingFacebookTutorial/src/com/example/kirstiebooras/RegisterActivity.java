@@ -9,9 +9,19 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
+import com.parse.FunctionCallback;
+import com.parse.ParseCloud;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 import com.parse.integratingfacebooktutorial.R;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Displays screen for a user to register for an account.
@@ -45,8 +55,8 @@ public class RegisterActivity extends Activity {
     }
 
     public void onRegisterClick(View v) {
-        String emailTxt = mEmail.getText().toString();
-        String fullNameTxt = mFullName.getText().toString();
+        final String emailTxt = mEmail.getText().toString();
+        final String fullNameTxt = mFullName.getText().toString();
         String passwordTxt = mPassword.getText().toString();
         String reenterPasswordTxt = mReenterPassword.getText().toString();
 
@@ -69,31 +79,58 @@ public class RegisterActivity extends Activity {
                     Toast.LENGTH_LONG).show();
         } else {
             // Save new user data into Parse.com Data Storage
-            ParseUser user = new ParseUser();
-            user.setUsername(emailTxt);
-            user.setPassword(passwordTxt);
-            user.setEmail(emailTxt);
-            user.put("fullName", fullNameTxt);
-            user.signUpInBackground(new SignUpCallback() {
-                @Override
-                public void done(com.parse.ParseException e) {
-                    if (e == null) {
-                        Log.v(TAG, "Sign up success!");
-                        Intent intent = new Intent(getApplicationContext(),
-                                HomeActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                    } else if (e.getCode() == EMAIL_TAKEN || e.getCode() == USERNAME_TAKEN) {
+            registerUser(emailTxt, passwordTxt, fullNameTxt);
+        }
+    }
+
+    private void createParseUser(final String email, String password, final String fullName) {
+        ParseUser user = new ParseUser();
+        user.setUsername(email);
+        user.setPassword(password);
+        user.setEmail(email);
+        user.put("fullName", fullName);
+        user.signUpInBackground(new SignUpCallback() {
+            @Override
+            public void done(com.parse.ParseException e) {
+                if (e == null) {
+                    Log.v(TAG, "Sign up success!");
+                    Intent intent = new Intent(getApplicationContext(),
+                            HomeActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                } else if (e.getCode() == EMAIL_TAKEN || e.getCode() == USERNAME_TAKEN) {
+                    Toast.makeText(getApplicationContext(),
+                            mResources.getString(R.string.account_email_exists_toast),
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    Log.v(TAG, "Sign up failed :( " + e.toString());
+                }
+            }
+        });
+    }
+
+    private void registerUser(final String email, final String password, final String fullName) {
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put("email", email);
+        map.put("password", password);
+        map.put("fullName", fullName);
+        ParseCloud.callFunctionInBackground("registerUser", map, new FunctionCallback<Object>() {
+            @Override
+            public void done(Object o, ParseException e) {
+                if (e == null) {
+                    Intent intent = new Intent(getApplicationContext(),
+                            HomeActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                } else if (e.getCode() == EMAIL_TAKEN || e.getCode() == USERNAME_TAKEN) {
                         Toast.makeText(getApplicationContext(),
                                 mResources.getString(R.string.account_email_exists_toast),
                                 Toast.LENGTH_LONG).show();
-                    } else {
-                        Log.v(TAG, "Sign up failed :(");
-
-                    }
+                } else {
+                        Log.v(TAG, "Sign up failed :( " + e.toString() + " " + e.getCode());
                 }
-            });
-        }
+            }
+        });
     }
 
     private boolean isValidEmail(CharSequence emailTxt) {

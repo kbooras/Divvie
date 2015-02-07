@@ -143,7 +143,7 @@ public class CreateTransactionActivity extends Activity {
                     map.put("amount", splitAmount);
 
                     for (String email : users) {
-                        sendEmails(email, map);
+                        // sendEmails(email, map);
                     }
 
                     finish();
