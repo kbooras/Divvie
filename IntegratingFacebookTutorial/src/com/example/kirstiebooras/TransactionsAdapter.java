@@ -96,13 +96,13 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
     // Return string based on if user has paid or not
     private void setPaidStatus(TextView amountText, TextView statusText, ParseObject group) {
         @SuppressWarnings("unchecked")
-        ArrayList<String> members = (ArrayList<String>) group.get("members");
+        ArrayList<String> users = (ArrayList<String>) group.get("users");
         @SuppressWarnings("unchecked")
         ArrayList<Integer> paid = (ArrayList<Integer>) group.get("paid");
 
         int i;
-        for (i = 0; i < members.size(); i++) {
-            if (members.get(i).equals(ParseUser.getCurrentUser().getEmail())) {
+        for (i = 0; i < users.size(); i++) {
+            if (users.get(i).equals(ParseUser.getCurrentUser().getEmail())) {
                 break;
             }
         }
