@@ -1,5 +1,7 @@
 
 Parse.Cloud.define("sendChargeEmail", function(request, response) {
+    var key = request.params.key;
+
     var toEmail = request.params.toEmail;
     var toName = request.params.toName;
     var fromName = request.params.fromName;
@@ -8,7 +10,7 @@ Parse.Cloud.define("sendChargeEmail", function(request, response) {
     var amount = request.params.amount;
 
     var Mandrill = require('mandrill');
-    Mandrill.initialize('M5f77U0mhIWJxzMWFDhBkw');
+    Mandrill.initialize(key);
     Mandrill.sendEmail({
         message: {
         subject: "You have been charged " + amount + ".",
@@ -28,12 +30,14 @@ Parse.Cloud.define("sendChargeEmail", function(request, response) {
 });
 
 Parse.Cloud.define("sendNewUserEmail", function(request, response) {
+    var key = request.params.key;
+
     var toEmail = request.params.toEmail;
     var fromName = request.params.fromName;
     var groupName = request.params.groupName;
 
     var Mandrill = require('mandrill');
-    Mandrill.initialize('M5f77U0mhIWJxzMWFDhBkw');
+    Mandrill.initialize(key);
     Mandrill.sendEmail({
         message: {
         subject: fromName + " has added you to their group " + groupName ,
@@ -97,13 +101,18 @@ Parse.Cloud.define("registerUser", function(request, response) {
         groupsQuery.find({
             success: function(results) { 
                 for (var i = 0; i < results.length; i++) {
+                    var result = results[i];
                     // Find them in the displayNames array and replace with their full name
-                    console.log("Results groups. " + results.length);
-                    var groupDisplayNames = results[i].get("displayNames");
-                    console.log("Results groups displayNames. " + groupDisplayNames.length);
+                    var groupDisplayNames = result.get("displayNames");
                     for (var j = 0; j < groupDisplayNames.length; j++) {
                         if (groupDisplayNames[i] == email) {
                             groupDisplayNames[i] = fullName;
+                            result.save(null, {
+                                success: function(result) {
+                                    result.set("displayNames", groupDisplayNames);
+                                    result.save();
+                                }
+                            });
                         }
                     }
                 }
@@ -114,14 +123,19 @@ Parse.Cloud.define("registerUser", function(request, response) {
                 transactionsQuery.equalTo("displayNames", email);
                 transactionsQuery.find({
                     success: function(results) { 
-                        console.log("Results transactions. " + results.length);
                         for (var i = 0; i < results.length; i++) {
+                            var result = results[i];
                             // Find them in the displayNames array and replace with their full name
-                            var transactionDisplayNames = results[i].get("displayNames");
-                            console.log("Results transactions displayNames. " + transactionDisplayNames.length);
+                            var transactionDisplayNames = result.get("displayNames");
                             for (var j = 0; j < transactionDisplayNames.length; j++) {
                                 if (transactionDisplayNames[i] == email) {
                                     transactionDisplayNames[i] = fullName;
+                                    result.save(null, {
+                                        success: function(result) {
+                                            result.set("displayNames", groupDisplayNames);
+                                            result.save();
+                                        }
+                                    });
                                 }
                             }
                         }

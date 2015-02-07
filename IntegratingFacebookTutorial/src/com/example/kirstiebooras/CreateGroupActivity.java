@@ -206,6 +206,7 @@ public class CreateGroupActivity extends Activity {
     private void sendNewUserEmail(String groupName, String email) {
         HashMap<String, Object> map = new HashMap<String, Object>();
         String fromName = ParseUser.getCurrentUser().getString("fullName");
+        map.put("key", getString(R.string.MANDRILL_API_KEY));
         map.put("toEmail", email);
         map.put("fromName", fromName);
         map.put("groupName", groupName);

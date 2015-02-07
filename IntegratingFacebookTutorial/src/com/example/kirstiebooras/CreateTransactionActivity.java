@@ -198,6 +198,7 @@ public class CreateTransactionActivity extends Activity {
     }
 
     private void sendEmails(String email, HashMap<String, Object> map) {
+        map.put("key", getString(R.string.MANDRILL_API_KEY));
         map.put("toEmail", email);
         ParseCloud.callFunctionInBackground("sendChargeEmail", map, new FunctionCallback<Object>() {
             @Override
