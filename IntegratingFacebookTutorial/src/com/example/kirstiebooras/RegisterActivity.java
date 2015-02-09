@@ -83,7 +83,7 @@ public class RegisterActivity extends Activity {
         }
     }
 
-    private void createParseUser(final String email, String password, final String fullName) {
+    private void createParseUser(final String email, final String password, final String fullName) {
         ParseUser user = new ParseUser();
         user.setUsername(email);
         user.setPassword(password);
@@ -118,11 +118,18 @@ public class RegisterActivity extends Activity {
             @Override
             public void done(Object o, ParseException e) {
                 if (e == null) {
+                    Log.v(TAG, "no error ");
+                    try {
+                        ParseUser.logIn(email, password);
+                    } catch (ParseException e2) {
+                        Log.v(TAG, e2.toString());
+                    }
                     Intent intent = new Intent(getApplicationContext(),
                             HomeActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                 } else if (e.getCode() == EMAIL_TAKEN || e.getCode() == USERNAME_TAKEN) {
+                    Log.v(TAG, "error code " + e.toString());
                         Toast.makeText(getApplicationContext(),
                                 mResources.getString(R.string.account_email_exists_toast),
                                 Toast.LENGTH_LONG).show();
