@@ -25,7 +25,6 @@ import com.parse.integratingfacebooktutorial.R;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -172,8 +171,8 @@ public class CreateTransactionActivity extends Activity {
         // Set paid values and date paid values. PersonOwed is set as paid.
         ArrayList<Integer> paid = new ArrayList<Integer>(users.size());
         ArrayList<String> datePaid = new ArrayList<String>(users.size());
-        for (int i = 0; i < users.size(); i++) {
-            if (users.get(i).equals(personOwed)) {
+        for (String user : users) {
+            if (user.equals(personOwed)) {
                 paid.add(1);
                 String month = String.valueOf(Calendar.getInstance().get(Calendar.MONTH));
                 String date = String.valueOf(Calendar.getInstance().get(Calendar.DATE));

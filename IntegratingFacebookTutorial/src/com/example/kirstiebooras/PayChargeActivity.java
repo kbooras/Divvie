@@ -22,7 +22,6 @@ import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Currency;
 import java.util.List;

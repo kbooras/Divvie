@@ -48,7 +48,7 @@ public class CreateGroupActivity extends Activity {
     private LinearLayout mLayout;
     private EditText mGroupName;
     private int mEmailViewCount;
-    private HashMap<Integer, EditText> mAllEditTexts = new HashMap<Integer, EditText>();
+    private HashMap<Integer, EditText> mAllEditTexts;
     private Resources mResources;
     private static final int LAYOUT_ID_CONSTANT = 1000;
     private static final int EDIT_TEXT_ID_CONSTANT = 2000;
@@ -67,6 +67,7 @@ public class CreateGroupActivity extends Activity {
         ScrollView mScrollView = (ScrollView) findViewById(R.id.scroll);
         mLayout = (LinearLayout) mScrollView.findViewById(R.id.layout);
         mGroupName = (EditText) mScrollView.findViewById(R.id.groupName);
+        mAllEditTexts = new HashMap<Integer, EditText>();
         mAllEditTexts.put(1, (EditText) findViewById(R.id.email1));
 
         mEmailViewCount = 1;

@@ -9,19 +9,13 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.parse.FindCallback;
 import com.parse.FunctionCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.SignUpCallback;
 import com.parse.integratingfacebooktutorial.R;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Displays screen for a user to register for an account.
@@ -81,32 +75,6 @@ public class RegisterActivity extends Activity {
             // Save new user data into Parse.com Data Storage
             registerUser(emailTxt, passwordTxt, fullNameTxt);
         }
-    }
-
-    private void createParseUser(final String email, final String password, final String fullName) {
-        ParseUser user = new ParseUser();
-        user.setUsername(email);
-        user.setPassword(password);
-        user.setEmail(email);
-        user.put("fullName", fullName);
-        user.signUpInBackground(new SignUpCallback() {
-            @Override
-            public void done(com.parse.ParseException e) {
-                if (e == null) {
-                    Log.v(TAG, "Sign up success!");
-                    Intent intent = new Intent(getApplicationContext(),
-                            HomeActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                } else if (e.getCode() == EMAIL_TAKEN || e.getCode() == USERNAME_TAKEN) {
-                    Toast.makeText(getApplicationContext(),
-                            mResources.getString(R.string.account_email_exists_toast),
-                            Toast.LENGTH_LONG).show();
-                } else {
-                    Log.v(TAG, "Sign up failed :( " + e.toString());
-                }
-            }
-        });
     }
 
     private void registerUser(final String email, final String password, final String fullName) {
