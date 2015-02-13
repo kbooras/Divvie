@@ -143,7 +143,9 @@ public class CreateTransactionActivity extends Activity {
                     map.put("amount", splitAmount);
 
                     for (String email : users) {
-                        // sendEmails(email, map);
+                        if (!email.equals(personOwedEmail)) {
+                            // sendEmails(email, map);
+                        }
                     }
 
                     finish();
