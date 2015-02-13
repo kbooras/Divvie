@@ -107,8 +107,8 @@ public class CreateGroupActivity extends Activity {
         mEmailViewCount++;
         Log.v(TAG, "Create email view " + mEmailViewCount);
 
-        final LinearLayout ll = new LinearLayout(this);
-        final LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+        LinearLayout ll = new LinearLayout(this);
+        LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT);
         params.gravity = Gravity.CENTER_HORIZONTAL;
         ll.setLayoutParams(params);
