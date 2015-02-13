@@ -49,7 +49,7 @@ public class RegisterActivity extends Activity {
     }
 
     public void onRegisterClick(View v) {
-        final String emailTxt = mEmail.getText().toString();
+        final String emailTxt = mEmail.getText().toString().toLowerCase();
         final String fullNameTxt = mFullName.getText().toString();
         String passwordTxt = mPassword.getText().toString();
         String reenterPasswordTxt = mReenterPassword.getText().toString();

@@ -2,7 +2,6 @@ package com.example.kirstiebooras;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -18,9 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ScrollView;
 
-import com.parse.FindCallback;
 import com.parse.FunctionCallback;
-import com.parse.GetCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -29,11 +26,8 @@ import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * Activity to create a new group of users.
@@ -151,7 +145,7 @@ public class CreateGroupActivity extends Activity {
         // Check that each email is valid and add to the array of members
         int i = 1;
         for (EditText text : mAllEditTexts.values()) {
-            String email = text.getText().toString();
+            String email = text.getText().toString().toLowerCase();
             if (!isValidEmail(email)){
                 displayInvalidEmailMessage(i);
                 return;

@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.FunctionCallback;
+import com.parse.GetCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -84,8 +85,9 @@ public class CreateTransactionActivity extends Activity {
     }
 
     public void onSplitBillClick(View view) {
-        final ParseUser personOwed = ParseUser.getCurrentUser();
+        ParseUser personOwed = ParseUser.getCurrentUser();
         final String personOwedEmail = personOwed.getEmail();
+        final String personOwedName = personOwed.getString("fullName");
 
         ParseObject group = (ParseObject) mSpinner.getSelectedItem();
         final String groupId = group.getObjectId();
@@ -114,18 +116,17 @@ public class CreateTransactionActivity extends Activity {
         }
         final String totalAmount = String.format("%.2f", amountValue);
 
-
         ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Group");
         groupQuery.whereEqualTo("objectId", groupId);
-        groupQuery.findInBackground(new FindCallback<ParseObject>() {
+        groupQuery.getFirstInBackground(new GetCallback<ParseObject>() {
             @Override
-            public void done(List<ParseObject> parseObjects, ParseException e) {
+            public void done(ParseObject parseObject, ParseException e) {
                 if (e == null) {
                     @SuppressWarnings("unchecked")
-                    ArrayList<String> users = (ArrayList<String>) parseObjects.get(0).get("users");
+                    ArrayList<String> users = (ArrayList<String>) parseObject.get("users");
                     @SuppressWarnings("unchecked")
                     ArrayList<String> displayNames =
-                            (ArrayList<String>) parseObjects.get(0).get("displayNames");
+                            (ArrayList<String>) parseObject.get("displayNames");
 
                     double dividedAmount = amountValue / users.size();
                     BigDecimal bd = new BigDecimal(dividedAmount);
@@ -136,7 +137,7 @@ public class CreateTransactionActivity extends Activity {
 
                     HashMap<String, Object> map = new HashMap<String, Object>();
                     map.put("toEmail", personOwedEmail);
-                    map.put("fromName", personOwed.get("fullName"));
+                    map.put("fromName", personOwedName);
                     map.put("groupName", groupName);
                     map.put("chargeDescription", descriptionTxt);
                     map.put("amount", splitAmount);

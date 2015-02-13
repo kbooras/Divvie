@@ -43,7 +43,7 @@ public class SigninActivity extends Activity {
     }
 
     public void onSignInClick(View v) {
-        String emailTxt = mEmail.getText().toString();
+        String emailTxt = mEmail.getText().toString().toLowerCase();
         String passwordTxt = mPassword.getText().toString();
 
         if (emailTxt.equals("") || passwordTxt.equals("")) {
