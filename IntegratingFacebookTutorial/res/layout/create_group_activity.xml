@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginLeft="16dp"
-            android:textColor="#62C8BD"
+            android:textColor="@color/teal"
             android:textSize="30sp"
             android:text="@string/create_new_group_text"/>
 

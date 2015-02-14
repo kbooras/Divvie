@@ -2,7 +2,6 @@ package com.example.kirstiebooras;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,13 +26,13 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
     private static final String TAG = "TransactionsAdapter";
 
     private final ArrayList<ParseObject> mTransactions;
-    private Resources res;
+    private Resources mResources;
     private String mSymbol;
 
     public TransactionsAdapter(Context context, ArrayList<ParseObject> transactions) {
         super(context, R.layout.transactions_fragment_row, transactions);
         mTransactions = transactions;
-        res = context.getResources();
+        mResources = context.getResources();
         mSymbol = Currency.getInstance(Locale.getDefault()).getSymbol();
     }
 
@@ -68,7 +67,7 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
             }
 
             transactionDescription.setText(String.format(
-                    res.getString(R.string.transaction_description),
+                    mResources.getString(R.string.transaction_description),
                     transaction.getString("description")));
 
         }
@@ -79,7 +78,7 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
     private void setUserOwesGroupTexts(ParseObject transaction, TextView transactionGroup,
                                        TextView transactionAmount) {
         transactionGroup.setText(String.format(
-                res.getString(R.string.transaction_you_owe_group),
+                mResources.getString(R.string.transaction_you_owe_group),
                 transaction.getString("groupName")));
         transactionAmount.setText(mSymbol + transaction.getString("splitAmount"));
     }
@@ -87,9 +86,9 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
     private void setGroupOwesUserTexts(ParseObject transaction, TextView transactionGroup,
                                        TextView transactionAmount) {
         transactionGroup.setText(String.format(
-                res.getString(R.string.transaction_group_owes_you),
+                mResources.getString(R.string.transaction_group_owes_you),
                 transaction.getString("groupName")));
-        transactionAmount.setTextColor(Color.parseColor("#83CD6E"));
+        transactionAmount.setTextColor(mResources.getColor(R.color.green));
         transactionAmount.setText(mSymbol + transaction.getString("totalAmount"));
     }
 
@@ -108,13 +107,13 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
         }
 
         if (paid.get(i) == 1) {
-            statusText.setText(res.getString(R.string.paid));
-            statusText.setTextColor(Color.parseColor("#5C5C5C"));
-            amountText.setTextColor(Color.parseColor("#3B3B3B"));
+            statusText.setText(mResources.getString(R.string.paid));
+            statusText.setTextColor(mResources.getColor(R.color.light_grey));
+            amountText.setTextColor(mResources.getColor(R.color.dark_grey));
         } else {
-            statusText.setText(res.getString(R.string.pay_now));
-            statusText.setTextColor(Color.parseColor("#5C5C5C"));
-            amountText.setTextColor(Color.parseColor("#F2447E"));
+            statusText.setText(mResources.getString(R.string.pay_now));
+            statusText.setTextColor(mResources.getColor(R.color.light_grey));
+            amountText.setTextColor(mResources.getColor(R.color.pink));
         }
     }
 
@@ -132,12 +131,12 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
         }
 
         if (notPaid == 0) {
-            statusText.setText(res.getString(R.string.complete));
-            statusText.setTextColor(Color.parseColor("#5C5C5C"));
+            statusText.setText(mResources.getString(R.string.complete));
+            statusText.setTextColor(mResources.getColor(R.color.light_grey));
         } else {
-            statusText.setText(String.format(res.getString(R.string.transaction_amount_owed),
+            statusText.setText(String.format(mResources.getString(R.string.transaction_amount_owed),
                     mSymbol, String.format("%.2f", splitAmount * notPaid)));
-            statusText.setTextColor(Color.parseColor("#F2447E"));
+            statusText.setTextColor(mResources.getColor(R.color.pink));
         }
     }
 

@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="22sp"
-            android:textColor="#3B3B3B"/>
+            android:textColor="@color/dark_grey"/>
 
         <TextView
             android:id="@+id/transactionAmount"
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:gravity="right"
             android:textSize="22sp"
-            android:textColor="#83CD6E"/>
+            android:textColor="@color/green"/>
 
     </LinearLayout>
 
@@ -45,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20sp"
-            android:textColor="#3B3B3B"/>
+            android:textColor="@color/dark_grey"/>
 
         <TextView
             android:id="@+id/transactionStatus"

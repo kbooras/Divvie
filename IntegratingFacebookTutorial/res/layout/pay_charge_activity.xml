@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:textColor="#3B3B3B"
+        android:textColor="@color/dark_grey"
         android:textSize="22sp"/>
 
     <TextView
@@ -22,7 +22,7 @@
         android:layout_toRightOf="@+id/payPerson"
         android:layout_marginTop="16dp"
         android:gravity="right"
-        android:textColor="#F2447E"
+        android:textColor="@color/pink"
         android:textSize="22sp"/>
 
     <TextView
@@ -33,7 +33,7 @@
         android:layout_marginTop="20dp"
         android:gravity="center_horizontal"
         android:textSize="22sp"
-        android:textColor="#3B3B3B"
+        android:textColor="@color/dark_grey"
         android:text="@string/choose_payment_method"/>
 
     <Button
@@ -44,7 +44,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:background="@drawable/round_button"
-        android:textColor="#ffffff"
+        android:textColor="@color/white"
         android:text="@string/record_cash_payment"
         android:onClick="cashPaymentClick"/>
 
@@ -55,7 +55,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="11dp"
         android:background="@drawable/round_button"
-        android:textColor="#ffffff"
+        android:textColor="@color/white"
         android:text="Pay with Venmo"/>
 
 </RelativeLayout>

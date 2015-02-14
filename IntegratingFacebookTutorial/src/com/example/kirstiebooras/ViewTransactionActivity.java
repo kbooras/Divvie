@@ -3,7 +3,6 @@ package com.example.kirstiebooras;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
@@ -82,9 +81,9 @@ public class ViewTransactionActivity extends Activity {
         String status = mIntent.getStringExtra("transactionStatus");
         transactionStatus.setText(status);
         if (status.equals(mResources.getString(R.string.complete))) {
-            transactionStatus.setTextColor(Color.parseColor("#5C5C5C"));
+            transactionStatus.setTextColor(mResources.getColor(R.color.light_grey));
         } else {
-            transactionStatus.setTextColor(Color.parseColor("#F2447E"));
+            transactionStatus.setTextColor(mResources.getColor(R.color.pink));
         }
 
     }
@@ -114,13 +113,13 @@ public class ViewTransactionActivity extends Activity {
                         mResources.getString(R.string.transaction_group_owes_you),
                         displayName.get(i)));
                 status.setText(symbol + object.getString("splitAmount"));
-                status.setTextColor(Color.parseColor("#F2447E"));
+                status.setTextColor(mResources.getColor(R.color.pink));
             } else {
                 // Otherwise, display the date paid
                 member.setText(String.format(mResources.getString(R.string.person_paid_you),
                         displayName.get(i)));
                 status.setText(datePaid.get(i));
-                status.setTextColor(Color.parseColor("#3B3B3B"));
+                status.setTextColor(mResources.getColor(R.color.dark_grey));
             }
             mBaseLayout.addView(memberRow);
         }
