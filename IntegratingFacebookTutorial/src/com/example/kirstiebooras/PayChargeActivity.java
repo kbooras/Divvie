@@ -45,15 +45,15 @@ public class PayChargeActivity extends Activity {
         mTransactionObjectId = getIntent().getStringExtra("parseObjectId");
 
         ParseQuery<ParseObject> transactionQuery = ParseQuery.getQuery("Transaction");
-        transactionQuery.whereEqualTo("objectId", mTransactionObjectId);
+        transactionQuery.whereEqualTo(Constants.OBJECT_ID, mTransactionObjectId);
         transactionQuery.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, ParseException e) {
                 // Should fill in the text in the view
                 setContentView(R.layout.pay_charge_activity);
                 ParseObject object = parseObjects.get(0);
-                setViewText(object.getString("personOwed"),
-                        object.getString("splitAmount"));
+                setViewText(object.getString(Constants.TRANSACTION_PERSON_OWED),
+                        object.getString(Constants.TRANSACTION_SPLIT_AMOUNT));
             }
         });
     }
@@ -63,14 +63,14 @@ public class PayChargeActivity extends Activity {
         final TextView payAmount = (TextView) findViewById(R.id.payAmount);
 
         ParseQuery<ParseUser> userQuery = ParseUser.getQuery();
-        userQuery.whereEqualTo("email", personOwed);
+        userQuery.whereEqualTo(Constants.USER_EMAIL, personOwed);
         userQuery.findInBackground(new FindCallback<ParseUser>() {
             @Override
             public void done(List<ParseUser> results, ParseException e) {
                 // Should fill in the text in the view
                 ParseObject email = results.get(0);
                 payPerson.setText(String.format(getResources().getString(R.string.pay_person),
-                        email.getString("fullName")));
+                        email.getString(Constants.USER_FULL_NAME)));
                 payAmount.setText(Currency.getInstance(Locale.getDefault()).getSymbol() + splitAmount);
             }
         });
@@ -124,11 +124,14 @@ public class PayChargeActivity extends Activity {
             public void done(ParseObject parseObject, ParseException e) {
                 if (e == null) {
                     @SuppressWarnings("unchecked")
-                    ArrayList<String> members = (ArrayList<String>) parseObject.get("members");
+                    ArrayList<String> members =
+                            (ArrayList<String>) parseObject.get(Constants.GROUP_MEMBERS);
                     @SuppressWarnings("unchecked")
-                    ArrayList<Integer> paid = (ArrayList<Integer>) parseObject.get("paid");
+                    ArrayList<Integer> paid =
+                            (ArrayList<Integer>) parseObject.get(Constants.TRANSACTION_PAID);
                     @SuppressWarnings("unchecked")
-                    ArrayList<String> datePaid = (ArrayList<String>) parseObject.get("datePaid");
+                    ArrayList<String> datePaid =
+                            (ArrayList<String>) parseObject.get(Constants.TRANSACTION_DATE_PAID);
 
                     String currentUser = ParseUser.getCurrentUser().getEmail();
                     boolean complete = true;
@@ -146,10 +149,10 @@ public class PayChargeActivity extends Activity {
                         }
                     }
 
-                    parseObject.put("datePaid", datePaid);
-                    parseObject.put("paid", paid);
+                    parseObject.put(Constants.TRANSACTION_PAID, paid);
+                    parseObject.put(Constants.TRANSACTION_DATE_PAID, datePaid);
                     if (complete) {
-                        parseObject.put("complete", true);
+                        parseObject.put(Constants.TRANSACTION_COMPLETE, true);
                         Log.v(TAG, "Charge completed");
                     }
                     parseObject.saveInBackground();

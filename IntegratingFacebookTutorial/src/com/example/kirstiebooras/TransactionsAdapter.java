@@ -54,7 +54,8 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
         // We retrieve the object from the list
         ParseObject transaction = mTransactions.get(position);
         if (transaction != null) {
-            if (!transaction.getString("personOwed").equals(ParseUser.getCurrentUser().getEmail())) {
+            if (!transaction.getString(Constants.TRANSACTION_PERSON_OWED)
+                    .equals(ParseUser.getCurrentUser().getEmail())) {
                 // User owes the group
                 setUserOwesGroupTexts(transaction, transactionGroup, transactionAmount);
                 setPaidStatus(transactionAmount, transactionStatus, transaction);
@@ -68,7 +69,7 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
 
             transactionDescription.setText(String.format(
                     mResources.getString(R.string.transaction_description),
-                    transaction.getString("description")));
+                    transaction.getString(Constants.TRANSACTION_DESCRIPTION)));
 
         }
 
@@ -79,29 +80,31 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
                                        TextView transactionAmount) {
         transactionGroup.setText(String.format(
                 mResources.getString(R.string.transaction_you_owe_group),
-                transaction.getString("groupName")));
-        transactionAmount.setText(mSymbol + transaction.getString("splitAmount"));
+                transaction.getString(Constants.TRANSACTION_GROUP_NAME)));
+        transactionAmount.setText(mSymbol +
+                transaction.getString(Constants.TRANSACTION_SPLIT_AMOUNT));
     }
 
     private void setGroupOwesUserTexts(ParseObject transaction, TextView transactionGroup,
                                        TextView transactionAmount) {
         transactionGroup.setText(String.format(
                 mResources.getString(R.string.transaction_group_owes_you),
-                transaction.getString("groupName")));
+                transaction.getString(Constants.TRANSACTION_GROUP_NAME)));
         transactionAmount.setTextColor(mResources.getColor(R.color.green));
-        transactionAmount.setText(mSymbol + transaction.getString("totalAmount"));
+        transactionAmount.setText(mSymbol +
+                transaction.getString(Constants.TRANSACTION_TOTAL_AMOUNT));
     }
 
     // Return string based on if user has paid or not
     private void setPaidStatus(TextView amountText, TextView statusText, ParseObject group) {
         @SuppressWarnings("unchecked")
-        ArrayList<String> users = (ArrayList<String>) group.get("users");
+        ArrayList<String> members = (ArrayList<String>) group.get(Constants.GROUP_MEMBERS);
         @SuppressWarnings("unchecked")
-        ArrayList<Integer> paid = (ArrayList<Integer>) group.get("paid");
+        ArrayList<Integer> paid = (ArrayList<Integer>) group.get(Constants.TRANSACTION_PAID);
 
         int i;
-        for (i = 0; i < users.size(); i++) {
-            if (users.get(i).equals(ParseUser.getCurrentUser().getEmail())) {
+        for (i = 0; i < members.size(); i++) {
+            if (members.get(i).equals(ParseUser.getCurrentUser().getEmail())) {
                 break;
             }
         }
@@ -119,9 +122,9 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
 
     // Return string based on if transaction is complete or not
     private void setAmountStillOwed(TextView statusText, ParseObject group) {
-        double splitAmount = Double.valueOf(group.getString("splitAmount"));
+        double splitAmount = Double.valueOf(group.getString(Constants.TRANSACTION_SPLIT_AMOUNT));
         @SuppressWarnings("unchecked")
-        ArrayList<Integer> paid = (ArrayList<Integer>) group.get("paid");
+        ArrayList<Integer> paid = (ArrayList<Integer>) group.get(Constants.TRANSACTION_PAID);
         int notPaid = 0;
 
         for (Integer p : paid) {

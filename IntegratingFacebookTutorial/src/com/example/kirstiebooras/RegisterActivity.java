@@ -79,9 +79,9 @@ public class RegisterActivity extends Activity {
 
     private void registerUser(final String email, final String password, final String fullName) {
         HashMap<String, Object> map = new HashMap<String, Object>();
-        map.put("email", email);
+        map.put(Constants.USER_EMAIL, email);
         map.put("password", password);
-        map.put("fullName", fullName);
+        map.put(Constants.USER_FULL_NAME, fullName);
         ParseCloud.callFunctionInBackground("registerUser", map, new FunctionCallback<Object>() {
             @Override
             public void done(Object o, ParseException e) {

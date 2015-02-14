@@ -167,10 +167,10 @@ public class CreateGroupActivity extends Activity {
         // If there is no user, send new user email
         for (String email : memberEmails) {
             ParseQuery<ParseUser> userQuery = ParseUser.getQuery();
-            userQuery.whereEqualTo("email", email);
+            userQuery.whereEqualTo(Constants.USER_EMAIL, email);
             try {
                 ParseUser user = userQuery.getFirst();
-                memberNames.add(user.getString("fullName"));
+                memberNames.add(user.getString(Constants.USER_FULL_NAME));
             } catch (ParseException e) {
                 memberNames.add(email);
             }
@@ -183,9 +183,9 @@ public class CreateGroupActivity extends Activity {
     private void createParseObjectGroup(String name, ArrayList<String> memberEmails,
                                         ArrayList<String> memberNames){
         ParseObject newGroup = new ParseObject("Group");
-        newGroup.put("name", name);
-        newGroup.put("users", memberEmails);
-        newGroup.put("displayNames", memberNames);
+        newGroup.put(Constants.GROUP_NAME, name);
+        newGroup.put(Constants.GROUP_MEMBERS, memberEmails);
+        newGroup.put(Constants.GROUP_DISPLAY_NAMES, memberNames);
         try {
             newGroup.save();
             Log.v(TAG, "Saved new group successfully!");

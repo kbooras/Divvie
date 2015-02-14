@@ -46,9 +46,10 @@ public class GroupsAdapter extends ArrayAdapter<ParseObject> {
         // We retrieve the object from the list
         ParseObject group = mGroups.get(position);
         if (group != null) {
-            textView.setText(group.getString("name"));
+            textView.setText(group.getString(Constants.GROUP_NAME));
             @SuppressWarnings("unchecked")
-            ArrayList<String> displayNames = (ArrayList<String>) group.get("displayNames");
+            ArrayList<String> displayNames =
+                    (ArrayList<String>) group.get(Constants.GROUP_DISPLAY_NAMES);
             // Create a TextView for each member
             for (int i = 0; i < displayNames.size(); i++) {
                membersLayout.addView(createMemberView(displayNames.get(i), i));

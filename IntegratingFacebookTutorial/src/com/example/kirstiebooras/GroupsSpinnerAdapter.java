@@ -45,7 +45,7 @@ public class GroupsSpinnerAdapter extends ArrayAdapter<ParseObject> {
         }
 
         TextView group = (TextView) convertView.findViewById(R.id.groupTextView);
-        group.setText(mGroups.get(position).getString("name"));
+        group.setText(mGroups.get(position).getString(Constants.GROUP_NAME));
 
         return convertView;
     }

@@ -87,11 +87,11 @@ public class CreateTransactionActivity extends Activity {
     public void onSplitBillClick(View view) {
         ParseUser personOwed = ParseUser.getCurrentUser();
         final String personOwedEmail = personOwed.getEmail();
-        final String personOwedName = personOwed.getString("fullName");
+        final String personOwedName = personOwed.getString(Constants.USER_FULL_NAME);
 
         ParseObject group = (ParseObject) mSpinner.getSelectedItem();
         final String groupId = group.getObjectId();
-        final String groupName = group.getString("name");
+        final String groupName = group.getString(Constants.GROUP_NAME);
 
         EditText description = (EditText) findViewById(R.id.description);
         final String descriptionTxt = description.getText().toString();
@@ -117,23 +117,24 @@ public class CreateTransactionActivity extends Activity {
         final String totalAmount = String.format("%.2f", amountValue);
 
         ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Group");
-        groupQuery.whereEqualTo("objectId", groupId);
+        groupQuery.whereEqualTo(Constants.OBJECT_ID, groupId);
         groupQuery.getFirstInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject parseObject, ParseException e) {
                 if (e == null) {
                     @SuppressWarnings("unchecked")
-                    ArrayList<String> users = (ArrayList<String>) parseObject.get("users");
+                    ArrayList<String> members =
+                            (ArrayList<String>) parseObject.get(Constants.GROUP_MEMBERS);
                     @SuppressWarnings("unchecked")
                     ArrayList<String> displayNames =
-                            (ArrayList<String>) parseObject.get("displayNames");
+                            (ArrayList<String>) parseObject.get(Constants.GROUP_DISPLAY_NAMES);
 
-                    double dividedAmount = amountValue / users.size();
+                    double dividedAmount = amountValue / members.size();
                     BigDecimal bd = new BigDecimal(dividedAmount);
                     String splitAmount = bd.setScale(2, BigDecimal.ROUND_FLOOR).toString();
 
                     createTransactionParseObject(groupId, groupName, personOwedEmail, descriptionTxt,
-                            totalAmount, users, displayNames, splitAmount);
+                            totalAmount, members, displayNames, splitAmount);
 
                     HashMap<String, Object> map = new HashMap<String, Object>();
                     map.put("toEmail", personOwedEmail);
@@ -142,7 +143,7 @@ public class CreateTransactionActivity extends Activity {
                     map.put("chargeDescription", descriptionTxt);
                     map.put("amount", splitAmount);
 
-                    for (String email : users) {
+                    for (String email : members) {
                         if (!email.equals(personOwedEmail)) {
                             // sendEmails(email, map);
                         }
@@ -158,23 +159,23 @@ public class CreateTransactionActivity extends Activity {
 
     private void createTransactionParseObject(String groupId, String groupName,
                                               String personOwed, String descriptionTxt,
-                                              String totalAmount, ArrayList<String> users,
+                                              String totalAmount, ArrayList<String> members,
                                               ArrayList<String> displayNames, String splitAmount) {
         ParseObject newTransaction = new ParseObject("Transaction");
 
-        newTransaction.put("groupId", groupId);
-        newTransaction.put("groupName", groupName);
-        newTransaction.put("personOwed", personOwed);
-        newTransaction.put("description", descriptionTxt);
-        newTransaction.put("totalAmount", totalAmount);
-        newTransaction.put("splitAmount", splitAmount);
-        newTransaction.put("users", users);
-        newTransaction.put("displayNames", displayNames);
+        newTransaction.put(Constants.TRANSACTION_GROUP_ID, groupId);
+        newTransaction.put(Constants.TRANSACTION_GROUP_NAME, groupName);
+        newTransaction.put(Constants.TRANSACTION_PERSON_OWED, personOwed);
+        newTransaction.put(Constants.TRANSACTION_DESCRIPTION, descriptionTxt);
+        newTransaction.put(Constants.TRANSACTION_TOTAL_AMOUNT, totalAmount);
+        newTransaction.put(Constants.TRANSACTION_SPLIT_AMOUNT, splitAmount);
+        newTransaction.put(Constants.GROUP_MEMBERS, members);
+        newTransaction.put(Constants.GROUP_DISPLAY_NAMES, displayNames);
 
         // Set paid values and date paid values. PersonOwed is set as paid.
-        ArrayList<Integer> paid = new ArrayList<Integer>(users.size());
-        ArrayList<String> datePaid = new ArrayList<String>(users.size());
-        for (String user : users) {
+        ArrayList<Integer> paid = new ArrayList<Integer>(members.size());
+        ArrayList<String> datePaid = new ArrayList<String>(members.size());
+        for (String user : members) {
             if (user.equals(personOwed)) {
                 paid.add(1);
                 String month = String.valueOf(Calendar.getInstance().get(Calendar.MONTH));
@@ -186,9 +187,9 @@ public class CreateTransactionActivity extends Activity {
             }
         }
 
-        newTransaction.put("paid", paid);
-        newTransaction.put("datePaid", datePaid);
-        newTransaction.put("complete", false);
+        newTransaction.put(Constants.TRANSACTION_PAID, paid);
+        newTransaction.put(Constants.TRANSACTION_DATE_PAID, datePaid);
+        newTransaction.put(Constants.TRANSACTION_COMPLETE, false);
         try {
             newTransaction.save();
         } catch (ParseException e) {
@@ -226,7 +227,7 @@ public class CreateTransactionActivity extends Activity {
         if (ParseUser.getCurrentUser() != null) {
             Log.v("current: ", ParseUser.getCurrentUser().getEmail());
             ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Group");
-            groupQuery.whereEqualTo("users", ParseUser.getCurrentUser().getEmail());
+            groupQuery.whereEqualTo(Constants.GROUP_MEMBERS, ParseUser.getCurrentUser().getEmail());
             groupQuery.findInBackground(new FindCallback<ParseObject>() {
                 @Override
                 public void done(List<ParseObject> parseObjects, ParseException e) {

@@ -52,7 +52,7 @@ public class ViewTransactionActivity extends Activity {
         String transactionId = mIntent.getStringExtra("parseObjectId");
 
         ParseQuery<ParseObject> transactionQuery = ParseQuery.getQuery("Transaction");
-        transactionQuery.whereEqualTo("objectId", transactionId);
+        transactionQuery.whereEqualTo(Constants.OBJECT_ID, transactionId);
         transactionQuery.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, ParseException e) {
@@ -73,11 +73,11 @@ public class ViewTransactionActivity extends Activity {
         TextView transactionStatus = (TextView) layout2.findViewById(R.id.transactionStatus);
 
         group.setText(String.format(mResources.getString(R.string.transaction_group_owes_you),
-                object.getString("groupName")));
-        transactionAmount.setText(symbol + object.getString("totalAmount"));
+                object.getString(Constants.TRANSACTION_GROUP_NAME)));
+        transactionAmount.setText(symbol + object.getString(Constants.TRANSACTION_TOTAL_AMOUNT));
         transactionDescription.setText(String.format(
                 mResources.getString(R.string.transaction_description),
-                object.getString("description")));
+                object.getString(Constants.TRANSACTION_DESCRIPTION)));
         String status = mIntent.getStringExtra("transactionStatus");
         transactionStatus.setText(status);
         if (status.equals(mResources.getString(R.string.complete))) {
@@ -92,11 +92,11 @@ public class ViewTransactionActivity extends Activity {
         String symbol = Currency.getInstance(Locale.getDefault()).getSymbol();
 
         @SuppressWarnings("unchecked")
-        ArrayList<Integer> paid = (ArrayList<Integer>) object.get("paid");
+        ArrayList<Integer> paid = (ArrayList<Integer>) object.get(Constants.TRANSACTION_PAID);
         @SuppressWarnings("unchecked")
-        ArrayList<String> displayName = (ArrayList<String>) object.get("displayNames");
+        ArrayList<String> displayName = (ArrayList<String>) object.get(Constants.GROUP_DISPLAY_NAMES);
         @SuppressWarnings("unchecked")
-        ArrayList<String> datePaid = (ArrayList<String>) object.get("datePaid");
+        ArrayList<String> datePaid = (ArrayList<String>) object.get(Constants.TRANSACTION_DATE_PAID);
 
         for (int i = 0; i < displayName.size(); i++) {
             if (displayName.get(i).equals(ParseUser.getCurrentUser().getEmail())) {
@@ -112,7 +112,7 @@ public class ViewTransactionActivity extends Activity {
                 member.setText(String.format(
                         mResources.getString(R.string.transaction_group_owes_you),
                         displayName.get(i)));
-                status.setText(symbol + object.getString("splitAmount"));
+                status.setText(symbol + object.getString(Constants.TRANSACTION_SPLIT_AMOUNT));
                 status.setTextColor(mResources.getColor(R.color.pink));
             } else {
                 // Otherwise, display the date paid
