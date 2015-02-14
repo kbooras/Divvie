@@ -47,7 +47,6 @@ public class GroupsFragment extends ListFragment {
 
     private void getDataFromParse() {
         if (ParseUser.getCurrentUser() != null) {
-            Log.v("current: ", ParseUser.getCurrentUser().getEmail());
             ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Group");
             groupQuery.whereEqualTo(Constants.GROUP_MEMBERS, ParseUser.getCurrentUser().getEmail());
             groupQuery.findInBackground(new FindCallback<ParseObject>() {

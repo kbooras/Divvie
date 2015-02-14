@@ -60,7 +60,7 @@ Parse.Cloud.define("sendNewUserEmail", function(request, response) {
 
 Parse.Cloud.define("getTransactionsDescending", function(request, response) {
     var query = new Parse.Query("Transaction");
-    query.equalTo("users", request.params.currentUser);
+    query.equalTo("members", request.params.currentUser);
     query.descending("createdAt");
     query.find({
         success: function(results) { 
@@ -72,7 +72,7 @@ Parse.Cloud.define("getTransactionsDescending", function(request, response) {
 
 Parse.Cloud.define("getGroupsDescending", function(request, response) {
     var query = new Parse.Query("Group");
-    query.equalTo("users", request.params.currentUser);
+    query.equalTo("members", request.params.currentUser);
     query.descending("createdAt");
     query.find({
         success: function(results) { 
