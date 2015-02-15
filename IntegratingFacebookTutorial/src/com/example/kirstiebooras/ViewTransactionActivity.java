@@ -64,13 +64,11 @@ public class ViewTransactionActivity extends Activity {
 
     private void setViewText(ParseObject object) {
         String symbol = Currency.getInstance(Locale.getDefault()).getSymbol();
-        LinearLayout layout1 = (LinearLayout) mBaseLayout.findViewById(R.id.layout1);
-        LinearLayout layout2 = (LinearLayout) mBaseLayout.findViewById(R.id.layout2);
 
-        TextView group = (TextView) layout1.findViewById(R.id.group);
-        TextView transactionAmount = (TextView) layout1.findViewById(R.id.transactionAmount);
-        TextView transactionDescription = (TextView) layout2.findViewById(R.id.transactionDescription);
-        TextView transactionStatus = (TextView) layout2.findViewById(R.id.transactionStatus);
+        TextView group = (TextView) findViewById(R.id.group);
+        TextView transactionAmount = (TextView) findViewById(R.id.transactionAmount);
+        TextView transactionDescription = (TextView) findViewById(R.id.transactionDescription);
+        TextView transactionStatus = (TextView) findViewById(R.id.transactionStatus);
 
         group.setText(String.format(mResources.getString(R.string.transaction_group_owes_you),
                 object.getString(Constants.TRANSACTION_GROUP_NAME)));
