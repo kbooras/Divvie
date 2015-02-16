@@ -97,7 +97,7 @@ public class ViewTransactionActivity extends Activity {
         ArrayList<String> datePaid = (ArrayList<String>) object.get(Constants.TRANSACTION_DATE_PAID);
 
         for (int i = 0; i < displayName.size(); i++) {
-            if (displayName.get(i).equals(ParseUser.getCurrentUser().getEmail())) {
+            if (displayName.get(i).equals(ParseUser.getCurrentUser().getString("fullName"))) {
                 // Do not display the current user as part of the transaction
                 continue;
             }

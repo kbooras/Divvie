@@ -158,12 +158,6 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
             // If the current user is null, send to sign in or register
             startSigninRegisterActivity();
         }
-        else if (ParseFacebookUtils.isLinked(currentUser)) {
-            // If the current user is not null and is linked to a Facebook account
-            // send to user details activity
-            Intent intent = new Intent(getApplicationContext(), UserDetailsActivity.class);
-            startActivity(intent);
-        }
     }
 
     private void startSigninRegisterActivity() {
