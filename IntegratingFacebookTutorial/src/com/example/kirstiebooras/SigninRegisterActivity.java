@@ -8,11 +8,18 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.facebook.FacebookRequestError;
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.model.GraphUser;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.List;
@@ -78,12 +85,37 @@ public class SigninRegisterActivity extends Activity {
                     showUserDetailsActivity();
                 } else {
                     Log.d(TAG, "User logged in through Facebook!");
+                    // Set user's full name
+                    setUserInfo();
                     showUserDetailsActivity();
                 }
             }
         });
     }
 
+    private void setUserInfo() {
+        Request request = Request.newMeRequest(ParseFacebookUtils.getSession(),
+                new Request.GraphUserCallback() {
+                    @Override
+                    public void onCompleted(GraphUser user, Response response) {
+                        if (user != null) {
+                            // Save the user profile info in a user property
+                            ParseUser currentUser = ParseUser.getCurrentUser();
+                            currentUser.put("facebookId", user.getId());
+                            currentUser.put(Constants.USER_FULL_NAME, user.getName());
+                            if (user.getProperty("email") != null) {
+                                currentUser.put(Constants.USER_EMAIL, user.getProperty("email"));
+                            }
+                            currentUser.saveInBackground();
+
+                        } else {
+                            Log.d(TAG, "setFullName error: " + response.getError());
+                        }
+                    }
+                }
+        );
+        request.executeAsync();
+    }
 
     private void showUserDetailsActivity() {
         Intent intent = new Intent(this, UserDetailsActivity.class);

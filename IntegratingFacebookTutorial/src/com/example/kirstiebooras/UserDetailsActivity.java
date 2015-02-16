@@ -26,6 +26,7 @@ public class UserDetailsActivity extends Activity {
     private TextView userNameView;
     private TextView userGenderView;
     private TextView userEmailView;
+    private Session mSession;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +40,8 @@ public class UserDetailsActivity extends Activity {
         userEmailView = (TextView) findViewById(R.id.userEmail);
 
         // Fetch Facebook user info if the session is active
-        Session session = ParseFacebookUtils.getSession();
-        if (session != null && session.isOpened()) {
+        mSession = ParseFacebookUtils.getSession();
+        if (mSession != null && mSession.isOpened()) {
             makeMeRequest();
         }
     }
@@ -150,6 +151,7 @@ public class UserDetailsActivity extends Activity {
 
     private void logout() {
         // Log the user out
+        mSession.closeAndClearTokenInformation();
         ParseUser.logOut();
 
         // Go to the login view
