@@ -25,6 +25,7 @@ import java.util.List;
  */
 public class GroupsFragment extends ListFragment {
 
+    private static final String TAG = "GroupsFragment";
     private ArrayList<ParseObject> mGroups;
     private GroupsAdapter mAdapter;
 
@@ -53,9 +54,14 @@ public class GroupsFragment extends ListFragment {
                 @Override
                 public void done(List<ParseObject> parseObjects, ParseException e) {
                     //Query should generate group listview using an array adapter
-                    mGroups.clear();
-                    mGroups.addAll(parseObjects);
-                    mAdapter.notifyDataSetChanged();
+                    if (e == null) {
+                        mGroups.clear();
+                        mGroups.addAll(parseObjects);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                    else {
+                        Log.v(TAG, e.toString());
+                    }
                 }
             });
         }
@@ -70,6 +76,9 @@ public class GroupsFragment extends ListFragment {
                                 mGroups.clear();
                                 mGroups.addAll((List<ParseObject>) results);
                                 mAdapter.notifyDataSetChanged();
+                            }
+                            else {
+                                Log.v(TAG, e.toString());
                             }
                         }
                     }
