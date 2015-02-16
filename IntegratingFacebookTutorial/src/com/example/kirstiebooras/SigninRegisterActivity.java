@@ -82,12 +82,12 @@ public class SigninRegisterActivity extends Activity {
                     Log.d(TAG, "Uh oh. The user cancelled the Facebook login.");
                 } else if (user.isNew()) {
                     Log.d(TAG, "User signed up and logged in through Facebook!");
-                    showUserDetailsActivity();
+                    // Set user's full name and email
+                    setUserInfo();
+                    showHomeActivity();
                 } else {
                     Log.d(TAG, "User logged in through Facebook!");
-                    // Set user's full name
-                    setUserInfo();
-                    showUserDetailsActivity();
+                    showHomeActivity();
                 }
             }
         });
@@ -117,8 +117,8 @@ public class SigninRegisterActivity extends Activity {
         request.executeAsync();
     }
 
-    private void showUserDetailsActivity() {
-        Intent intent = new Intent(this, UserDetailsActivity.class);
+    private void showHomeActivity() {
+        Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);
     }
 }
