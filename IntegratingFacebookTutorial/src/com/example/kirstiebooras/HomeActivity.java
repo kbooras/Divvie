@@ -7,12 +7,15 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.facebook.Session;
 import com.parse.ParseException;
+import com.parse.ParseFacebookUtils;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -94,6 +97,13 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 
         switch(item.getItemId()){
             case R.id.logout:
+//                // Logout Facebook user
+//                if (ParseFacebookUtils.isLinked(ParseUser.getCurrentUser())) {
+//                    Session session = ParseFacebookUtils.getSession();
+//                    if (session != null && session.isOpened()) {
+//                        session.closeAndClearTokenInformation();
+//                    }
+//                }
                 ParseUser.logOut();
                 Log.v(TAG, "User signed out!");
                 startSigninRegisterActivity();
@@ -153,6 +163,14 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         checkForCurrentUser();
     }
 
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            return true;
+        }
+        return super.onKeyUp(keyCode, event);
+    }
+
     // Adds the tabs below the action bar
     public void setTabsBelowActionBar() {
         try {
@@ -182,4 +200,5 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
+
 }
