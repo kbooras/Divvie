@@ -10,8 +10,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
-import com.parse.ParseFacebookUtils;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
 
@@ -35,20 +38,18 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 
         setContentView(R.layout.home_activity);
 
+        checkForCurrentUser();
+
         // Used to set font dp in fragments
         sScale = getResources().getDisplayMetrics().density;
 
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
         TabsFragmentPagerAdapter tabsAdapter = new TabsFragmentPagerAdapter(getSupportFragmentManager());
-
         mViewPager.setAdapter(tabsAdapter);
 
-        mActionBar = getActionBar();
-
         // Home button should not be enabled, since there is no hierarchical parent.
-        if (mActionBar != null) {
-            mActionBar.setHomeButtonEnabled(false);
-        }
+        mActionBar = getActionBar();
+        mActionBar.setHomeButtonEnabled(false);
 
         // Specify there will be tabs
         mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -78,8 +79,6 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 
         setTabsBelowActionBar();
 
-        checkForCurrentUser();
-
     }
 
     @Override
@@ -103,8 +102,14 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
             case R.id.add:
                 int currentFragment = mViewPager.getCurrentItem();
                 if (currentFragment == 0) {
-                    Intent intent = new Intent(this, CreateTransactionActivity.class);
-                    startActivity(intent);
+                    if (userHasGroups()) {
+                        Intent intent = new Intent(this, CreateTransactionActivity.class);
+                        startActivity(intent);
+                    }
+                    else {
+                        Toast.makeText(this, getResources().getString(R.string.user_no_groups_toast),
+                                Toast.LENGTH_LONG).show();
+                    }
                 } else {
                     Intent intent = new Intent(this, CreateGroupActivity.class);
                     startActivity(intent);
@@ -112,6 +117,17 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
                 return true;
             default:
                 return false;
+        }
+    }
+
+    private boolean userHasGroups() {
+        ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Group");
+        groupQuery.whereEqualTo(Constants.GROUP_MEMBERS, ParseUser.getCurrentUser().getEmail());
+        try {
+            groupQuery.getFirst();
+            return true;
+        } catch (ParseException e) {
+            return false;
         }
     }
 

@@ -53,6 +53,8 @@
     </string>
 
     <string name="create_transaction">Create Transaction</string>
+    <string name="user_no_groups_toast">You must be in at least one group to create a
+        transaction.</string>
     <string name="bill">Bill</string>
     <string name="transaction_description_hint">Enter a description</string>
     <string name="transaction_amount_hint">$0.00</string>
