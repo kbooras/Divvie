@@ -106,14 +106,17 @@ public class CreateTransactionActivity extends Activity {
             return;
         }
 
-        final double amountValue = Double.valueOf(amountTxt);
-        if ((amountValue % 0.01) < 0.0099) {
-            Log.v(TAG, String.valueOf(amountValue % 0.01));
+        // Check for valid monetary input
+        int decimal = amountTxt.lastIndexOf('.');
+        int decimalPlaces = amountTxt.substring(decimal+1).length();
+        if (decimalPlaces > 2 || decimalPlaces < -1) {
             Toast.makeText(getApplicationContext(),
                     getResources().getString(R.string.invalid_amount_toast),
                     Toast.LENGTH_LONG).show();
             return;
         }
+
+        final double amountValue = Double.valueOf(amountTxt);
         final String totalAmount = String.format("%.2f", amountValue);
 
         ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Group");
