@@ -77,5 +77,11 @@
         Are you sure you would like to record this charge as paid?
     </string>
     <string name="record">Record</string>
+    <string name="pay_with_venmo">Pay with Venmo</string>
+    <string name="venmo_not_installed">Venmo Not Installed</string>
+    <string name="venmo_not_installed_message">You must have Venmo installed on your device
+        to make a payment. Would you like to install the Venmo app?
+    </string>
+    <string name="download_venmo">Download Venmo</string>
 
 </resources>

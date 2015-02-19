@@ -3,7 +3,9 @@ package com.example.kirstiebooras;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
@@ -21,6 +23,8 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
 
+import com.example.kirstiebooras.VenmoLibrary.VenmoResponse;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Currency;
@@ -34,13 +38,19 @@ import java.util.Locale;
 public class PayChargeActivity extends Activity {
 
     private static final String TAG = "PayChargeActivity";
+    private static final int REQUEST_CODE_VENMO_APP_SWITCH = 1;
     private String mTransactionObjectId;
+    private String mDescription;
+    private String mPersonOwed;
+    private String mSplitAmount;
+    private Resources mResources;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        mResources = getResources();
 
         mTransactionObjectId = getIntent().getStringExtra("parseObjectId");
 
@@ -52,18 +62,20 @@ public class PayChargeActivity extends Activity {
                 // Should fill in the text in the view
                 setContentView(R.layout.pay_charge_activity);
                 ParseObject object = parseObjects.get(0);
-                setViewText(object.getString(Constants.TRANSACTION_PERSON_OWED),
-                        object.getString(Constants.TRANSACTION_SPLIT_AMOUNT));
+                mPersonOwed = object.getString(Constants.TRANSACTION_PERSON_OWED);
+                mSplitAmount = object.getString(Constants.TRANSACTION_SPLIT_AMOUNT);
+                mDescription = object.getString(Constants.TRANSACTION_DESCRIPTION);
+                setViewText();
             }
         });
     }
 
-    private void setViewText(final String personOwed, final String splitAmount) {
+    private void setViewText() {
         final TextView payPerson = (TextView) findViewById(R.id.payPerson);
         final TextView payAmount = (TextView) findViewById(R.id.payAmount);
 
         ParseQuery<ParseUser> userQuery = ParseUser.getQuery();
-        userQuery.whereEqualTo(Constants.USER_EMAIL, personOwed);
+        userQuery.whereEqualTo(Constants.USER_EMAIL, mPersonOwed);
         userQuery.findInBackground(new FindCallback<ParseUser>() {
             @Override
             public void done(List<ParseUser> results, ParseException e) {
@@ -71,7 +83,7 @@ public class PayChargeActivity extends Activity {
                 ParseObject email = results.get(0);
                 payPerson.setText(String.format(getResources().getString(R.string.pay_person),
                         email.getString(Constants.USER_FULL_NAME)));
-                payAmount.setText(Currency.getInstance(Locale.getDefault()).getSymbol() + splitAmount);
+                payAmount.setText(Currency.getInstance(Locale.getDefault()).getSymbol() + mSplitAmount);
             }
         });
     }
@@ -101,11 +113,10 @@ public class PayChargeActivity extends Activity {
     }
 
     public void cashPaymentClick(View v) {
-        Resources res = getResources();
         new AlertDialog.Builder(this)
-                .setTitle(res.getString(R.string.record_cash_payment))
-                .setMessage(res.getString(R.string.verify_record_cash_payment))
-                .setPositiveButton(res.getString(R.string.record),
+                .setTitle(mResources.getString(R.string.record_cash_payment))
+                .setMessage(mResources.getString(R.string.verify_record_cash_payment))
+                .setPositiveButton(mResources.getString(R.string.record),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 // Mark charge as paid
@@ -113,7 +124,7 @@ public class PayChargeActivity extends Activity {
                                 finish();
                             }
                         })
-                .setNegativeButton(res.getString(R.string.cancel), null)
+                .setNegativeButton(mResources.getString(R.string.cancel), null)
                 .show();
     }
 
@@ -161,5 +172,67 @@ public class PayChargeActivity extends Activity {
             }
         });
 
+    }
+
+    public void venmoPaymentClick(View v) {
+        // TODO: user's enter venmo id, email, or phone number preferred
+        if(VenmoLibrary.isVenmoInstalled(this)) {
+            // Direct the user to Venmo to make this payment
+            Intent venmoIntent = VenmoLibrary.openVenmoPayment(
+                    mResources.getString(R.string.VENMO_APP_ID),
+                    mResources.getString(R.string.app_name), mPersonOwed, mSplitAmount,
+                    mDescription, "pay");
+            startActivityForResult(venmoIntent, REQUEST_CODE_VENMO_APP_SWITCH);
+        } else {
+            // User must download Venmo to their device
+            new AlertDialog.Builder(this)
+                    .setTitle(mResources.getString(R.string.venmo_not_installed))
+                    .setMessage(mResources.getString(R.string.venmo_not_installed_message))
+                    .setPositiveButton(mResources.getString(R.string.download_venmo),
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    try {
+                                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
+                                                "market://details?id=com.venmo")));
+                                    } catch (android.content.ActivityNotFoundException e) {
+                                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
+                                                "http://play.google.com/store/apps/details?id=com.venmo")));
+                                    }
+                                }
+                            })
+                    .setNegativeButton(mResources.getString(R.string.cancel), null)
+                    .show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        // TODO Auto generated from Venmo Android SDK
+        switch(requestCode) {
+            case REQUEST_CODE_VENMO_APP_SWITCH: {
+                if(resultCode == RESULT_OK) {
+                    String signedrequest = data.getStringExtra("signedrequest");
+                    if(signedrequest != null) {
+                        VenmoResponse response = (new VenmoLibrary()).validateVenmoPaymentResponse(
+                                signedrequest, mResources.getString(R.string.VENMO_APP_SECRET));
+                        if(response.getSuccess().equals("1")) {
+                            // Payment successful.
+                            // Use data from response object to display a success message
+                            String note = response.getNote();
+                            String amount = response.getAmount();
+                        }
+                    }
+                    else {
+                        String error_message = data.getStringExtra("error_message");
+                        // An error ocurred.  Make sure to display the error_message to the user
+                    }
+                }
+                else if(resultCode == RESULT_CANCELED) {
+                    //The user cancelled the payment
+                }
+                break;
+            }
+        }
     }
 }
