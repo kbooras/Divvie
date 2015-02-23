@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.GetCallback;
@@ -44,6 +45,7 @@ public class PayChargeActivity extends Activity {
     private String mPersonOwed;
     private String mSplitAmount;
     private Resources mResources;
+    // TODO DO you need mResources
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,6 +130,67 @@ public class PayChargeActivity extends Activity {
                 .show();
     }
 
+    public void venmoPaymentClick(View v) {
+        // TODO: user's enter venmo id, email, or phone number preferred
+        if(VenmoLibrary.isVenmoInstalled(this)) {
+            // Direct the user to Venmo to make this payment
+            Intent venmoIntent = VenmoLibrary.openVenmoPayment(
+                    mResources.getString(R.string.VENMO_APP_ID),
+                    mResources.getString(R.string.app_name), mPersonOwed, mSplitAmount,
+                    mDescription, "pay");
+            startActivityForResult(venmoIntent, REQUEST_CODE_VENMO_APP_SWITCH);
+        } else {
+            // User must download Venmo to their device
+            new AlertDialog.Builder(this)
+                    .setTitle(mResources.getString(R.string.venmo_not_installed))
+                    .setMessage(mResources.getString(R.string.venmo_not_installed_message))
+                    .setPositiveButton(mResources.getString(R.string.download_venmo),
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    try {
+                                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
+                                                "market://details?id=com.venmo")));
+                                    } catch (android.content.ActivityNotFoundException e) {
+                                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
+                                                "http://play.google.com/store/apps/details?id=com.venmo")));
+                                    }
+                                }
+                            })
+                    .setNegativeButton(mResources.getString(R.string.cancel), null)
+                    .show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch(requestCode) {
+            case REQUEST_CODE_VENMO_APP_SWITCH: {
+                if(resultCode == RESULT_OK) {
+                    String signedrequest = data.getStringExtra("signedrequest");
+                    if(signedrequest != null) {
+                        VenmoResponse response = (new VenmoLibrary()).validateVenmoPaymentResponse(
+                                signedrequest, mResources.getString(R.string.VENMO_APP_SECRET));
+                        if(response.getSuccess().equals("1")) {
+                            // Payment successful.
+                            Toast.makeText(this, mResources.getString(R.string.venmo_success),
+                                    Toast.LENGTH_LONG).show();
+                            markChargePaid();
+                        }
+                    }
+                    else {
+                        String errorMessage = data.getStringExtra("error_message");
+                        new AlertDialog.Builder(this)
+                                .setTitle(mResources.getString(R.string.venmo_error))
+                                .setMessage(errorMessage)
+                                .setPositiveButton(mResources.getString(R.string.ok), null)
+                                .show();
+                    }
+                }
+                break;
+            }
+        }
+    }
+
     private void markChargePaid() {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Transaction");
 
@@ -171,68 +234,6 @@ public class PayChargeActivity extends Activity {
                 }
             }
         });
-
     }
 
-    public void venmoPaymentClick(View v) {
-        // TODO: user's enter venmo id, email, or phone number preferred
-        if(VenmoLibrary.isVenmoInstalled(this)) {
-            // Direct the user to Venmo to make this payment
-            Intent venmoIntent = VenmoLibrary.openVenmoPayment(
-                    mResources.getString(R.string.VENMO_APP_ID),
-                    mResources.getString(R.string.app_name), mPersonOwed, mSplitAmount,
-                    mDescription, "pay");
-            startActivityForResult(venmoIntent, REQUEST_CODE_VENMO_APP_SWITCH);
-        } else {
-            // User must download Venmo to their device
-            new AlertDialog.Builder(this)
-                    .setTitle(mResources.getString(R.string.venmo_not_installed))
-                    .setMessage(mResources.getString(R.string.venmo_not_installed_message))
-                    .setPositiveButton(mResources.getString(R.string.download_venmo),
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    try {
-                                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
-                                                "market://details?id=com.venmo")));
-                                    } catch (android.content.ActivityNotFoundException e) {
-                                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
-                                                "http://play.google.com/store/apps/details?id=com.venmo")));
-                                    }
-                                }
-                            })
-                    .setNegativeButton(mResources.getString(R.string.cancel), null)
-                    .show();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        // TODO Auto generated from Venmo Android SDK
-        switch(requestCode) {
-            case REQUEST_CODE_VENMO_APP_SWITCH: {
-                if(resultCode == RESULT_OK) {
-                    String signedrequest = data.getStringExtra("signedrequest");
-                    if(signedrequest != null) {
-                        VenmoResponse response = (new VenmoLibrary()).validateVenmoPaymentResponse(
-                                signedrequest, mResources.getString(R.string.VENMO_APP_SECRET));
-                        if(response.getSuccess().equals("1")) {
-                            // Payment successful.
-                            // Use data from response object to display a success message
-                            String note = response.getNote();
-                            String amount = response.getAmount();
-                        }
-                    }
-                    else {
-                        String error_message = data.getStringExtra("error_message");
-                        // An error ocurred.  Make sure to display the error_message to the user
-                    }
-                }
-                else if(resultCode == RESULT_CANCELED) {
-                    //The user cancelled the payment
-                }
-                break;
-            }
-        }
-    }
 }

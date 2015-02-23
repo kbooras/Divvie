@@ -83,5 +83,7 @@
         to make a payment. Would you like to install the Venmo app?
     </string>
     <string name="download_venmo">Download Venmo</string>
+    <string name="venmo_success">Payment successful!</string>
+    <string name="venmo_error">Venmo Error</string>
 
 </resources>
