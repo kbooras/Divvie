@@ -48,25 +48,6 @@ public class GroupsFragment extends ListFragment {
 
     private void getDataFromParse() {
         if (ParseUser.getCurrentUser() != null) {
-            ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Group");
-            groupQuery.whereEqualTo(Constants.GROUP_MEMBERS, ParseUser.getCurrentUser().getEmail());
-            groupQuery.findInBackground(new FindCallback<ParseObject>() {
-                @Override
-                public void done(List<ParseObject> parseObjects, ParseException e) {
-                    //Query should generate group listview using an array adapter
-                    if (e == null) {
-                        mGroups.clear();
-                        mGroups.addAll(parseObjects);
-                        mAdapter.notifyDataSetChanged();
-                    }
-                    else {
-                        Log.v(TAG, e.toString());
-                    }
-                }
-            });
-        }
-
-        if (ParseUser.getCurrentUser() != null) {
             HashMap<String, Object> map = new HashMap<String, Object>();
             map.put("currentUser", ParseUser.getCurrentUser().getEmail());
             ParseCloud.callFunctionInBackground("getGroupsDescending", map,
