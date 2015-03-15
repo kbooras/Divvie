@@ -16,6 +16,7 @@ public class DivvieApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        Parse.enableLocalDatastore(this);
         Parse.initialize(this,
                 getString(R.string.PARSE_APPLICATION_ID),
                 getString(R.string.PARSE_CLIENT_ID)
