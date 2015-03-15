@@ -26,6 +26,7 @@ import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -138,17 +139,32 @@ public class CreateGroupActivity extends Activity {
         ParseUser current = ParseUser.getCurrentUser();
 
         // Create arrays of all emails and names added in the EditTexts + the current user.
-        ArrayList<String> memberEmails = new ArrayList<String>(mAllEditTexts.size() + 1);
-        ArrayList<String> memberNames = new ArrayList<String>(mAllEditTexts.size() + 1);
+        ArrayList<String> memberEmails = validateEmails(mAllEditTexts.values());
+        if (memberEmails == null) {
+            // There is an invalid email
+            return;
+        }
         memberEmails.add(current.getEmail());
+        ArrayList<String> memberNames = getMemberNames(memberEmails);
 
-        // Check that each email is valid and add to the array of members
+        createParseGroupObject(groupNameTxt, memberEmails, memberNames);
+
+        finish();
+    }
+
+    /**
+     * Validate all the emails from the EditTexts and check for duplicates.
+     * @param emailTexts: The collection of EditTexts containing the member emails.
+     * @return the ArrayList of memberEmails
+     */
+    private ArrayList<String> validateEmails(Collection<EditText> emailTexts) {
+        ArrayList<String> memberEmails = new ArrayList<String>(emailTexts.size());
         int i = 1;
-        for (EditText text : mAllEditTexts.values()) {
+        for (EditText text :emailTexts) {
             String email = text.getText().toString().toLowerCase();
             if (!isValidEmail(email)){
                 displayInvalidEmailMessage(i);
-                return;
+                return null;
             } else {
                 memberEmails.add(email);
             }
@@ -160,11 +176,24 @@ public class CreateGroupActivity extends Activity {
         if (set.size() < memberEmails.size()) {
             // Display repeated email message
             displayDuplicateEmailMessage();
-            return;
+            return null;
         }
 
-        // Add the corresponding name, or email if there is no existing user
-        // If there is no user, send new user email
+        return memberEmails;
+    }
+
+    private boolean isValidEmail(CharSequence emailTxt) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(emailTxt).matches();
+    }
+
+    /**
+     * Add the corresponding name, or email if there is no existing user.
+     * If there is no user, send new user email.
+     * @param memberEmails: The ArrayList of emails for the group members
+     * @return the ArrayList of memberNames
+     */
+    private ArrayList<String> getMemberNames(ArrayList<String> memberEmails) {
+        ArrayList<String> memberNames = new ArrayList<String>(memberEmails.size());
         for (String email : memberEmails) {
             ParseQuery<ParseUser> userQuery = ParseUser.getQuery();
             userQuery.whereEqualTo(Constants.USER_EMAIL, email);
@@ -173,29 +202,10 @@ public class CreateGroupActivity extends Activity {
                 memberNames.add(user.getString(Constants.USER_FULL_NAME));
             } catch (ParseException e) {
                 memberNames.add(email);
+                // sendNewUserEmail(mGroupName.getText().toString(), email);
             }
         }
-
-        createParseObjectGroup(groupNameTxt, memberEmails, memberNames);
-        finish();
-    }
-
-    private void createParseObjectGroup(String name, ArrayList<String> memberEmails,
-                                        ArrayList<String> memberNames){
-        ParseObject newGroup = new ParseObject("Group");
-        newGroup.put(Constants.GROUP_NAME, name);
-        newGroup.put(Constants.GROUP_MEMBERS, memberEmails);
-        newGroup.put(Constants.GROUP_DISPLAY_NAMES, memberNames);
-        try {
-            newGroup.save();
-            Log.v(TAG, "Saved new group successfully!");
-            // Update the ArrayAdapter
-        } catch (ParseException e) {
-            // Display error message.
-            displayCreateGroupFailedMessage();
-            Log.v(TAG, "Save new group failed :(");
-            e.printStackTrace();
-        }
+        return memberNames;
     }
 
     private void sendNewUserEmail(String groupName, String email) {
@@ -219,8 +229,22 @@ public class CreateGroupActivity extends Activity {
         });
     }
 
-    private boolean isValidEmail(CharSequence emailTxt) {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(emailTxt).matches();
+    private void createParseGroupObject(String name, ArrayList<String> memberEmails,
+                                        ArrayList<String> memberNames){
+        ParseObject newGroup = new ParseObject("Group");
+        newGroup.put(Constants.GROUP_NAME, name);
+        newGroup.put(Constants.GROUP_MEMBERS, memberEmails);
+        newGroup.put(Constants.GROUP_DISPLAY_NAMES, memberNames);
+        try {
+            newGroup.save();
+            Log.v(TAG, "Saved new group successfully!");
+            // Update the ArrayAdapter
+        } catch (ParseException e) {
+            // Display error message.
+            displayCreateGroupFailedMessage();
+            Log.v(TAG, "Save new group failed :(");
+            e.printStackTrace();
+        }
     }
 
     private void displayInvalidEmailMessage (int emailNumber) {

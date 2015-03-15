@@ -37,7 +37,9 @@ public class GroupsFragment extends ListFragment {
         mAdapter = new GroupsAdapter(getActivity().getBaseContext(), mGroups);
         setListAdapter(mAdapter);
 
-        getDataFromParse();
+        if (ParseUser.getCurrentUser() != null) {
+            getDataFromParse();
+        }
     }
 
     @Override

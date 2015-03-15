@@ -107,16 +107,15 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
             if (members.get(i).equals(ParseUser.getCurrentUser().getEmail())) {
                 break;
             }
-        }
-
-        if (paid.get(i) == 1) {
-            statusText.setText(mResources.getString(R.string.paid));
-            statusText.setTextColor(mResources.getColor(R.color.light_grey));
-            amountText.setTextColor(mResources.getColor(R.color.dark_grey));
-        } else {
-            statusText.setText(mResources.getString(R.string.pay_now));
-            statusText.setTextColor(mResources.getColor(R.color.light_grey));
-            amountText.setTextColor(mResources.getColor(R.color.pink));
+            if (paid.get(i) == 1) {
+                statusText.setText(mResources.getString(R.string.paid));
+                statusText.setTextColor(mResources.getColor(R.color.light_grey));
+                amountText.setTextColor(mResources.getColor(R.color.dark_grey));
+            } else {
+                statusText.setText(mResources.getString(R.string.pay_now));
+                statusText.setTextColor(mResources.getColor(R.color.light_grey));
+                amountText.setTextColor(mResources.getColor(R.color.pink));
+            }
         }
     }
 

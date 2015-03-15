@@ -38,7 +38,9 @@ public class TransactionsFragment extends ListFragment {
         mAdapter = new TransactionsAdapter(getActivity().getBaseContext(), mTransactions);
         setListAdapter(mAdapter);
 
-        getDataFromParse();
+        if (ParseUser.getCurrentUser() != null) {
+            getDataFromParse();
+        }
     }
 
     @Override
