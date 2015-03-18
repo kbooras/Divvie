@@ -30,57 +30,62 @@ import java.lang.reflect.Method;
  */
 public class HomeActivity extends FragmentActivity implements ActionBar.TabListener {
 
+    private static final String TAG = "HomeActivity";
     private ActionBar mActionBar;
     private ViewPager mViewPager;
-    public static float sScale;
-    private static final String TAG = "Home";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.home_activity);
 
         checkForCurrentUser();
 
-        // Used to set font dp in fragments
-        sScale = getResources().getDisplayMetrics().density;
-
-        mViewPager = (ViewPager) findViewById(R.id.viewPager);
         TabsFragmentPagerAdapter tabsAdapter = new TabsFragmentPagerAdapter(getSupportFragmentManager());
-        mViewPager.setAdapter(tabsAdapter);
 
         // Home button should not be enabled, since there is no hierarchical parent.
         mActionBar = getActionBar();
         mActionBar.setHomeButtonEnabled(false);
 
-        // Specify there will be tabs
-        mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-        mActionBar.addTab(mActionBar.newTab().setText(
-                getResources().getString(R.string.transactions)).setTabListener(this));
-        mActionBar.addTab(mActionBar.newTab().setText(
-                getResources().getString(R.string.groups)).setTabListener(this));
-
-        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-
+        // Set up the ViewPager
+        mViewPager = (ViewPager) findViewById(R.id.viewPager);
+        mViewPager.setAdapter(tabsAdapter);
+        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int i) {
                 mActionBar.setSelectedNavigationItem(i);
             }
-
-            @Override
-            public void onPageScrolled(int i, float v, int i2) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int i) {
-                // TODO Auto-generated method stub
-            }
         });
 
+        // Add the tabs to the action bar
+        mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        mActionBar.addTab(mActionBar.newTab().setText(
+                getResources().getString(R.string.transactions)).setTabListener(this));
+        mActionBar.addTab(mActionBar.newTab().setText(
+                getResources().getString(R.string.groups)).setTabListener(this));
         setTabsBelowActionBar();
+
+
+
+    }
+
+
+    }
+
+    /**
+     * Adds the tabs below the action bar
+     */
+    public void setTabsBelowActionBar() {
+        try {
+            final Method setHasEmbeddedTabsMethod = mActionBar.getClass()
+                    .getDeclaredMethod("setHasEmbeddedTabs", boolean.class);
+            setHasEmbeddedTabsMethod.setAccessible(true);
+            setHasEmbeddedTabsMethod.invoke(mActionBar, false);
+        }
+        catch(final Exception e) {
+            // Handle issues as needed: log, warn user, fallback etc
+            // This error is safe to ignore, standard tabs will appear.
+        }
 
     }
 
@@ -113,6 +118,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
                 int currentFragment = mViewPager.getCurrentItem();
                 if (currentFragment == 0) {
                     if (userHasGroups()) {
+                        // User must have at least one group to make a transaction
                         Intent intent = new Intent(this, CreateTransactionActivity.class);
                         startActivity(intent);
                     }
@@ -159,33 +165,12 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
     @Override
     protected void onResume() {
         super.onResume();
-
         checkForCurrentUser();
     }
 
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            return true;
-        }
-        return super.onKeyUp(keyCode, event);
-    }
-
-    // Adds the tabs below the action bar
-    public void setTabsBelowActionBar() {
-        try {
-            final Method setHasEmbeddedTabsMethod = mActionBar.getClass()
-                    .getDeclaredMethod("setHasEmbeddedTabs", boolean.class);
-            setHasEmbeddedTabsMethod.setAccessible(true);
-            setHasEmbeddedTabsMethod.invoke(mActionBar, false);
-        }
-        catch(final Exception e) {
-            // Handle issues as needed: log, warn user, fallback etc
-            // This error is safe to ignore, standard tabs will appear.
-        }
-    }
-
-    // Check if there is a currently logged in user
+    /**
+     * Check if there is a currently logged in user
+     */
     private void checkForCurrentUser() {
         ParseUser currentUser = ParseUser.getCurrentUser();
         if (currentUser == null) {
@@ -199,6 +184,14 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            return true;
+        }
+        return super.onKeyUp(keyCode, event);
     }
 
 }
