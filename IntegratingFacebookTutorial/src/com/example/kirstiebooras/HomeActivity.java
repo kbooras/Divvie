@@ -13,15 +13,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.facebook.Session;
+import com.parse.DeleteCallback;
 import com.parse.ParseException;
-import com.parse.ParseFacebookUtils;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * Shows the pending group transactions the user has.
@@ -31,15 +31,26 @@ import java.lang.reflect.Method;
 public class HomeActivity extends FragmentActivity implements ActionBar.TabListener {
 
     private static final String TAG = "HomeActivity";
+    private static final String CLASSNAME_GROUP = "Group";
+    private static final String CLASSNAME_TRANSACTION = "Transaction";
     private ActionBar mActionBar;
     private ViewPager mViewPager;
+    private List<ParseObject> mTransactionsData;
+    private List<ParseObject> mGroupsData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.v(TAG, "onCreate");
         setContentView(R.layout.home_activity);
 
         checkForCurrentUser();
+
+        if (mGroupsData == null || mTransactionsData == null) {
+            // TODO: Check for internet connection. If none, check for pinned data.
+            getParseData(CLASSNAME_TRANSACTION);
+            getParseData(CLASSNAME_GROUP);
+        }
 
         TabsFragmentPagerAdapter tabsAdapter = new TabsFragmentPagerAdapter(getSupportFragmentManager());
 
@@ -65,11 +76,6 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
                 getResources().getString(R.string.groups)).setTabListener(this));
         setTabsBelowActionBar();
 
-
-
-    }
-
-
     }
 
     /**
@@ -86,7 +92,51 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
             // Handle issues as needed: log, warn user, fallback etc
             // This error is safe to ignore, standard tabs will appear.
         }
+    }
 
+    /**
+     * Get data from Parse.
+     * @param className: The type of objects the ParseQuery will be searching for.
+     */
+    private void getParseData(final String className) {
+        Log.v(TAG, "getParseData");
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(className);
+        query.whereEqualTo(Constants.GROUP_MEMBERS, ParseUser.getCurrentUser().getEmail());
+        query.orderByDescending("createdAt");
+        try {
+            final List<ParseObject> parseObjects = query.find();
+
+            if (className.equals(CLASSNAME_TRANSACTION)) {
+                mTransactionsData = parseObjects;
+            }
+            else if (className.equals(CLASSNAME_GROUP)) {
+                mGroupsData = parseObjects;
+            }
+
+            // Release any objects previously pinned for this query.
+            Log.v(TAG, className + ": Found " + parseObjects.size());
+            ParseObject.unpinAllInBackground(className, parseObjects, new DeleteCallback() {
+                public void done(ParseException e) {
+                    if (e != null) {
+                        // There was some error.
+                        Log.v(TAG, "Unpin error: " + e.getMessage());
+                        return;
+                    }
+
+                    // Add the latest results for this query to the cache.
+                    Log.v(TAG, className + ": Pinned " + parseObjects.size());
+                    ParseObject.pinAllInBackground(className, parseObjects);
+                }
+            });
+        } catch (ParseException e) {
+            Log.v(TAG, "Query error: " + e.getMessage());
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // TODO
     }
 
     @Override
@@ -109,6 +159,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 //                        session.closeAndClearTokenInformation();
 //                    }
 //                }
+                // TODO: unpin data
                 ParseUser.logOut();
                 Log.v(TAG, "User signed out!");
                 startSigninRegisterActivity();
@@ -192,6 +243,14 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
             return true;
         }
         return super.onKeyUp(keyCode, event);
+    }
+
+    public List<ParseObject> getGroupsData() {
+        return mGroupsData;
+    }
+
+    public List<ParseObject> getTransactionsData() {
+        return mTransactionsData;
     }
 
 }

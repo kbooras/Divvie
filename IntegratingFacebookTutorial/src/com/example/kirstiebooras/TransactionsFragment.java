@@ -1,22 +1,17 @@
 package com.example.kirstiebooras;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.parse.FunctionCallback;
-import com.parse.ParseCloud;
-import com.parse.ParseException;
 import com.parse.ParseObject;
-import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -27,6 +22,7 @@ import java.util.List;
  */
 public class TransactionsFragment extends ListFragment {
 
+    private static final String TAG = "TransactionsFragment";
     private ArrayList<ParseObject> mTransactions;
     private TransactionsAdapter mAdapter;
 
@@ -38,47 +34,48 @@ public class TransactionsFragment extends ListFragment {
         mAdapter = new TransactionsAdapter(getActivity().getBaseContext(), mTransactions);
         setListAdapter(mAdapter);
 
-        if (ParseUser.getCurrentUser() != null) {
-            getDataFromParse();
-        }
+        //if (savedInstanceState == null) {
+        // Get data from HomeActivity member variables
+        HomeActivity homeActivity = (HomeActivity) getActivity();
+        bindData(homeActivity.getTransactionsData());
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        getDataFromParse();
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        // Remove lines between list views
+        getListView().setDivider(null);
     }
 
-    private void getDataFromParse() {
-        if (ParseUser.getCurrentUser() != null) {
-            HashMap<String, Object> map = new HashMap<String, Object>();
-            map.put("currentUser", ParseUser.getCurrentUser().getEmail());
-            ParseCloud.callFunctionInBackground("getTransactionsDescending", map,
-                    new FunctionCallback<Object>() {
-                        public void done(Object results, ParseException e) {
-                            if (e == null) {
-                                mTransactions.clear();
-                                mTransactions.addAll((List<ParseObject>) results);
-                                mAdapter.notifyDataSetChanged();
-                            }
-                        }
-            });
-        }
+    /**
+     * Attach the data passed in from HomeActivity to the adapter
+     * @param data: The data from HomeActivity
+     */
+    private void bindData(List<ParseObject> data) {
+        Log.v(TAG, "bindData");
+        mTransactions.clear();
+        mTransactions.addAll(data);
+        mAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Display appropriate action when a list item is clicked depending on the type of transaction
+     * @param l: The ListView
+     * @param v: The item clicked in the ListView
+     * @param position: The index clicked in the ListView
+     * @param id:
+     */
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         TextView transactionStatus = (TextView) v.findViewById(R.id.transactionStatus);
-        Resources res = getResources();
-
         ParseObject transaction = mAdapter.getItem(position);
 
-        if (transactionStatus.getText().toString().equals(res.getString(R.string.pay_now))) {
+        if (transactionStatus.getText().toString().equals(getString(R.string.pay_now))) {
             // Start PayChargeActivity
             Intent intent = new Intent(getActivity(), PayChargeActivity.class);
             intent.putExtra("parseObjectId", transaction.getObjectId());
             startActivity(intent);
-        } else if (!transactionStatus.getText().equals(res.getString(R.string.paid))) {
+        } else if (!transactionStatus.getText().equals(getString(R.string.paid))) {
             // TODO popup for remind or override
             // Display transaction
             Intent intent = new Intent(getActivity(), ViewTransactionActivity.class);

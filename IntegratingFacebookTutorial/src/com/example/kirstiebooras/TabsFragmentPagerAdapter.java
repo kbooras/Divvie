@@ -10,6 +10,9 @@ import android.support.v4.app.FragmentPagerAdapter;
  */
 public class TabsFragmentPagerAdapter extends FragmentPagerAdapter {
 
+    private TransactionsFragment mTransactionsFragment;
+    private GroupsFragment mGroupsFragment;
+
     public TabsFragmentPagerAdapter(FragmentManager manager) {
         super(manager);
     }
@@ -18,9 +21,11 @@ public class TabsFragmentPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int index) {
         switch (index) {
             case 0:
-                return new TransactionsFragment();
+                mTransactionsFragment = new TransactionsFragment();
+                return mTransactionsFragment;
             case 1:
-                return new GroupsFragment();
+                mGroupsFragment = new GroupsFragment();
+                return mGroupsFragment;
             default:
                 return null;
         }
@@ -29,5 +34,13 @@ public class TabsFragmentPagerAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         return 2;
+    }
+
+    public GroupsFragment getGroupsFragment() {
+        return mGroupsFragment;
+    }
+
+    public TransactionsFragment getTransactionsFragment() {
+        return mTransactionsFragment;
     }
 }
