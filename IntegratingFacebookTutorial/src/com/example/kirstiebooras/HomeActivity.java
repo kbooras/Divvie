@@ -123,16 +123,15 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
             getPinnedData(className);
         }
 
-        // TODO Signal fragment to update
+        // TODO
+        // Signal fragment to update. Keeps giving null pointer exception when getting
+        // variables for the new item in the adapter
         int index = mViewPager.getCurrentItem();
         if (className.equals(CLASSNAME_TRANSACTION)) {
-            TransactionsFragment fragment
-                    = (TransactionsFragment) tabsAdapter.getCurrentFragment(index);
-            //fragment.bindData(mGroupsData);
+            //((TransactionsFragment) tabsAdapter.getCurrentFragment(index)).bindData(mGroupsData);
         }
         else if (className.equals(CLASSNAME_GROUP)) {
-            GroupsFragment fragment = (GroupsFragment) tabsAdapter.getCurrentFragment(index);
-            //fragment.bindData(mGroupsData);
+            //((GroupsFragment) tabsAdapter.getCurrentFragment(index)).bindData(mGroupsData);
         }
     }
 
@@ -368,7 +367,6 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
     }
 
     public List<ParseObject> getGroupsData() {
-        Log.v(TAG, "get groups data");
         return mGroupsData;
     }
 

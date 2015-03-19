@@ -87,14 +87,11 @@ public class CreateTransactionActivity extends Activity {
 
     public void onSplitBillClick(View view) {
         // Get user input
-        EditText description = (EditText) findViewById(R.id.description);
-        String descriptionTxt = description.getText().toString();
-
-        EditText amount = (EditText) findViewById(R.id.amount);
-        String amountTxt = amount.getText().toString();
+        String description = ((EditText) findViewById(R.id.description)).getText().toString();
+        String amount = ((EditText) findViewById(R.id.amount)).getText().toString();
 
         // Check the form is complete
-        if (descriptionTxt.equals("") || amountTxt == null) {
+        if (description.equals("") || amount == null) {
             Toast.makeText(getApplicationContext(),
                     getResources().getString(R.string.complete_form_toast),
                     Toast.LENGTH_LONG).show();
@@ -102,11 +99,11 @@ public class CreateTransactionActivity extends Activity {
         }
 
         // Check for valid monetary input
-        if (!validMonetaryInput(amountTxt)) {
+        if (!validMonetaryInput(amount)) {
             return;
         }
 
-        double amountValue = Double.valueOf(amountTxt);
+        double amountValue = Double.valueOf(amount);
         String totalAmount = String.format("%.2f", amountValue);
 
         // Get person owed info
@@ -128,7 +125,7 @@ public class CreateTransactionActivity extends Activity {
         // Get split amount
         String splitAmount = getSplitAmount(amountValue, members.size());
 
-        createTransactionParseObject(groupId, groupName, personOwedEmail, descriptionTxt,
+        createTransactionParseObject(groupId, groupName, personOwedEmail, description,
                 totalAmount, members, displayNames, splitAmount);
 
         // Send emails to group members
@@ -136,7 +133,7 @@ public class CreateTransactionActivity extends Activity {
         map.put("toEmail", personOwedEmail);
         map.put("fromName", personOwedName);
         map.put("groupName", groupName);
-        map.put("chargeDescription", descriptionTxt);
+        map.put("chargeDescription", description);
         map.put("amount", splitAmount);
 
         for (String email : members) {
@@ -208,14 +205,9 @@ public class CreateTransactionActivity extends Activity {
         newTransaction.put(Constants.TRANSACTION_PAID, paid);
         newTransaction.put(Constants.TRANSACTION_DATE_PAID, datePaid);
         newTransaction.put(Constants.TRANSACTION_COMPLETE, false);
-        try {
-            newTransaction.save();
-        } catch (ParseException e) {
-            e.printStackTrace();
-            Log.v(TAG, e.toString());
-        }
-
+        newTransaction.saveEventually();
         Log.v(TAG, "Saved new transaction");
+        
     }
 
     private void sendEmails(String email, HashMap<String, Object> map) {
