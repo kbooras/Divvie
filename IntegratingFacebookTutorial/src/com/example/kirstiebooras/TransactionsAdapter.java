@@ -2,7 +2,6 @@ package com.example.kirstiebooras;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +21,6 @@ import java.util.Locale;
  * Created by kirstiebooras on 1/31/15.
  */
 public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
-
-    private static final String TAG = "TransactionsAdapter";
 
     private final ArrayList<ParseObject> mTransactions;
     private Resources mResources;
@@ -59,12 +56,10 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
                 // User owes the group
                 setUserOwesGroupTexts(transaction, transactionGroup, transactionAmount);
                 setPaidStatus(transactionAmount, transactionStatus, transaction);
-                Log.v(TAG, "User owes the group");
             } else {
                 // The group owes user
                 setGroupOwesUserTexts(transaction, transactionGroup, transactionAmount);
                 setAmountStillOwed(transactionStatus, transaction);
-                Log.v(TAG, "The group owes the user");
             }
 
             transactionDescription.setText(String.format(

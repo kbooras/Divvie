@@ -15,7 +15,6 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.parse.FindCallback;
 import com.parse.FunctionCallback;
 import com.parse.GetCallback;
 import com.parse.ParseCloud;
@@ -59,6 +58,7 @@ public class CreateTransactionActivity extends Activity {
         mSpinner.setAdapter(mAdapter);
 
         getGroupsFromParse();
+        // TODO: get this from the HomeActivity. Just need to send groupName and group objectId
     }
 
     @Override
@@ -86,20 +86,14 @@ public class CreateTransactionActivity extends Activity {
     }
 
     public void onSplitBillClick(View view) {
-        ParseUser personOwed = ParseUser.getCurrentUser();
-        final String personOwedEmail = personOwed.getEmail();
-        final String personOwedName = personOwed.getString(Constants.USER_FULL_NAME);
-
-        ParseObject group = (ParseObject) mSpinner.getSelectedItem();
-        final String groupId = group.getObjectId();
-        final String groupName = group.getString(Constants.GROUP_NAME);
-
+        // Get user input
         EditText description = (EditText) findViewById(R.id.description);
-        final String descriptionTxt = description.getText().toString();
+        String descriptionTxt = description.getText().toString();
 
         EditText amount = (EditText) findViewById(R.id.amount);
         String amountTxt = amount.getText().toString();
 
+        // Check the form is complete
         if (descriptionTxt.equals("") || amountTxt == null) {
             Toast.makeText(getApplicationContext(),
                     getResources().getString(R.string.complete_form_toast),
@@ -108,57 +102,68 @@ public class CreateTransactionActivity extends Activity {
         }
 
         // Check for valid monetary input
-        int decimal = amountTxt.lastIndexOf('.');
-        int decimalPlaces = amountTxt.substring(decimal+1).length();
+        if (!validMonetaryInput(amountTxt)) {
+            return;
+        }
+
+        double amountValue = Double.valueOf(amountTxt);
+        String totalAmount = String.format("%.2f", amountValue);
+
+        // Get person owed info
+        ParseUser personOwed = ParseUser.getCurrentUser();
+        String personOwedEmail = personOwed.getEmail();
+        String personOwedName = personOwed.getString(Constants.USER_FULL_NAME);
+
+        // Get group info
+        ParseObject group = (ParseObject) mSpinner.getSelectedItem();
+        String groupId = group.getObjectId();
+        String groupName = group.getString(Constants.GROUP_NAME);
+
+        // Get members of the group to create arrays for paid and datePaid and to get split amount
+        @SuppressWarnings("unchecked")
+        ArrayList<String> members = (ArrayList<String>) group.get(Constants.GROUP_MEMBERS);
+        @SuppressWarnings("unchecked")
+        ArrayList<String> displayNames = (ArrayList<String>) group.get(Constants.GROUP_DISPLAY_NAMES);
+
+        // Get split amount
+        String splitAmount = getSplitAmount(amountValue, members.size());
+
+        createTransactionParseObject(groupId, groupName, personOwedEmail, descriptionTxt,
+                totalAmount, members, displayNames, splitAmount);
+
+        // Send emails to group members
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put("toEmail", personOwedEmail);
+        map.put("fromName", personOwedName);
+        map.put("groupName", groupName);
+        map.put("chargeDescription", descriptionTxt);
+        map.put("amount", splitAmount);
+
+        for (String email : members) {
+            if (!email.equals(personOwedEmail)) {
+                // sendEmails(email, map);
+            }
+        }
+
+        finish();
+    }
+
+    private boolean validMonetaryInput(String amount) {
+        int decimal = amount.lastIndexOf('.');
+        int decimalPlaces = amount.substring(decimal+1).length();
         if (decimalPlaces > 2 || decimalPlaces < -1) {
             Toast.makeText(getApplicationContext(),
                     getResources().getString(R.string.invalid_amount_toast),
                     Toast.LENGTH_LONG).show();
-            return;
+            return false;
         }
+        return true;
+    }
 
-        final double amountValue = Double.valueOf(amountTxt);
-        final String totalAmount = String.format("%.2f", amountValue);
-
-        ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Group");
-        groupQuery.whereEqualTo(Constants.OBJECT_ID, groupId);
-        groupQuery.getFirstInBackground(new GetCallback<ParseObject>() {
-            @Override
-            public void done(ParseObject parseObject, ParseException e) {
-                if (e == null) {
-                    @SuppressWarnings("unchecked")
-                    ArrayList<String> members =
-                            (ArrayList<String>) parseObject.get(Constants.GROUP_MEMBERS);
-                    @SuppressWarnings("unchecked")
-                    ArrayList<String> displayNames =
-                            (ArrayList<String>) parseObject.get(Constants.GROUP_DISPLAY_NAMES);
-
-                    double dividedAmount = amountValue / members.size();
-                    BigDecimal bd = new BigDecimal(dividedAmount);
-                    String splitAmount = bd.setScale(2, BigDecimal.ROUND_FLOOR).toString();
-
-                    createTransactionParseObject(groupId, groupName, personOwedEmail, descriptionTxt,
-                            totalAmount, members, displayNames, splitAmount);
-
-                    HashMap<String, Object> map = new HashMap<String, Object>();
-                    map.put("toEmail", personOwedEmail);
-                    map.put("fromName", personOwedName);
-                    map.put("groupName", groupName);
-                    map.put("chargeDescription", descriptionTxt);
-                    map.put("amount", splitAmount);
-
-                    for (String email : members) {
-                        if (!email.equals(personOwedEmail)) {
-                            // sendEmails(email, map);
-                        }
-                    }
-
-                    finish();
-                } else {
-                    Log.v(TAG, e.toString());
-                }
-            }
-        });
+    private String getSplitAmount(double amountValue, double numMembers) {
+        double dividedAmount = amountValue / numMembers;
+        BigDecimal bd = new BigDecimal(dividedAmount);
+        return bd.setScale(2, BigDecimal.ROUND_FLOOR).toString();
     }
 
     @Override
@@ -229,33 +234,22 @@ public class CreateTransactionActivity extends Activity {
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.v(TAG, "Resume");
-        getGroupsFromParse();
-    }
-
-    // TODO: get this some other way like from the HomeActivity
     private void getGroupsFromParse() {
         if (ParseUser.getCurrentUser() != null) {
             ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Group");
             groupQuery.whereEqualTo(Constants.GROUP_MEMBERS, ParseUser.getCurrentUser().getEmail());
-            groupQuery.findInBackground(new FindCallback<ParseObject>() {
-                @Override
-                public void done(List<ParseObject> parseObjects, ParseException e) {
-                    // Query should generate Spinner data using an array adapter
-                    // Create a key-value pairing the name to the object id so we can get the id
-                    mGroupsList.clear();
-                    for (ParseObject obj : parseObjects) {
-                        if (obj != null) {
-                            mGroupsList.add(obj);
-                        }
-                    }
-                    mAdapter.notifyDataSetChanged();
-                    Log.v(TAG, "Notify data set changed");
-                }
-            });
+            try {
+                List<ParseObject> groups = groupQuery.find();
+                // Query should generate Spinner data using an array adapter
+                // Create a key-value pairing the name to the object id so we can get the id
+                mGroupsList.clear();
+                mGroupsList.addAll(groups);
+                mAdapter.notifyDataSetChanged();
+                Log.v(TAG, "Notify data set changed");
+            }
+            catch (ParseException e) {
+                Log.d(TAG, e.getMessage());
+            }
         }
     }
 }

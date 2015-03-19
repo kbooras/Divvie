@@ -301,6 +301,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
                     updateData(CLASSNAME_GROUP);
                 }
             }
+            //TODO this can be simplified a lot by doing instanceof fragment in updateData
         }
     }
 
