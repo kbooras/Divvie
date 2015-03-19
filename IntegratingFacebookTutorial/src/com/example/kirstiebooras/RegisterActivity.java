@@ -30,8 +30,6 @@ public class RegisterActivity extends Activity {
     private EditText mPassword;
     private EditText mReenterPassword;
     private Resources mResources;
-    private static final int EMAIL_TAKEN = 203;
-    private static final int USERNAME_TAKEN = 202;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,13 +94,17 @@ public class RegisterActivity extends Activity {
                             HomeActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
-                } else if (e.getCode() == EMAIL_TAKEN || e.getCode() == USERNAME_TAKEN) {
+                } else if (e.getCode() == ParseException.EMAIL_TAKEN
+                        || e.getCode() == ParseException.USERNAME_TAKEN) {
                     Log.v(TAG, "error code " + e.toString());
                         Toast.makeText(getApplicationContext(),
                                 mResources.getString(R.string.account_email_exists_toast),
                                 Toast.LENGTH_LONG).show();
-                } else {
-                        Log.v(TAG, "Sign up failed :( " + e.toString() + " " + e.getCode());
+                } else if (e.getCode() == ParseException.CONNECTION_FAILED) {
+
+                }
+                else {
+                        Log.v(TAG, "Sign up failed :( " + e.getCode() + " " + e.toString());
                 }
             }
         });

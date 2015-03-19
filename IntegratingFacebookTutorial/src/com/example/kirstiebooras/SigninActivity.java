@@ -28,15 +28,12 @@ public class SigninActivity extends Activity {
 
     private EditText mEmail;
     private EditText mPassword;
-    private Resources mResources;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.signin_activity);
-
-        mResources = getResources();
 
         mEmail = (EditText) findViewById(R.id.email);
         mPassword = (EditText) findViewById(R.id.password);
@@ -47,7 +44,7 @@ public class SigninActivity extends Activity {
         String passwordTxt = mPassword.getText().toString();
 
         if (emailTxt.equals("") || passwordTxt.equals("")) {
-            Toast.makeText(getApplicationContext(), mResources.getString(R.string.complete_form_toast),
+            Toast.makeText(getApplicationContext(), getString(R.string.complete_form_toast),
                     Toast.LENGTH_LONG).show();
         } else {
             ParseUser.logInInBackground(emailTxt, passwordTxt, new LogInCallback() {
@@ -59,19 +56,34 @@ public class SigninActivity extends Activity {
                                 HomeActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
-                    } else {
-                        Log.v(TAG, "Sign in failed :(" + e.toString());
+                    } else if (e.getCode() == ParseException.CONNECTION_FAILED) {
+                        Log.v(TAG, "No network connection");
                         new AlertDialog.Builder(SigninActivity.this)
                                 .setIconAttribute(android.R.attr.alertDialogIcon)
-                                .setTitle(mResources.getString(R.string.sign_in))
-                                .setMessage(mResources.getString(R.string.signin_failed_alert_message))
-                                .setPositiveButton(mResources.getString(R.string.ok),
+                                .setTitle(getString(R.string.no_network_connection))
+                                .setMessage(getString(R.string.network_connection_alert_message))
+                                .setPositiveButton(getString(R.string.ok),
                                         new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
                                             }
-                                })
+                                        }
+                                )
                                 .show();
+                    } else if (e.getCode() == ParseException.OBJECT_NOT_FOUND) {
+                        new AlertDialog.Builder(SigninActivity.this)
+                                .setIconAttribute(android.R.attr.alertDialogIcon)
+                                .setTitle(getString(R.string.sign_in))
+                                .setMessage(getString(R.string.signin_failed_alert_message))
+                                .setPositiveButton(getString(R.string.ok),
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                            }
+                                        })
+                                .show();
+                    } else {
+                        Log.v(TAG, "Sign in failed :( " + e.getCode() + " " + e.toString());
                     }
                 }
             });
@@ -81,17 +93,17 @@ public class SigninActivity extends Activity {
     public void onForgotPasswordClick(View v) {
         final EditText resetPasswordEmail = new EditText(this);
         new AlertDialog.Builder(this)
-                .setTitle(mResources.getString(R.string.forgot_password_alert_title))
-                .setMessage(mResources.getString(R.string.forgot_password_alert_message))
+                .setTitle(getString(R.string.forgot_password_alert_title))
+                .setMessage(getString(R.string.forgot_password_alert_message))
                 .setView(resetPasswordEmail)
-                .setPositiveButton(mResources.getString(R.string.reset),
+                .setPositiveButton(getString(R.string.reset),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 String resetPasswordEmailTxt = resetPasswordEmail.getText().toString();
                                 resetPassword(resetPasswordEmailTxt);
                             }
                 })
-                .setNegativeButton(mResources.getString(R.string.cancel), null)
+                .setNegativeButton(getString(R.string.cancel), null)
                 .show();
     }
 
@@ -100,15 +112,13 @@ public class SigninActivity extends Activity {
                 new RequestPasswordResetCallback() {
                     public void done(ParseException e) {
                         if (e == null) {
-                            // An email was successfully sent with reset
-                            // instructions.
+                            // An email was successfully sent with reset instructions.
                             Toast.makeText(getApplicationContext(),
-                                    mResources.getString(R.string.reset_success_toast),
+                                    getString(R.string.reset_success_toast),
                                     Toast.LENGTH_LONG).show();
                             Log.v(TAG, "reset email sent!");
                         } else {
-                            // Something went wrong. Look at the ParseException
-                            // to see what's up.
+                            // Something went wrong. Look at the ParseException to see what's up.
                             Log.v(TAG, String.valueOf(e.getCode()));
                             displayResetErrorMessage(e.getCode());
                         }
@@ -118,20 +128,18 @@ public class SigninActivity extends Activity {
 
     public void displayResetErrorMessage(int errorCode) {
         String message;
-        int INVALID_EMAIL = 125;
-        int EMAIL_NOT_FOUND = 205;
-        if (errorCode == INVALID_EMAIL) {
-            message = mResources.getString(R.string.reset_invalid_email_alert_message);
-        } else if (errorCode == EMAIL_NOT_FOUND) {
-            message = mResources.getString((R.string.reset_no_account_alert_message));
+        if (errorCode == ParseException.INVALID_EMAIL_ADDRESS) {
+            message = getString(R.string.reset_invalid_email_alert_message);
+        } else if (errorCode == ParseException.EMAIL_NOT_FOUND) {
+            message = getString((R.string.reset_no_account_alert_message));
         } else {
-            message = mResources.getString((R.string.reset_failed_alert_message));
+            message = getString((R.string.reset_failed_alert_message));
         }
 
         new AlertDialog.Builder(this)
-                .setTitle(mResources.getString((R.string.reset_failed_alert_title)))
+                .setTitle(getString((R.string.reset_failed_alert_title)))
                 .setMessage(message)
-                .setPositiveButton(mResources.getString((R.string.ok)), null)
+                .setPositiveButton(getString((R.string.ok)), null)
                 .show();
     }
 }

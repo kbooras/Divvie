@@ -17,6 +17,9 @@
     <string name="enter_valid_email_toast">Please enter a valid email.</string>
     <string name="password_match_toast">Passwords do not match.</string>
     <string name="account_email_exists_toast">There is already an account with this email.</string>
+    <string name="no_network_connection">No Network Connection</string>
+    <string name="network_connection_alert_message">You are not connected to the internet and
+        cannot sign in. Please try again when you gain connectivity.</string>
     <string name="signin_failed_alert_message">Email or password invalid.</string>
 
     <string name="forgot_password_alert_title">Forgot Password</string>
@@ -27,8 +30,7 @@
     <string name="reset_failed_alert_title">Reset Password Failed</string>
     <string name="reset_invalid_email_alert_message">The email you entered was invalid.</string>
     <string name="reset_no_account_alert_message"> The email you entered is not associated with an
-        account.
-    </string>
+        account.</string>
     <string name="reset_failed_alert_message">The reset password failed. Please try again
         later.</string>
 

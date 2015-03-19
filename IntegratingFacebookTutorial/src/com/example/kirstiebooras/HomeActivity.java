@@ -48,18 +48,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 
         checkForCurrentUser();
 
-        if (isNetworkConnected()) {
-            // If there is a network connection, get data from Parse
-            Log.v(TAG, "connected to network");
-            getParseData(CLASSNAME_TRANSACTION);
-            getParseData(CLASSNAME_GROUP);
-        }
-        else {
-            // Otherwise get data from local datastore
-            Log.v(TAG, "no network connection");
-            getPinnedData(CLASSNAME_TRANSACTION);
-            getPinnedData(CLASSNAME_GROUP);
-        }
+        initData();
 
         TabsFragmentPagerAdapter tabsAdapter = new TabsFragmentPagerAdapter(getSupportFragmentManager());
 
@@ -84,7 +73,37 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         mActionBar.addTab(mActionBar.newTab().setText(
                 getResources().getString(R.string.groups)).setTabListener(this));
         setTabsBelowActionBar();
+    }
 
+    /**
+     * Check if there is a currently logged in user
+     */
+    private void checkForCurrentUser() {
+        Log.v(TAG, "checkForCurrentUser");
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        if (currentUser == null) {
+            // If the current user is null, send to sign in or register
+            startSigninRegisterActivity();
+            finish();
+        }
+    }
+
+    /**
+     * Initialize the data for the Fragments to display
+     */
+    private void initData() {
+        if (isNetworkConnected()) {
+            // If there is a network connection, get data from Parse
+            Log.v(TAG, "connected to network");
+            getParseData(CLASSNAME_TRANSACTION);
+            getParseData(CLASSNAME_GROUP);
+        }
+        else {
+            // Otherwise get data from local datastore
+            Log.v(TAG, "no network connection");
+            getPinnedData(CLASSNAME_TRANSACTION);
+            getPinnedData(CLASSNAME_GROUP);
+        }
     }
 
     /**
@@ -118,8 +137,12 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
      */
     private void getParseData(final String className) {
         Log.v(TAG, "getParseData");
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        if (currentUser == null) {
+            return;
+        }
         ParseQuery<ParseObject> query = ParseQuery.getQuery(className);
-        query.whereEqualTo(Constants.GROUP_MEMBERS, ParseUser.getCurrentUser().getEmail());
+        query.whereEqualTo(Constants.GROUP_MEMBERS, currentUser.getEmail());
         query.orderByDescending("createdAt");
         try {
             final List<ParseObject> parseObjects = query.find();
@@ -157,8 +180,12 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
      */
     private void getPinnedData(String className) {
         Log.v(TAG, "getPinnedData");
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        if (currentUser == null) {
+            return;
+        }
         ParseQuery<ParseObject> query = ParseQuery.getQuery(className);
-        query.whereEqualTo(Constants.GROUP_MEMBERS, ParseUser.getCurrentUser().getEmail());
+        query.whereEqualTo(Constants.GROUP_MEMBERS, currentUser.getEmail());
         query.fromLocalDatastore();
         query.orderByDescending("createdAt");
         try {
@@ -203,7 +230,8 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 //                        session.closeAndClearTokenInformation();
 //                    }
 //                }
-                // TODO: unpin data
+                unpinData(CLASSNAME_TRANSACTION);
+                unpinData(CLASSNAME_GROUP);
                 ParseUser.logOut();
                 Log.v(TAG, "User signed out!");
                 startSigninRegisterActivity();
@@ -229,6 +257,21 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
             default:
                 return false;
         }
+    }
+
+    private void unpinData(final String className) {
+        Log.v(TAG, "unpinData");
+        ParseObject.unpinAllInBackground(className, new DeleteCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e != null) {
+                    // There was some error.
+                    Log.v(TAG, "Unpin error: " + e.getMessage());
+                    return;
+                }
+                Log.v(TAG, "unpinned");
+            }
+        });
     }
 
     private boolean userHasGroups() {
@@ -261,17 +304,6 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
     protected void onResume() {
         super.onResume();
         checkForCurrentUser();
-    }
-
-    /**
-     * Check if there is a currently logged in user
-     */
-    private void checkForCurrentUser() {
-        ParseUser currentUser = ParseUser.getCurrentUser();
-        if (currentUser == null) {
-            // If the current user is null, send to sign in or register
-            startSigninRegisterActivity();
-        }
     }
 
     private void startSigninRegisterActivity() {

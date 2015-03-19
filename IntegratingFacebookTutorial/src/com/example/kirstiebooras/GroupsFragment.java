@@ -50,6 +50,9 @@ public class GroupsFragment extends ListFragment {
      */
     private void bindData(List<ParseObject> data) {
         Log.v(TAG, "bindData");
+        if (data == null) {
+            return;
+        }
         mGroups.clear();
         mGroups.addAll(data);
         mAdapter.notifyDataSetChanged();

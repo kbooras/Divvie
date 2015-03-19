@@ -52,6 +52,9 @@ public class TransactionsFragment extends ListFragment {
      */
     private void bindData(List<ParseObject> data) {
         Log.v(TAG, "bindData");
+        if (data == null) {
+            return;
+        }
         mTransactions.clear();
         mTransactions.addAll(data);
         mAdapter.notifyDataSetChanged();
