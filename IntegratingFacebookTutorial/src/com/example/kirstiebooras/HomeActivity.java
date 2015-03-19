@@ -33,8 +33,8 @@ import java.util.List;
 public class HomeActivity extends FragmentActivity implements ActionBar.TabListener {
 
     private static final String TAG = "HomeActivity";
-    private static final String CLASSNAME_GROUP = "Group";
-    private static final String CLASSNAME_TRANSACTION = "Transaction";
+    public static final String CLASSNAME_GROUP = "Group";
+    public static final String CLASSNAME_TRANSACTION = "Transaction";
     private ActionBar mActionBar;
     private ViewPager mViewPager;
     private List<ParseObject> mTransactionsData;
@@ -103,6 +103,25 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
             Log.v(TAG, "no network connection");
             getPinnedData(CLASSNAME_TRANSACTION);
             getPinnedData(CLASSNAME_GROUP);
+        }
+    }
+
+    /**
+     * Update either the transaction data or group data
+     * @param className: The type of data to update
+     */
+    private void updateData(String className) {
+        if (isNetworkConnected()) {
+            // If there is a network connection, get data from Parse
+            Log.v(TAG, "Update data. Connected to network.");
+            getParseData(className);
+            // Signal fragment to update
+
+        }
+        else {
+            // Otherwise get data from local datastore
+            Log.v(TAG, "Update data. No network connection.");
+            getPinnedData(className);
         }
     }
 
@@ -243,7 +262,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
                     if (userHasGroups()) {
                         // User must have at least one group to make a transaction
                         Intent intent = new Intent(this, CreateTransactionActivity.class);
-                        startActivity(intent);
+                        startActivityForResult(intent, 2);
                     }
                     else {
                         Toast.makeText(this, getResources().getString(R.string.user_no_groups_toast),
@@ -256,6 +275,21 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
                 return true;
             default:
                 return false;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == 2) {
+            if (data.hasExtra("className")) {
+                if (data.getExtras().getString("className").equals(CLASSNAME_TRANSACTION)) {
+                    updateData(CLASSNAME_TRANSACTION);
+                }
+                else if (data.getExtras().getString("className").equals(CLASSNAME_GROUP)) {
+                    updateData(CLASSNAME_GROUP);
+                }
+            }
         }
     }
 
@@ -322,6 +356,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
     }
 
     public List<ParseObject> getGroupsData() {
+        Log.v(TAG, "get groups data");
         return mGroupsData;
     }
 

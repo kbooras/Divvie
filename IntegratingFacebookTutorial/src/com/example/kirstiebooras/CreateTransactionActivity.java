@@ -1,6 +1,7 @@
 package com.example.kirstiebooras;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
@@ -160,6 +161,15 @@ public class CreateTransactionActivity extends Activity {
         });
     }
 
+    @Override
+    public void finish() {
+        Intent data = new Intent();
+        // TODO Tell homeactivity specifically what object to get using data.putExtra()
+        data.putExtra("className", "Transaction");
+        setResult(RESULT_OK, data);
+        super.finish();
+    }
+
     private void createTransactionParseObject(String groupId, String groupName,
                                               String personOwed, String descriptionTxt,
                                               String totalAmount, ArrayList<String> members,
@@ -226,6 +236,7 @@ public class CreateTransactionActivity extends Activity {
         getGroupsFromParse();
     }
 
+    // TODO: get this some other way like from the HomeActivity
     private void getGroupsFromParse() {
         if (ParseUser.getCurrentUser() != null) {
             ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Group");
