@@ -3,6 +3,11 @@ package com.example.kirstiebooras;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.Log;
+import android.view.ViewGroup;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * FragmentPagerAdapter which loads the fragments into the ViewPager.
@@ -10,37 +15,41 @@ import android.support.v4.app.FragmentPagerAdapter;
  */
 public class TabsFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    private TransactionsFragment mTransactionsFragment;
-    private GroupsFragment mGroupsFragment;
+    private Map<Integer, Fragment> mPageReferenceMap;
 
     public TabsFragmentPagerAdapter(FragmentManager manager) {
         super(manager);
+        mPageReferenceMap = new HashMap<Integer, Fragment>();
     }
 
     @Override
     public Fragment getItem(int index) {
         switch (index) {
             case 0:
-                mTransactionsFragment = new TransactionsFragment();
-                return mTransactionsFragment;
+                Fragment transactions = new TransactionsFragment();
+                mPageReferenceMap.put(index, transactions);
+                return transactions;
             case 1:
-                mGroupsFragment = new GroupsFragment();
-                return mGroupsFragment;
+                Fragment groups = new GroupsFragment();
+                mPageReferenceMap.put(index, groups);
+                return groups;
             default:
                 return null;
         }
     }
 
+    public Fragment getCurrentFragment(int index) {
+        return  mPageReferenceMap.get(index);
+    }
+
+    @Override
+    public void destroyItem(ViewGroup container, int position, Object object) {
+        super.destroyItem(container, position, object);
+        mPageReferenceMap.remove(position);
+    }
+
     @Override
     public int getCount() {
         return 2;
-    }
-
-    public GroupsFragment getGroupsFragment() {
-        return mGroupsFragment;
-    }
-
-    public TransactionsFragment getTransactionsFragment() {
-        return mTransactionsFragment;
     }
 }

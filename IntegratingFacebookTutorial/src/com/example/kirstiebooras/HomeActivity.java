@@ -39,6 +39,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
     private ViewPager mViewPager;
     private List<ParseObject> mTransactionsData;
     private List<ParseObject> mGroupsData;
+    private TabsFragmentPagerAdapter tabsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +51,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 
         initData();
 
-        TabsFragmentPagerAdapter tabsAdapter = new TabsFragmentPagerAdapter(getSupportFragmentManager());
+        tabsAdapter = new TabsFragmentPagerAdapter(getSupportFragmentManager());
 
         // Home button should not be enabled, since there is no hierarchical parent.
         mActionBar = getActionBar();
@@ -94,13 +95,13 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
     private void initData() {
         if (isNetworkConnected()) {
             // If there is a network connection, get data from Parse
-            Log.v(TAG, "connected to network");
+            Log.v(TAG, "Init data. Connected to network.");
             getParseData(CLASSNAME_TRANSACTION);
             getParseData(CLASSNAME_GROUP);
         }
         else {
             // Otherwise get data from local datastore
-            Log.v(TAG, "no network connection");
+            Log.v(TAG, "Init data. No network connection.");
             getPinnedData(CLASSNAME_TRANSACTION);
             getPinnedData(CLASSNAME_GROUP);
         }
@@ -115,13 +116,23 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
             // If there is a network connection, get data from Parse
             Log.v(TAG, "Update data. Connected to network.");
             getParseData(className);
-            // Signal fragment to update
-
         }
         else {
             // Otherwise get data from local datastore
             Log.v(TAG, "Update data. No network connection.");
             getPinnedData(className);
+        }
+
+        // TODO Signal fragment to update
+        int index = mViewPager.getCurrentItem();
+        if (className.equals(CLASSNAME_TRANSACTION)) {
+            TransactionsFragment fragment
+                    = (TransactionsFragment) tabsAdapter.getCurrentFragment(index);
+            //fragment.bindData(mGroupsData);
+        }
+        else if (className.equals(CLASSNAME_GROUP)) {
+            GroupsFragment fragment = (GroupsFragment) tabsAdapter.getCurrentFragment(index);
+            //fragment.bindData(mGroupsData);
         }
     }
 

@@ -50,7 +50,7 @@ public class TransactionsFragment extends ListFragment {
      * Attach the data passed in from HomeActivity to the adapter
      * @param data: The data from HomeActivity
      */
-    private void bindData(List<ParseObject> data) {
+    public void bindData(List<ParseObject> data) {
         Log.v(TAG, "bindData");
         if (data == null) {
             return;
