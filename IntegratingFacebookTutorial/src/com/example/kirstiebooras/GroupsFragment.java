@@ -31,7 +31,6 @@ public class GroupsFragment extends ListFragment {
         mAdapter = new GroupsAdapter(getActivity().getBaseContext(), mGroups);
         setListAdapter(mAdapter);
 
-        //if (savedInstanceState == null) {
         // Get data from HomeActivity member variables
         HomeActivity homeActivity = (HomeActivity) getActivity();
         bindData(homeActivity.getGroupsData());

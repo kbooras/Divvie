@@ -34,7 +34,6 @@ public class TransactionsFragment extends ListFragment {
         mAdapter = new TransactionsAdapter(getActivity().getBaseContext(), mTransactions);
         setListAdapter(mAdapter);
 
-        //if (savedInstanceState == null) {
         // Get data from HomeActivity member variables
         HomeActivity homeActivity = (HomeActivity) getActivity();
         bindData(homeActivity.getTransactionsData());

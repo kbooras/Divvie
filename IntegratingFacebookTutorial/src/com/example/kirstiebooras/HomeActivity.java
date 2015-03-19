@@ -2,7 +2,9 @@ package com.example.kirstiebooras;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
@@ -46,10 +48,17 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 
         checkForCurrentUser();
 
-        if (mGroupsData == null || mTransactionsData == null) {
-            // TODO: Check for internet connection. If none, check for pinned data.
+        if (isNetworkConnected()) {
+            // If there is a network connection, get data from Parse
+            Log.v(TAG, "connected to network");
             getParseData(CLASSNAME_TRANSACTION);
             getParseData(CLASSNAME_GROUP);
+        }
+        else {
+            // Otherwise get data from local datastore
+            Log.v(TAG, "no network connection");
+            getPinnedData(CLASSNAME_TRANSACTION);
+            getPinnedData(CLASSNAME_GROUP);
         }
 
         TabsFragmentPagerAdapter tabsAdapter = new TabsFragmentPagerAdapter(getSupportFragmentManager());
@@ -76,6 +85,15 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
                 getResources().getString(R.string.groups)).setTabListener(this));
         setTabsBelowActionBar();
 
+    }
+
+    /**
+     * Checks for network connection
+     * @return true if connected
+     */
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null;
     }
 
     /**
@@ -131,6 +149,32 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         } catch (ParseException e) {
             Log.v(TAG, "Query error: " + e.getMessage());
         }
+    }
+
+    /**
+     * Get data from the local datastore.
+     * @param className: The type of objects the ParseQuery will be searching for.
+     */
+    private void getPinnedData(String className) {
+        Log.v(TAG, "getPinnedData");
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(className);
+        query.whereEqualTo(Constants.GROUP_MEMBERS, ParseUser.getCurrentUser().getEmail());
+        query.fromLocalDatastore();
+        query.orderByDescending("createdAt");
+        try {
+            List<ParseObject> parseObjects = query.find();
+            Log.v(TAG, "Found " + parseObjects.size() + " objects in local datastore");
+
+            if (className.equals(CLASSNAME_TRANSACTION)) {
+                mTransactionsData = parseObjects;
+            }
+            else if (className.equals(CLASSNAME_GROUP)) {
+                mGroupsData = parseObjects;
+            }
+        } catch (ParseException e) {
+            Log.v(TAG, "Query error: " + e.getMessage());
+        }
+
     }
 
     @Override
