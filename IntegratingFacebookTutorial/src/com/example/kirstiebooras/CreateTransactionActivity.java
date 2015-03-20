@@ -230,6 +230,7 @@ public class CreateTransactionActivity extends Activity {
         if (ParseUser.getCurrentUser() != null) {
             ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Group");
             groupQuery.whereEqualTo(Constants.GROUP_MEMBERS, ParseUser.getCurrentUser().getEmail());
+            // TODO find in background
             try {
                 List<ParseObject> groups = groupQuery.find();
                 // Query should generate Spinner data using an array adapter

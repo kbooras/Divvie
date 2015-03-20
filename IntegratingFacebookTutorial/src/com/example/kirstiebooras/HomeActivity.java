@@ -89,6 +89,14 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         }
     }
 
+    private void startSigninRegisterActivity() {
+        Intent intent = new Intent(this, SigninRegisterActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+    // TODO combine 2 below methods
     /**
      * Initialize the data for the Fragments to display
      */
@@ -170,6 +178,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         ParseQuery<ParseObject> query = ParseQuery.getQuery(className);
         query.whereEqualTo(Constants.GROUP_MEMBERS, currentUser.getEmail());
         query.orderByDescending("createdAt");
+        // TODO findinbackground
         try {
             final List<ParseObject> parseObjects = query.find();
 
@@ -214,6 +223,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         query.whereEqualTo(Constants.GROUP_MEMBERS, currentUser.getEmail());
         query.fromLocalDatastore();
         query.orderByDescending("createdAt");
+        // TODO findinbackground
         try {
             List<ParseObject> parseObjects = query.find();
             Log.v(TAG, "Found " + parseObjects.size() + " objects in local datastore");
@@ -270,6 +280,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
                         // User must have at least one group to make a transaction
                         Intent intent = new Intent(this, CreateTransactionActivity.class);
                         startActivityForResult(intent, 2);
+                        // TODO: create a listener?
                     }
                     else {
                         Toast.makeText(this, getResources().getString(R.string.user_no_groups_toast),
@@ -282,6 +293,18 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
                 return true;
             default:
                 return false;
+        }
+    }
+
+    // TODO make this a flag
+    private boolean userHasGroups() {
+        ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Group");
+        groupQuery.whereEqualTo(Constants.GROUP_MEMBERS, ParseUser.getCurrentUser().getEmail());
+        try {
+            groupQuery.getFirst();
+            return true;
+        } catch (ParseException e) {
+            return false;
         }
     }
 
@@ -316,17 +339,6 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         });
     }
 
-    private boolean userHasGroups() {
-        ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Group");
-        groupQuery.whereEqualTo(Constants.GROUP_MEMBERS, ParseUser.getCurrentUser().getEmail());
-        try {
-            groupQuery.getFirst();
-            return true;
-        } catch (ParseException e) {
-            return false;
-        }
-    }
-
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction arg1) {
         mViewPager.setCurrentItem(tab.getPosition());
@@ -346,13 +358,6 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
     protected void onResume() {
         super.onResume();
         checkForCurrentUser();
-    }
-
-    private void startSigninRegisterActivity() {
-        Intent intent = new Intent(this, SigninRegisterActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
     }
 
     @Override
