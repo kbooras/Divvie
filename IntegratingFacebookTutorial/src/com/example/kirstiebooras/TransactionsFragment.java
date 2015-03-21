@@ -34,9 +34,11 @@ public class TransactionsFragment extends ListFragment {
         mAdapter = new TransactionsAdapter(getActivity().getBaseContext(), mTransactions);
         setListAdapter(mAdapter);
 
-        // Get data from HomeActivity member variables
+        // Workaround for problem where fragments are not available in the HomeActivity onCreate method
+        // to initially set the data.
         HomeActivity homeActivity = (HomeActivity) getActivity();
         bindData(homeActivity.getTransactionsData());
+
     }
 
     @Override
@@ -53,6 +55,7 @@ public class TransactionsFragment extends ListFragment {
     public void bindData(List<ParseObject> data) {
         Log.v(TAG, "bindData");
         if (data == null) {
+            Log.e(TAG, "Data is null");
             return;
         }
         mTransactions.clear();

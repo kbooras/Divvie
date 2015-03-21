@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.View;
-import android.widget.ListView;
 
 import com.parse.ParseObject;
 
@@ -31,7 +30,8 @@ public class GroupsFragment extends ListFragment {
         mAdapter = new GroupsAdapter(getActivity().getBaseContext(), mGroups);
         setListAdapter(mAdapter);
 
-        // Get data from HomeActivity member variables
+        // Workaround for problem where fragments are not available in the HomeActivity onCreate method
+        // to initially set the data.
         HomeActivity homeActivity = (HomeActivity) getActivity();
         bindData(homeActivity.getGroupsData());
 
@@ -51,16 +51,12 @@ public class GroupsFragment extends ListFragment {
     public void bindData(List<ParseObject> data) {
         Log.v(TAG, "bindData");
         if (data == null) {
+            Log.e(TAG, "Data is null");
             return;
         }
         mGroups.clear();
         mGroups.addAll(data);
         mAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        // do something with the data
     }
 
 }

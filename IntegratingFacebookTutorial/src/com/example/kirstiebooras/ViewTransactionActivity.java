@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -51,15 +52,18 @@ public class ViewTransactionActivity extends Activity {
 
         String transactionId = mIntent.getStringExtra("parseObjectId");
 
-        ParseQuery<ParseObject> transactionQuery = ParseQuery.getQuery("Transaction");
-        transactionQuery.whereEqualTo(Constants.OBJECT_ID, transactionId);
-        transactionQuery.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> parseObjects, ParseException e) {
-                setViewText(parseObjects.get(0));
-                displayMembers(parseObjects.get(0));
-            }
-        });
+        // TODO move to ParseMethods
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Transaction");
+        query.whereEqualTo(Constants.OBJECT_ID, transactionId);
+        query.fromLocalDatastore();
+        try {
+            ParseObject object = query.getFirst();
+            setViewText(object);
+            displayMembers(object);
+        }
+        catch (ParseException e) {
+            Log.e(TAG, "Query error: " + e.getMessage());
+        }
     }
 
     private void setViewText(ParseObject object) {

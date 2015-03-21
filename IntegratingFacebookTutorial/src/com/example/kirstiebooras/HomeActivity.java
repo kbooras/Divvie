@@ -18,7 +18,6 @@ import android.widget.Toast;
 import com.parse.DeleteCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
 
@@ -34,24 +33,24 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 
     private static final String TAG = "HomeActivity";
     public static final String CLASSNAME_GROUP = "Group";
-    public static final String CLASSNAME_TRANSACTION = "Transaction";
+    private static final String CLASSNAME_TRANSACTION = "Transaction";
+    private static final int CREATE_TRANSACTION_REQUEST_CODE = 1;
+    private static final int CREATE_GROUP_REQUEST_CODE = 2;
     private ActionBar mActionBar;
     private ViewPager mViewPager;
     private List<ParseObject> mTransactionsData;
     private List<ParseObject> mGroupsData;
-    private TabsFragmentPagerAdapter tabsAdapter;
+    private TabsFragmentPagerAdapter mTabsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.v(TAG, "onCreate");
+        Log.d(TAG, "onCreate");
         setContentView(R.layout.home_activity);
 
         checkForCurrentUser();
 
-        initData();
-
-        tabsAdapter = new TabsFragmentPagerAdapter(getSupportFragmentManager());
+        mTabsAdapter = new TabsFragmentPagerAdapter(getSupportFragmentManager());
 
         // Home button should not be enabled, since there is no hierarchical parent.
         mActionBar = getActionBar();
@@ -59,7 +58,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 
         // Set up the ViewPager
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
-        mViewPager.setAdapter(tabsAdapter);
+        mViewPager.setAdapter(mTabsAdapter);
         mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int i) {
@@ -74,13 +73,25 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         mActionBar.addTab(mActionBar.newTab().setText(
                 getResources().getString(R.string.groups)).setTabListener(this));
         setTabsBelowActionBar();
+
+        // Load data into the Lists
+        if(mTransactionsData == null) {
+            updateFragmentData(CLASSNAME_TRANSACTION);
+        }
+        if (mGroupsData == null) {
+            updateFragmentData(CLASSNAME_GROUP);
+        }
+
+        // Update the data in the Local Datastore
+        updateLocalDatastore(CLASSNAME_TRANSACTION);
+        updateLocalDatastore(CLASSNAME_GROUP);
     }
 
     /**
      * Check if there is a currently logged in user
      */
     private void checkForCurrentUser() {
-        Log.v(TAG, "checkForCurrentUser");
+        Log.d(TAG, "checkForCurrentUser");
         ParseUser currentUser = ParseUser.getCurrentUser();
         if (currentUser == null) {
             // If the current user is null, send to sign in or register
@@ -96,52 +107,19 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         startActivity(intent);
     }
 
-    // TODO combine 2 below methods
     /**
-     * Initialize the data for the Fragments to display
+     * Update the Local Datastore with data from Parse.
+     * @param className: The type of objects the ParseQuery will be searching for.
      */
-    private void initData() {
+    private void updateLocalDatastore(String className) {
         if (isNetworkConnected()) {
-            // If there is a network connection, get data from Parse
-            Log.v(TAG, "Init data. Connected to network.");
-            getParseData(CLASSNAME_TRANSACTION);
-            getParseData(CLASSNAME_GROUP);
+            ParseMethods.getParseData(className);
         }
-        else {
-            // Otherwise get data from local datastore
-            Log.v(TAG, "Init data. No network connection.");
-            getPinnedData(CLASSNAME_TRANSACTION);
-            getPinnedData(CLASSNAME_GROUP);
-        }
+        // TODO on finish call updateFragmentData. But how do you know if it's finished?
     }
 
     /**
-     * Update either the transaction data or group data
-     * @param className: The type of data to update
-     */
-    private void updateData(String className) {
-        if (isNetworkConnected()) {
-            // If there is a network connection, get data from Parse
-            Log.v(TAG, "Update data. Connected to network.");
-            getParseData(className);
-        }
-        else {
-            // Otherwise get data from local datastore
-            Log.v(TAG, "Update data. No network connection.");
-            getPinnedData(className);
-        }
-
-        int index = mViewPager.getCurrentItem();
-        if (className.equals(CLASSNAME_TRANSACTION)) {
-            ((TransactionsFragment) tabsAdapter.getCurrentFragment(index)).bindData(mTransactionsData);
-        }
-        else if (className.equals(CLASSNAME_GROUP)) {
-            ((GroupsFragment) tabsAdapter.getCurrentFragment(index)).bindData(mGroupsData);
-        }
-    }
-
-    /**
-     * Checks for network connection
+     * Checks for network connection.
      * @return true if connected
      */
     private boolean isNetworkConnected() {
@@ -150,7 +128,37 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
     }
 
     /**
-     * Adds the tabs below the action bar
+     * Update either mTransactionsData or mGroupsData from the Local Datastore and tell the
+     * Fragment to bind the new data.
+     * @param className: The type of data to update
+     */
+    private void updateFragmentData(String className) {
+        Log.d(TAG, "updateFragmentData");
+
+        if (className.equals(CLASSNAME_TRANSACTION)) {
+            mTransactionsData = ParseMethods.getLocalData(CLASSNAME_TRANSACTION);
+            if (mTransactionsData != null) {
+                // TODO Doesn't work because this is called from onCreate the first time and the fragments don't exist yet
+                TransactionsFragment fragment = mTabsAdapter.getTransactionsFragment();
+                if (fragment != null) {
+                    fragment.bindData(mTransactionsData);
+                }
+            }
+        }
+        else if (className.equals(CLASSNAME_GROUP)) {
+            mGroupsData = ParseMethods.getLocalData(CLASSNAME_GROUP);
+            if (mGroupsData != null) {
+                GroupsFragment fragment = mTabsAdapter.getGroupsFragment();
+                if (fragment != null) {
+                    fragment.bindData(mGroupsData);
+                }
+            }
+        }
+
+    }
+
+    /**
+     * Adds the tabs below the action bar.
      */
     public void setTabsBelowActionBar() {
         try {
@@ -163,87 +171,6 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
             // Handle issues as needed: log, warn user, fallback etc
             // This error is safe to ignore, standard tabs will appear.
         }
-    }
-
-    /**
-     * Get data from Parse.
-     * @param className: The type of objects the ParseQuery will be searching for.
-     */
-    private void getParseData(final String className) {
-        Log.v(TAG, "getParseData");
-        ParseUser currentUser = ParseUser.getCurrentUser();
-        if (currentUser == null) {
-            return;
-        }
-        ParseQuery<ParseObject> query = ParseQuery.getQuery(className);
-        query.whereEqualTo(Constants.GROUP_MEMBERS, currentUser.getEmail());
-        query.orderByDescending("createdAt");
-        // TODO findinbackground
-        try {
-            final List<ParseObject> parseObjects = query.find();
-
-            if (className.equals(CLASSNAME_TRANSACTION)) {
-                mTransactionsData = parseObjects;
-            }
-            else if (className.equals(CLASSNAME_GROUP)) {
-                mGroupsData = parseObjects;
-            }
-
-            // Release any objects previously pinned for this query.
-            Log.v(TAG, className + ": Found " + parseObjects.size());
-            ParseObject.unpinAllInBackground(className, parseObjects, new DeleteCallback() {
-                public void done(ParseException e) {
-                    if (e != null) {
-                        // There was some error.
-                        Log.v(TAG, "Unpin error: " + e.getMessage());
-                        return;
-                    }
-
-                    // Add the latest results for this query to the cache.
-                    Log.v(TAG, className + ": Pinned " + parseObjects.size());
-                    ParseObject.pinAllInBackground(className, parseObjects);
-                }
-            });
-        } catch (ParseException e) {
-            Log.v(TAG, "Query error: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Get data from the local datastore.
-     * @param className: The type of objects the ParseQuery will be searching for.
-     */
-    private void getPinnedData(String className) {
-        Log.v(TAG, "getPinnedData");
-        ParseUser currentUser = ParseUser.getCurrentUser();
-        if (currentUser == null) {
-            return;
-        }
-        ParseQuery<ParseObject> query = ParseQuery.getQuery(className);
-        query.whereEqualTo(Constants.GROUP_MEMBERS, currentUser.getEmail());
-        query.fromLocalDatastore();
-        query.orderByDescending("createdAt");
-        // TODO findinbackground
-        try {
-            List<ParseObject> parseObjects = query.find();
-            Log.v(TAG, "Found " + parseObjects.size() + " objects in local datastore");
-
-            if (className.equals(CLASSNAME_TRANSACTION)) {
-                mTransactionsData = parseObjects;
-            }
-            else if (className.equals(CLASSNAME_GROUP)) {
-                mGroupsData = parseObjects;
-            }
-        } catch (ParseException e) {
-            Log.v(TAG, "Query error: " + e.getMessage());
-        }
-
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        // TODO
     }
 
     @Override
@@ -269,7 +196,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
                 unpinData(CLASSNAME_TRANSACTION);
                 unpinData(CLASSNAME_GROUP);
                 ParseUser.logOut();
-                Log.v(TAG, "User signed out!");
+                Log.i(TAG, "User signed out!");
                 startSigninRegisterActivity();
                 return true;
 
@@ -278,9 +205,9 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
                 if (currentFragment == 0) {
                     if (userHasGroups()) {
                         // User must have at least one group to make a transaction
+                        Log.d(TAG, "Start create transaction");
                         Intent intent = new Intent(this, CreateTransactionActivity.class);
-                        startActivityForResult(intent, 2);
-                        // TODO: create a listener?
+                        startActivityForResult(intent, CREATE_TRANSACTION_REQUEST_CODE);
                     }
                     else {
                         Toast.makeText(this, getResources().getString(R.string.user_no_groups_toast),
@@ -296,45 +223,56 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         }
     }
 
-    // TODO make this a flag
+    /**
+     * Determine if the user is a member of any groups.
+     * @return true or false
+     */
     private boolean userHasGroups() {
-        ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Group");
-        groupQuery.whereEqualTo(Constants.GROUP_MEMBERS, ParseUser.getCurrentUser().getEmail());
-        try {
-            groupQuery.getFirst();
-            return true;
-        } catch (ParseException e) {
+        if (mGroupsData != null) {
+            return mGroupsData.size() != 0;
+        }
+        else {
+            Log.wtf(TAG, "mGroupsData is null");
             return false;
         }
     }
 
+    /**
+     * Result from CreateTransactionActivity or CreateGroupActivity letting HomeActivity know a new
+     * ParseObject was created and the List data should be reloaded.
+     * @param requestCode: The code for the result request. This tells the type of object.
+     * @param resultCode: The code for the result from the request
+     * @param data: Not currently used
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == 2) {
-            if (data.hasExtra("className")) {
-                if (data.getExtras().getString("className").equals(CLASSNAME_TRANSACTION)) {
-                    updateData(CLASSNAME_TRANSACTION);
-                }
-                else if (data.getExtras().getString("className").equals(CLASSNAME_GROUP)) {
-                    updateData(CLASSNAME_GROUP);
-                }
+        if (resultCode == RESULT_OK) {
+            if(requestCode == CREATE_TRANSACTION_REQUEST_CODE) {
+                updateFragmentData(CLASSNAME_TRANSACTION);
             }
-            //TODO this can be simplified a lot by doing instanceof fragment in updateData
+            else if (requestCode == CREATE_GROUP_REQUEST_CODE) {
+                updateFragmentData(CLASSNAME_GROUP);
+            }
         }
+
     }
 
+    /**
+     * Remove ParseObjects from the Local Datastore.
+     * @param className: The type of ParseObjects to remove.
+     */
     private void unpinData(final String className) {
-        Log.v(TAG, "unpinData");
+        Log.d(TAG, "unpinData");
         ParseObject.unpinAllInBackground(className, new DeleteCallback() {
             @Override
             public void done(ParseException e) {
                 if (e != null) {
                     // There was some error.
-                    Log.v(TAG, "Unpin error: " + e.getMessage());
+                    Log.e(TAG, "Unpin error: " + e.getMessage());
                     return;
                 }
-                Log.v(TAG, "unpinned");
+                Log.i(TAG, "Unpinned " + className + " successfully.");
             }
         });
     }

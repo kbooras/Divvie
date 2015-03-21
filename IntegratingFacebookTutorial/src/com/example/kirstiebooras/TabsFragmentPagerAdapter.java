@@ -15,6 +15,7 @@ import java.util.Map;
  */
 public class TabsFragmentPagerAdapter extends FragmentPagerAdapter {
 
+    private static final String TAG = "TabsFragmentPagerAdapter";
     private Map<Integer, Fragment> mPageReferenceMap;
 
     public TabsFragmentPagerAdapter(FragmentManager manager) {
@@ -28,18 +29,50 @@ public class TabsFragmentPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 Fragment transactions = new TransactionsFragment();
                 mPageReferenceMap.put(index, transactions);
+                Log.v(TAG, "case 0 " + mPageReferenceMap.size());
                 return transactions;
             case 1:
+
                 Fragment groups = new GroupsFragment();
                 mPageReferenceMap.put(index, groups);
+                Log.v(TAG, "case 1 " + mPageReferenceMap.size());
                 return groups;
             default:
                 return null;
         }
     }
 
-    public Fragment getCurrentFragment(int index) {
-        return  mPageReferenceMap.get(index);
+    public TransactionsFragment getTransactionsFragment() {
+        if (mPageReferenceMap.isEmpty()) {
+            Log.e(TAG, "mPageReferenceMap is empty.");
+            return null;
+        }
+        else {
+            Fragment fragment = mPageReferenceMap.get(0);
+            if (!(fragment instanceof TransactionsFragment)) {
+                Log.wtf(TAG, "Value returned from getGroupsFragment not instance of TransactionsFragment");
+                return null;
+            } else {
+                Log.v(TAG, "returned fragment");
+                return (TransactionsFragment) fragment;
+            }
+        }
+    }
+
+    public GroupsFragment getGroupsFragment() {
+        if (mPageReferenceMap.size() < 2) {
+            Log.e(TAG, "mPageReferenceMap has a size less than 2.");
+            return null;
+        }
+        else {
+            Fragment fragment = mPageReferenceMap.get(1);
+            if (!(fragment instanceof GroupsFragment)) {
+                Log.wtf(TAG, "Value returned from getGroupsFragment not instance of GroupsFragment");
+                return null;
+            } else {
+                return (GroupsFragment) fragment;
+            }
+        }
     }
 
     @Override

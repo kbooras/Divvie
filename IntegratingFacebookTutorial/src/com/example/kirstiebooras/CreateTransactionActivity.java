@@ -1,7 +1,6 @@
 package com.example.kirstiebooras;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
@@ -16,7 +15,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.parse.FunctionCallback;
-import com.parse.GetCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -26,7 +24,6 @@ import com.parse.integratingfacebooktutorial.R;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -45,6 +42,7 @@ public class CreateTransactionActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
         setContentView(R.layout.create_transaction_activity);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -73,7 +71,9 @@ public class CreateTransactionActivity extends Activity {
         switch(item.getItemId()){
             case R.id.logout:
                 ParseUser.logOut();
-                Log.v(TAG, "User signed out!");
+                Log.i(TAG, "User signed out!");
+                // TODO: Call unpin data
+                // TODO: start sign in register activity
                 return true;
 
             case android.R.id.home:
@@ -93,8 +93,7 @@ public class CreateTransactionActivity extends Activity {
         // Check the form is complete
         if (description.equals("") || amount == null) {
             Toast.makeText(getApplicationContext(),
-                    getResources().getString(R.string.complete_form_toast),
-                    Toast.LENGTH_LONG).show();
+                    getResources().getString(R.string.complete_form_toast), Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -125,7 +124,7 @@ public class CreateTransactionActivity extends Activity {
         // Get split amount
         String splitAmount = getSplitAmount(amountValue, members.size());
 
-        createTransactionParseObject(groupId, groupName, personOwedEmail, description,
+        ParseMethods.createTransactionParseObject(groupId, groupName, personOwedEmail, description,
                 totalAmount, members, displayNames, splitAmount);
 
         // Send emails to group members
@@ -165,49 +164,9 @@ public class CreateTransactionActivity extends Activity {
 
     @Override
     public void finish() {
-        Intent data = new Intent();
         // TODO Tell homeactivity specifically what object to get using data.putExtra()
-        data.putExtra("className", "Transaction");
-        setResult(RESULT_OK, data);
+        setResult(RESULT_OK);
         super.finish();
-    }
-
-    private void createTransactionParseObject(String groupId, String groupName,
-                                              String personOwed, String descriptionTxt,
-                                              String totalAmount, ArrayList<String> members,
-                                              ArrayList<String> displayNames, String splitAmount) {
-        ParseObject newTransaction = new ParseObject("Transaction");
-
-        newTransaction.put(Constants.TRANSACTION_GROUP_ID, groupId);
-        newTransaction.put(Constants.TRANSACTION_GROUP_NAME, groupName);
-        newTransaction.put(Constants.TRANSACTION_PERSON_OWED, personOwed);
-        newTransaction.put(Constants.TRANSACTION_DESCRIPTION, descriptionTxt);
-        newTransaction.put(Constants.TRANSACTION_TOTAL_AMOUNT, totalAmount);
-        newTransaction.put(Constants.TRANSACTION_SPLIT_AMOUNT, splitAmount);
-        newTransaction.put(Constants.GROUP_MEMBERS, members);
-        newTransaction.put(Constants.GROUP_DISPLAY_NAMES, displayNames);
-
-        // Set paid values and date paid values. PersonOwed is set as paid.
-        ArrayList<Integer> paid = new ArrayList<Integer>(members.size());
-        ArrayList<String> datePaid = new ArrayList<String>(members.size());
-        for (String user : members) {
-            if (user.equals(personOwed)) {
-                paid.add(1);
-                String month = String.valueOf(Calendar.getInstance().get(Calendar.MONTH));
-                String date = String.valueOf(Calendar.getInstance().get(Calendar.DATE));
-                datePaid.add(month + "/" + date);
-            } else {
-                paid.add(0);
-                datePaid.add("");
-            }
-        }
-
-        newTransaction.put(Constants.TRANSACTION_PAID, paid);
-        newTransaction.put(Constants.TRANSACTION_DATE_PAID, datePaid);
-        newTransaction.put(Constants.TRANSACTION_COMPLETE, false);
-        newTransaction.saveEventually();
-        Log.v(TAG, "Saved new transaction");
-        
     }
 
     private void sendEmails(String email, HashMap<String, Object> map) {
@@ -230,18 +189,19 @@ public class CreateTransactionActivity extends Activity {
         if (ParseUser.getCurrentUser() != null) {
             ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Group");
             groupQuery.whereEqualTo(Constants.GROUP_MEMBERS, ParseUser.getCurrentUser().getEmail());
-            // TODO find in background
+            groupQuery.fromLocalDatastore();
+            // TODO find in background && move to ParseMethods??
             try {
                 List<ParseObject> groups = groupQuery.find();
+                Log.i(TAG, "Found " + groups.size() + " objects.");
                 // Query should generate Spinner data using an array adapter
                 // Create a key-value pairing the name to the object id so we can get the id
                 mGroupsList.clear();
                 mGroupsList.addAll(groups);
                 mAdapter.notifyDataSetChanged();
-                Log.v(TAG, "Notify data set changed");
             }
             catch (ParseException e) {
-                Log.d(TAG, e.getMessage());
+                Log.e(TAG, "Query error: " + e.getMessage());
             }
         }
     }
