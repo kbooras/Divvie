@@ -83,9 +83,6 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         updateLocalDatastore(Constants.CLASSNAME_GROUP);
     }
 
-    /**
-     * Check if there is a currently logged in user
-     */
     private void checkForCurrentUser() {
         Log.d(TAG, "checkForCurrentUser");
         ParseUser currentUser = ParseUser.getCurrentUser();
@@ -103,9 +100,8 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         startActivity(intent);
     }
 
-    /**
-     * Update the Local Datastore with data from Parse.
-     * @param className: The type of objects the ParseQuery will be searching for.
+    /*
+     * Update objects of the specified type in the Local Datastore with data from Parse.
      */
     private void updateLocalDatastore(String className) {
         if (isNetworkConnected()) {
@@ -114,27 +110,19 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         // TODO on finish call updateFragmentData. But how do you know if it's finished?
     }
 
-    /**
-     * Checks for network connection.
-     * @return true if connected
-     */
     private boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null;
     }
 
-    /**
-     * Get array of ParseObjects from Local Datastore
-     * @param className: The type of ParseObjects to fetch
+    /*
+     * Get array of specified type of ParseObjects from Local Datastore
      */
     private List<ParseObject> getArrayFromLocalDataStore(String className) {
         Log.d(TAG, className + ": getArrayFromLocalDataStore");
         return ParseMethods.getLocalData(className);
     }
 
-    /**
-     * Adds the tabs below the action bar.
-     */
     public void setTabsBelowActionBar() {
         try {
             final Method setHasEmbeddedTabsMethod = mActionBar.getClass()
@@ -199,10 +187,6 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         }
     }
 
-    /**
-     * Determine if the user is a member of any groups.
-     * @return true or false
-     */
     private boolean userHasGroups() {
         if (mGroupsData != null) {
             return mGroupsData.size() != 0;
@@ -213,12 +197,9 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         }
     }
 
-    /**
+    /*
      * Result from CreateTransactionActivity or CreateGroupActivity letting HomeActivity know a new
      * ParseObject was created and the List data should be reloaded.
-     * @param requestCode: The code for the result request. This tells the type of object.
-     * @param resultCode: The code for the result from the request
-     * @param data: Not currently used
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

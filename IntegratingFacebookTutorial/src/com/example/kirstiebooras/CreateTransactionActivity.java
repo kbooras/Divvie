@@ -152,10 +152,6 @@ public class CreateTransactionActivity extends Activity {
         finish();
     }
 
-    /**
-     * Checks for network connection.
-     * @return true if connected
-     */
     private boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null;
@@ -169,10 +165,8 @@ public class CreateTransactionActivity extends Activity {
                 .show();
     }
 
-    /**
+    /*
      * Check if the amount entered by the user is valid.
-     * @param amount: The amount the user entered
-     * @return True if valid
      */
     private boolean validMonetaryInput(String amount) {
         int decimal = amount.lastIndexOf('.');
@@ -180,11 +174,8 @@ public class CreateTransactionActivity extends Activity {
         return !(decimalPlaces > 2 || decimalPlaces < -1);
     }
 
-    /**
+    /*
      * Determine amount to be paid by each member of the group.
-     * @param amountValue: Total bill
-     * @param numMembers: Number of members in the group
-     * @return The amount each member should pay
      */
     private String getSplitAmount(double amountValue, double numMembers) {
         double dividedAmount = amountValue / numMembers;
@@ -192,13 +183,8 @@ public class CreateTransactionActivity extends Activity {
         return bd.setScale(2, BigDecimal.ROUND_FLOOR).toString();
     }
 
-    /**
+    /*
      * Send email to every one splitting the transaction.
-     * @param fromName: The person owed
-     * @param groupName: The name of the group with the transaction
-     * @param chargeDescription: The description for the transaction
-     * @param amount: The amount each person owes
-     * @param members: An array of all persons splitting the bills
      */
     private void sendEmails(String fromName, String groupName, String chargeDescription,
                             String amount, String[] members) {

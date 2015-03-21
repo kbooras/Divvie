@@ -155,9 +155,8 @@ public class CreateGroupActivity extends Activity {
             return;
         }
         memberEmails.add(current.getEmail());
-        ArrayList<String> memberNames = getMemberNames(memberEmails);
 
-        ParseMethods.createParseGroupObject(groupNameTxt, memberEmails, memberNames);
+        ParseMethods.createParseGroupObject(groupNameTxt, memberEmails);
 
         finish();
     }
@@ -203,44 +202,6 @@ public class CreateGroupActivity extends Activity {
 
     private boolean isValidEmail(CharSequence emailTxt) {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(emailTxt).matches();
-    }
-
-    /**
-     * Add the corresponding name, or email if there is no existing user.
-     * If there is no user, send new user email.
-     * @param memberEmails: The ArrayList of emails for the group members
-     * @return the ArrayList of memberNames
-     */
-    //TODO move to ParseMethods
-    private ArrayList<String> getMemberNames(ArrayList<String> memberEmails) {
-        ArrayList<String> memberNames = new ArrayList<String>(memberEmails.size());
-        for (String email : memberEmails) {
-            ParseQuery<ParseUser> userQuery = ParseUser.getQuery();
-            userQuery.whereEqualTo(Constants.USER_EMAIL, email);
-            try {
-                ParseUser user = userQuery.getFirst();
-                memberNames.add(user.getString(Constants.USER_FULL_NAME));
-            } catch (ParseException e) {
-                memberNames.add(email);
-                // sendEmail(mGroupName.getText().toString(), email);
-            }
-        }
-        return memberNames;
-    }
-
-    /**
-     * Send email to person added to a group who does not yet have a Divvie account.
-     * @param groupName: The name of the group
-     * @param email: The email of the new user
-     */
-    private void sendEmail(String groupName, String email) {
-        String fromName = ParseUser.getCurrentUser().getString(Constants.USER_FULL_NAME);
-        HashMap<String, Object> map = new HashMap<String, Object>();
-        map.put("key", getString(R.string.MANDRILL_API_KEY));
-        map.put("toEmail", email);
-        map.put("fromName", fromName);
-        map.put("groupName", groupName);
-        ParseMethods.sendNewUserEmail(map);
     }
 
     @Override
