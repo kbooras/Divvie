@@ -247,6 +247,13 @@ public class CreateGroupActivity extends Activity {
         ParseMethods.sendNewUserEmail(map);
     }
 
+    @Override
+    public void finish() {
+        // TODO Tell homeactivity specifically what object to get using data.putExtra()
+        setResult(RESULT_OK);
+        super.finish();
+    }
+
     private void displayNoNetworkConnectionMessage() {
         new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.no_network_connection))

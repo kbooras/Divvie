@@ -74,10 +74,10 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 
         // Load data into the Lists
         if(mTransactionsData == null) {
-            updateFragmentData(Constants.CLASSNAME_TRANSACTION);
+            mTransactionsData = getArrayFromLocalDataStore(Constants.CLASSNAME_TRANSACTION);
         }
         if (mGroupsData == null) {
-            updateFragmentData(Constants.CLASSNAME_GROUP);
+            mTransactionsData = getArrayFromLocalDataStore(Constants.CLASSNAME_GROUP);
         }
 
         // Update the data in the Local Datastore
@@ -126,33 +126,12 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
     }
 
     /**
-     * Update either mTransactionsData or mGroupsData from the Local Datastore and tell the
-     * Fragment to bind the new data.
-     * @param className: The type of data to update
+     * Get array of ParseObjects from Local Datastore
+     * @param className: The type of ParseObjects to fetch
      */
-    private void updateFragmentData(String className) {
-        Log.d(TAG, "updateFragmentData");
-
-        if (className.equals(Constants.CLASSNAME_TRANSACTION)) {
-            mTransactionsData = ParseMethods.getLocalData(Constants.CLASSNAME_TRANSACTION);
-            if (mTransactionsData != null) {
-                // TODO Doesn't work because this is called from onCreate the first time and the fragments don't exist yet
-                TransactionsFragment fragment = mTabsAdapter.getTransactionsFragment();
-                if (fragment != null) {
-                    fragment.bindData(mTransactionsData);
-                }
-            }
-        }
-        else if (className.equals(Constants.CLASSNAME_GROUP)) {
-            mGroupsData = ParseMethods.getLocalData(Constants.CLASSNAME_GROUP);
-            if (mGroupsData != null) {
-                GroupsFragment fragment = mTabsAdapter.getGroupsFragment();
-                if (fragment != null) {
-                    fragment.bindData(mGroupsData);
-                }
-            }
-        }
-
+    private List<ParseObject> getArrayFromLocalDataStore(String className) {
+        Log.d(TAG, "getArrayFromLocalDataStore");
+        return ParseMethods.getLocalData(className);
     }
 
     /**
@@ -203,7 +182,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
                 if (currentFragment == 0) {
                     if (userHasGroups()) {
                         // User must have at least one group to make a transaction
-                        Log.d(TAG, "Start create transaction");
+                        Log.v(TAG, "Start create transaction");
                         Intent intent = new Intent(this, CreateTransactionActivity.class);
                         startActivityForResult(intent, CREATE_TRANSACTION_REQUEST_CODE);
                     }
@@ -212,8 +191,9 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
                                 Toast.LENGTH_LONG).show();
                     }
                 } else {
+                    Log.v(TAG, "Start create transaction");
                     Intent intent = new Intent(this, CreateGroupActivity.class);
-                    startActivity(intent);
+                    startActivityForResult(intent, CREATE_GROUP_REQUEST_CODE);
                 }
                 return true;
             default:
@@ -247,10 +227,12 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if(requestCode == CREATE_TRANSACTION_REQUEST_CODE) {
-                updateFragmentData(Constants.CLASSNAME_TRANSACTION);
+                mTransactionsData = getArrayFromLocalDataStore(Constants.CLASSNAME_TRANSACTION);
+                mTabsAdapter.getTransactionsFragment().bindData(mTransactionsData);
             }
             else if (requestCode == CREATE_GROUP_REQUEST_CODE) {
-                updateFragmentData(Constants.CLASSNAME_GROUP);
+                mGroupsData = getArrayFromLocalDataStore(Constants.CLASSNAME_GROUP);
+                mTabsAdapter.getTransactionsFragment().bindData(mGroupsData);
             }
         }
 
