@@ -52,17 +52,11 @@ public class ViewTransactionActivity extends Activity {
 
         String transactionId = mIntent.getStringExtra("parseObjectId");
 
-        // TODO move to ParseMethods
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Transaction");
-        query.whereEqualTo(Constants.OBJECT_ID, transactionId);
-        query.fromLocalDatastore();
-        try {
-            ParseObject object = query.getFirst();
+        ParseObject object = ParseMethods.findParseObjectById(Constants.CLASSNAME_TRANSACTION,
+                transactionId);
+        if (object != null) {
             setViewText(object);
             displayMembers(object);
-        }
-        catch (ParseException e) {
-            Log.e(TAG, "Query error: " + e.getMessage());
         }
     }
 

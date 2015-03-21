@@ -6,6 +6,8 @@ package com.example.kirstiebooras;
  */
 public final class Constants {
     public static final String OBJECT_ID = "objectId";
+    public static final String CLASSNAME_GROUP = "Group";
+    public static final String CLASSNAME_TRANSACTION = "Transaction";
 
     public static final String USER_EMAIL = "email";
     public static final String USER_FULL_NAME = "fullName";

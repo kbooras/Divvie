@@ -4,13 +4,17 @@ import android.util.Log;
 
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
+import com.parse.FunctionCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.integratingfacebooktutorial.R;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -21,11 +25,19 @@ public final class ParseMethods {
 
     private static final String TAG = "ParseQueries";
 
+//    private ParseMethods() {
+//
+//    }
+//
+//    public interface GetParseDataListener {
+//        public void onGetParseDataComplete(String className);
+//    }
+//
     /**
      * Get data from the Local Datastore.
      * @param className: The type of objects the ParseQuery will be searching for.
      */
-    public List<ParseObject> getLocalData(final String className) {
+    public static List<ParseObject> getLocalData(final String className) {
         Log.d(TAG, "getLocalData");
         ParseUser currentUser = ParseUser.getCurrentUser();
         if (currentUser == null) {
@@ -51,7 +63,7 @@ public final class ParseMethods {
      * Get data from the Parse server and update the Local Datastore.
      * @param className: The ParseObject type to query for.
      */
-    public void getParseData(final String className) {
+    public static void getParseData(final String className) {
         Log.d(TAG, "getParseData");
         ParseUser currentUser = ParseUser.getCurrentUser();
         if (currentUser == null) {
@@ -86,7 +98,18 @@ public final class ParseMethods {
         });
     }
 
-    public void createTransactionParseObject(String groupId, String groupName,
+    /**
+     * Create a Transaction object
+     * @param groupId: The ID for the group this transaction belongs to
+     * @param groupName: The name of the group this transaction belongs to
+     * @param personOwed: The username for the person owed
+     * @param descriptionTxt: A description for the transaction
+     * @param totalAmount: The total bill
+     * @param members: The members of the group
+     * @param displayNames: The display names for the members of the group
+     * @param splitAmount: The amount each member owes
+     */
+    public static void createTransactionParseObject(String groupId, String groupName,
                                               String personOwed, String descriptionTxt,
                                               String totalAmount, ArrayList<String> members,
                                               ArrayList<String> displayNames, String splitAmount) {
@@ -123,6 +146,68 @@ public final class ParseMethods {
         //TODO Extend ParseObject and use UUID and write to Local Datastore
         Log.v(TAG, "Saved new transaction");
 
+    }
+
+    /**
+     * Send email to every one splitting the transaction.
+     * @param map: Map containing all data needed to create the email.
+     * @param members: An array of all persons splitting the bills
+     */
+    public static void sendEmails(HashMap<String, Object> map, String[] members) {
+        for(String email : members) {
+            map.put("toEmail", email);
+            // TODO: move this loop to the cloud
+            ParseCloud.callFunctionInBackground("sendChargeEmail", map, new FunctionCallback<Object>() {
+                @Override
+                public void done(Object o, ParseException e) {
+                    if (e == null) {
+                        Log.v(TAG, (String) o);
+                    } else {
+                        e.printStackTrace();
+                        Log.v(TAG, "Send email error: " + e.toString());
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * Find a ParseObject
+     * @param className: The type of ParseObject
+     * @param objectId: The id for the object
+     * @return: The ParseObject or null if one is not found.
+     */
+    public static ParseObject findParseObjectById(String className, String objectId) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(className);
+        query.whereEqualTo(Constants.OBJECT_ID, objectId);
+        query.fromLocalDatastore();
+        try {
+            Log.v(TAG, "Found object");
+            return query.getFirst();
+        }
+        catch (ParseException e) {
+            Log.e(TAG, "findParseObjectById query error: " + e.getMessage());
+            return  null;
+        }
+    }
+
+    /**
+     * Remove ParseObjects from the Local Datastore.
+     * @param className: The type of ParseObjects to remove.
+     */
+    public static void unpinData(final String className) {
+        Log.d(TAG, "unpinData");
+        ParseObject.unpinAllInBackground(className, new DeleteCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e != null) {
+                    // There was some error.
+                    Log.e(TAG, "Unpin error: " + e.getMessage());
+                    return;
+                }
+                Log.i(TAG, "Unpinned " + className + " successfully.");
+            }
+        });
     }
 
 }

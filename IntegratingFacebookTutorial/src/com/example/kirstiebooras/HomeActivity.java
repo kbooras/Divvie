@@ -32,8 +32,6 @@ import java.util.List;
 public class HomeActivity extends FragmentActivity implements ActionBar.TabListener {
 
     private static final String TAG = "HomeActivity";
-    public static final String CLASSNAME_GROUP = "Group";
-    private static final String CLASSNAME_TRANSACTION = "Transaction";
     private static final int CREATE_TRANSACTION_REQUEST_CODE = 1;
     private static final int CREATE_GROUP_REQUEST_CODE = 2;
     private ActionBar mActionBar;
@@ -76,15 +74,15 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 
         // Load data into the Lists
         if(mTransactionsData == null) {
-            updateFragmentData(CLASSNAME_TRANSACTION);
+            updateFragmentData(Constants.CLASSNAME_TRANSACTION);
         }
         if (mGroupsData == null) {
-            updateFragmentData(CLASSNAME_GROUP);
+            updateFragmentData(Constants.CLASSNAME_GROUP);
         }
 
         // Update the data in the Local Datastore
-        updateLocalDatastore(CLASSNAME_TRANSACTION);
-        updateLocalDatastore(CLASSNAME_GROUP);
+        updateLocalDatastore(Constants.CLASSNAME_TRANSACTION);
+        updateLocalDatastore(Constants.CLASSNAME_GROUP);
     }
 
     /**
@@ -135,8 +133,8 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
     private void updateFragmentData(String className) {
         Log.d(TAG, "updateFragmentData");
 
-        if (className.equals(CLASSNAME_TRANSACTION)) {
-            mTransactionsData = ParseMethods.getLocalData(CLASSNAME_TRANSACTION);
+        if (className.equals(Constants.CLASSNAME_TRANSACTION)) {
+            mTransactionsData = ParseMethods.getLocalData(Constants.CLASSNAME_TRANSACTION);
             if (mTransactionsData != null) {
                 // TODO Doesn't work because this is called from onCreate the first time and the fragments don't exist yet
                 TransactionsFragment fragment = mTabsAdapter.getTransactionsFragment();
@@ -145,8 +143,8 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
                 }
             }
         }
-        else if (className.equals(CLASSNAME_GROUP)) {
-            mGroupsData = ParseMethods.getLocalData(CLASSNAME_GROUP);
+        else if (className.equals(Constants.CLASSNAME_GROUP)) {
+            mGroupsData = ParseMethods.getLocalData(Constants.CLASSNAME_GROUP);
             if (mGroupsData != null) {
                 GroupsFragment fragment = mTabsAdapter.getGroupsFragment();
                 if (fragment != null) {
@@ -193,8 +191,8 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 //                        session.closeAndClearTokenInformation();
 //                    }
 //                }
-                unpinData(CLASSNAME_TRANSACTION);
-                unpinData(CLASSNAME_GROUP);
+                ParseMethods.unpinData(Constants.CLASSNAME_TRANSACTION);
+                ParseMethods.unpinData(Constants.CLASSNAME_GROUP);
                 ParseUser.logOut();
                 Log.i(TAG, "User signed out!");
                 startSigninRegisterActivity();
@@ -249,32 +247,13 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if(requestCode == CREATE_TRANSACTION_REQUEST_CODE) {
-                updateFragmentData(CLASSNAME_TRANSACTION);
+                updateFragmentData(Constants.CLASSNAME_TRANSACTION);
             }
             else if (requestCode == CREATE_GROUP_REQUEST_CODE) {
-                updateFragmentData(CLASSNAME_GROUP);
+                updateFragmentData(Constants.CLASSNAME_GROUP);
             }
         }
 
-    }
-
-    /**
-     * Remove ParseObjects from the Local Datastore.
-     * @param className: The type of ParseObjects to remove.
-     */
-    private void unpinData(final String className) {
-        Log.d(TAG, "unpinData");
-        ParseObject.unpinAllInBackground(className, new DeleteCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e != null) {
-                    // There was some error.
-                    Log.e(TAG, "Unpin error: " + e.getMessage());
-                    return;
-                }
-                Log.i(TAG, "Unpinned " + className + " successfully.");
-            }
-        });
     }
 
     @Override

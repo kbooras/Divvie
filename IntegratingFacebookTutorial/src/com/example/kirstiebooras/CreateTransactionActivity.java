@@ -1,6 +1,7 @@
 package com.example.kirstiebooras;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
@@ -72,8 +73,9 @@ public class CreateTransactionActivity extends Activity {
             case R.id.logout:
                 ParseUser.logOut();
                 Log.i(TAG, "User signed out!");
-                // TODO: Call unpin data
-                // TODO: start sign in register activity
+                ParseMethods.unpinData(Constants.CLASSNAME_TRANSACTION);
+                ParseMethods.unpinData(Constants.CLASSNAME_GROUP);
+                startSigninRegisterActivity();
                 return true;
 
             case android.R.id.home:
@@ -83,6 +85,13 @@ public class CreateTransactionActivity extends Activity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void startSigninRegisterActivity() {
+        Intent intent = new Intent(this, SigninRegisterActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     public void onSplitBillClick(View view) {
@@ -99,6 +108,9 @@ public class CreateTransactionActivity extends Activity {
 
         // Check for valid monetary input
         if (!validMonetaryInput(amount)) {
+            Toast.makeText(getApplicationContext(),
+                    getResources().getString(R.string.invalid_amount_toast),
+                    Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -124,33 +136,25 @@ public class CreateTransactionActivity extends Activity {
         // Get split amount
         String splitAmount = getSplitAmount(amountValue, members.size());
 
+        // Create the object
         ParseMethods.createTransactionParseObject(groupId, groupName, personOwedEmail, description,
                 totalAmount, members, displayNames, splitAmount);
 
         // Send emails to group members
-        HashMap<String, Object> map = new HashMap<String, Object>();
-        map.put("toEmail", personOwedEmail);
-        map.put("fromName", personOwedName);
-        map.put("groupName", groupName);
-        map.put("chargeDescription", description);
-        map.put("amount", splitAmount);
-
-        for (String email : members) {
-            if (!email.equals(personOwedEmail)) {
-                // sendEmails(email, map);
-            }
-        }
+        // TODO sendEmails(personOwedName, groupName, description, splitAmount, (String[]) members.toArray());
 
         finish();
     }
 
+    /**
+     * Check if the amount entered by the user is valid.
+     * @param amount: The amound the user entered
+     * @return: True if valid
+     */
     private boolean validMonetaryInput(String amount) {
         int decimal = amount.lastIndexOf('.');
         int decimalPlaces = amount.substring(decimal+1).length();
         if (decimalPlaces > 2 || decimalPlaces < -1) {
-            Toast.makeText(getApplicationContext(),
-                    getResources().getString(R.string.invalid_amount_toast),
-                    Toast.LENGTH_LONG).show();
             return false;
         }
         return true;
@@ -162,27 +166,30 @@ public class CreateTransactionActivity extends Activity {
         return bd.setScale(2, BigDecimal.ROUND_FLOOR).toString();
     }
 
+    /**
+     * Send email to every one splitting the transaction.
+     * @param fromName: The person owed
+     * @param groupName: The name of the group with the transaction
+     * @param chargeDescription: The description for the transaction
+     * @param amount: The amount each person owes
+     * @param members: An array of all persons splitting the bills
+     */
+    private void sendEmails(String fromName, String groupName, String chargeDescription,
+                            String amount, String[] members) {
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put("fromName", fromName);
+        map.put("groupName", groupName);
+        map.put("chargeDescription", chargeDescription);
+        map.put("amount", amount);
+        map.put("key", getString(R.string.MANDRILL_API_KEY));
+        ParseMethods.sendEmails(map, members);
+    }
+
     @Override
     public void finish() {
         // TODO Tell homeactivity specifically what object to get using data.putExtra()
         setResult(RESULT_OK);
         super.finish();
-    }
-
-    private void sendEmails(String email, HashMap<String, Object> map) {
-        map.put("key", getString(R.string.MANDRILL_API_KEY));
-        map.put("toEmail", email);
-        ParseCloud.callFunctionInBackground("sendChargeEmail", map, new FunctionCallback<Object>() {
-            @Override
-            public void done(Object o, ParseException e) {
-                if (e == null) {
-                    Log.v(TAG, (String) o);
-                } else {
-                    e.printStackTrace();
-                    Log.v(TAG, "Send email error: " + e.toString());
-                }
-            }
-        });
     }
 
     private void getGroupsFromParse() {
