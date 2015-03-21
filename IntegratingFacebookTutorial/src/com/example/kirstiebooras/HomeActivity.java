@@ -15,8 +15,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.parse.DeleteCallback;
-import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
@@ -77,7 +75,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
             mTransactionsData = getArrayFromLocalDataStore(Constants.CLASSNAME_TRANSACTION);
         }
         if (mGroupsData == null) {
-            mTransactionsData = getArrayFromLocalDataStore(Constants.CLASSNAME_GROUP);
+            mGroupsData = getArrayFromLocalDataStore(Constants.CLASSNAME_GROUP);
         }
 
         // Update the data in the Local Datastore
@@ -130,7 +128,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
      * @param className: The type of ParseObjects to fetch
      */
     private List<ParseObject> getArrayFromLocalDataStore(String className) {
-        Log.d(TAG, "getArrayFromLocalDataStore");
+        Log.d(TAG, className + ": getArrayFromLocalDataStore");
         return ParseMethods.getLocalData(className);
     }
 
@@ -232,7 +230,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
             }
             else if (requestCode == CREATE_GROUP_REQUEST_CODE) {
                 mGroupsData = getArrayFromLocalDataStore(Constants.CLASSNAME_GROUP);
-                mTabsAdapter.getTransactionsFragment().bindData(mGroupsData);
+                mTabsAdapter.getGroupsFragment().bindData(mGroupsData);
             }
         }
 

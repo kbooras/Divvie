@@ -39,7 +39,7 @@ public final class ParseMethods {
      * @param className: The type of objects the ParseQuery will be searching for.
      */
     public static List<ParseObject> getLocalData(final String className) {
-        Log.d(TAG, "getLocalData");
+        Log.d(TAG, className + ": getLocalData");
         ParseUser currentUser = ParseUser.getCurrentUser();
         if (currentUser == null) {
             Log.wtf(TAG, "Current user is null.");
@@ -65,7 +65,7 @@ public final class ParseMethods {
      * @param className: The ParseObject type to query for.
      */
     public static void getParseData(final String className) {
-        Log.d(TAG, "getParseData");
+        Log.d(TAG, className + ": getParseData");
         ParseUser currentUser = ParseUser.getCurrentUser();
         if (currentUser == null) {
             return;

@@ -29,13 +29,12 @@ public class TabsFragmentPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 Fragment transactions = new TransactionsFragment();
                 mPageReferenceMap.put(index, transactions);
-                Log.v(TAG, "case 0 " + mPageReferenceMap.size());
+                Log.d(TAG, "Add Transactions fragment");
                 return transactions;
             case 1:
-
                 Fragment groups = new GroupsFragment();
                 mPageReferenceMap.put(index, groups);
-                Log.v(TAG, "case 1 " + mPageReferenceMap.size());
+                Log.d(TAG, "Add Groups fragment");
                 return groups;
             default:
                 return null;
