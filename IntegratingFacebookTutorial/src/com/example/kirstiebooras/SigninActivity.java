@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -61,7 +60,7 @@ public class SigninActivity extends Activity {
                         new AlertDialog.Builder(SigninActivity.this)
                                 .setIconAttribute(android.R.attr.alertDialogIcon)
                                 .setTitle(getString(R.string.no_network_connection))
-                                .setMessage(getString(R.string.network_connection_alert_message))
+                                .setMessage(getString(R.string.network_connection_sign_in_alert_message))
                                 .setPositiveButton(getString(R.string.ok),
                                         new DialogInterface.OnClickListener() {
                                             @Override

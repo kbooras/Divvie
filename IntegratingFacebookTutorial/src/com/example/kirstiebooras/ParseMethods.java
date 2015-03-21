@@ -10,6 +10,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.parse.integratingfacebooktutorial.R;
 
 import java.util.ArrayList;
@@ -142,9 +143,20 @@ public final class ParseMethods {
         newTransaction.put(Constants.TRANSACTION_PAID, paid);
         newTransaction.put(Constants.TRANSACTION_DATE_PAID, datePaid);
         newTransaction.put(Constants.TRANSACTION_COMPLETE, false);
-        newTransaction.saveEventually();
-        //TODO Extend ParseObject and use UUID and write to Local Datastore
-        Log.v(TAG, "Saved new transaction");
+        newTransaction.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e != null) {
+                    Log.e(TAG, "Create Transaction object error: " + e.getMessage());
+                    // TODO notify the user
+                }
+                else {
+                    Log.i(TAG, "Saved new transaction successfully!");
+                }
+            }
+        });
+        //TODO Extend ParseObject and use UUID and SaveEventually and write to Local Datastore
+        Log.i(TAG, "Saved new transaction successfully!");
 
     }
 
@@ -153,18 +165,15 @@ public final class ParseMethods {
      * @param map: Map containing all data needed to create the email.
      * @param members: An array of all persons splitting the bills
      */
-    public static void sendEmails(HashMap<String, Object> map, String[] members) {
+    public static void sendNewTransactionEmails(HashMap<String, Object> map, String[] members) {
         for(String email : members) {
             map.put("toEmail", email);
             // TODO: move this loop to the cloud
             ParseCloud.callFunctionInBackground("sendChargeEmail", map, new FunctionCallback<Object>() {
                 @Override
                 public void done(Object o, ParseException e) {
-                    if (e == null) {
-                        Log.v(TAG, (String) o);
-                    } else {
-                        e.printStackTrace();
-                        Log.v(TAG, "Send email error: " + e.toString());
+                    if (e != null) {
+                        Log.e(TAG, "Send email error: " + e.getMessage());
                     }
                 }
             });
@@ -172,12 +181,54 @@ public final class ParseMethods {
     }
 
     /**
-     * Find a ParseObject
+     * Create a Group object.
+     * @param name: Name of the group
+     * @param memberEmails: Array holding the emails for the members
+     * @param memberNames: Array holding the names of the members
+     */
+    public static void createParseGroupObject(String name, ArrayList<String> memberEmails,
+                                       ArrayList<String> memberNames){
+        ParseObject newGroup = new ParseObject(Constants.CLASSNAME_GROUP);
+        newGroup.put(Constants.GROUP_NAME, name);
+        newGroup.put(Constants.GROUP_MEMBERS, memberEmails);
+        newGroup.put(Constants.GROUP_DISPLAY_NAMES, memberNames);
+        newGroup.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e != null) {
+                    Log.e(TAG, "Create Group object error: " + e.getMessage());
+                    // TODO notify the user
+                }
+                else {
+                    Log.i(TAG, "Saved new group successfully!");
+                }
+            }
+        });
+        //TODO Extend ParseObject and use UUID and write to Local Datastore
+    }
+
+    /**
+     * Send email to person added to a group who does not yet have a Divvie account.
+     * @param map: Map containing all data needed to create the email.
+     */
+    public static void sendNewUserEmail(HashMap<String, Object> map) {
+        ParseCloud.callFunctionInBackground("sendNewUserEmail", map, new FunctionCallback<Object>() {
+            @Override
+            public void done(Object o, ParseException e) {
+                if (e != null) {
+                    Log.e(TAG, "Send new user email error: " + e.toString());
+                }
+            }
+        });
+    }
+
+    /**
+     * Find a ParseObject in the Local Datastore
      * @param className: The type of ParseObject
      * @param objectId: The id for the object
      * @return: The ParseObject or null if one is not found.
      */
-    public static ParseObject findParseObjectById(String className, String objectId) {
+    public static ParseObject findLocalParseObjectById(String className, String objectId) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery(className);
         query.whereEqualTo(Constants.OBJECT_ID, objectId);
         query.fromLocalDatastore();
@@ -186,7 +237,7 @@ public final class ParseMethods {
             return query.getFirst();
         }
         catch (ParseException e) {
-            Log.e(TAG, "findParseObjectById query error: " + e.getMessage());
+            Log.e(TAG, "findLocalParseObjectById query error: " + e.getMessage());
             return  null;
         }
     }
@@ -203,9 +254,10 @@ public final class ParseMethods {
                 if (e != null) {
                     // There was some error.
                     Log.e(TAG, "Unpin error: " + e.getMessage());
-                    return;
                 }
-                Log.i(TAG, "Unpinned " + className + " successfully.");
+                else {
+                    Log.i(TAG, "Unpinned " + className + " successfully.");
+                }
             }
         });
     }

@@ -1,7 +1,10 @@
 package com.example.kirstiebooras;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
@@ -15,8 +18,6 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.parse.FunctionCallback;
-import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -95,6 +96,11 @@ public class CreateTransactionActivity extends Activity {
     }
 
     public void onSplitBillClick(View view) {
+        if(!isNetworkConnected()) {
+            Log.i(TAG, "Cannot create Transaction. Not connected to internet.");
+            displayNoNetworkConnectionMessage();
+            return;
+        }
         // Get user input
         String description = ((EditText) findViewById(R.id.description)).getText().toString();
         String amount = ((EditText) findViewById(R.id.amount)).getText().toString();
@@ -147,19 +153,39 @@ public class CreateTransactionActivity extends Activity {
     }
 
     /**
+     * Checks for network connection.
+     * @return true if connected
+     */
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null;
+    }
+
+    private void displayNoNetworkConnectionMessage() {
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.no_network_connection))
+                .setMessage(getString(R.string.network_connection_create_transaction_alert_message))
+                .setPositiveButton(getString(R.string.ok), null)
+                .show();
+    }
+
+    /**
      * Check if the amount entered by the user is valid.
      * @param amount: The amound the user entered
-     * @return: True if valid
+     * @return True if valid
      */
     private boolean validMonetaryInput(String amount) {
         int decimal = amount.lastIndexOf('.');
         int decimalPlaces = amount.substring(decimal+1).length();
-        if (decimalPlaces > 2 || decimalPlaces < -1) {
-            return false;
-        }
-        return true;
+        return !(decimalPlaces > 2 || decimalPlaces < -1);
     }
 
+    /**
+     * Determine amount to be paid by each member of the group.
+     * @param amountValue: Total bill
+     * @param numMembers: Number of members in the group
+     * @return The amount each member should pay
+     */
     private String getSplitAmount(double amountValue, double numMembers) {
         double dividedAmount = amountValue / numMembers;
         BigDecimal bd = new BigDecimal(dividedAmount);
@@ -182,7 +208,7 @@ public class CreateTransactionActivity extends Activity {
         map.put("chargeDescription", chargeDescription);
         map.put("amount", amount);
         map.put("key", getString(R.string.MANDRILL_API_KEY));
-        ParseMethods.sendEmails(map, members);
+        ParseMethods.sendNewTransactionEmails(map, members);
     }
 
     @Override

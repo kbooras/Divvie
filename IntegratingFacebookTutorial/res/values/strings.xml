@@ -18,7 +18,7 @@
     <string name="password_match_toast">Passwords do not match.</string>
     <string name="account_email_exists_toast">There is already an account with this email.</string>
     <string name="no_network_connection">No Network Connection</string>
-    <string name="network_connection_alert_message">You are not connected to the internet and
+    <string name="network_connection_sign_in_alert_message">You are not connected to the internet and
         cannot sign in. Please try again when you gain connectivity.</string>
     <string name="signin_failed_alert_message">Email or password invalid.</string>
 
@@ -46,13 +46,12 @@
     <string name="group_invalid_email_alert_title">Invalid Email</string>
     <string name="group_invalid_email_alert_message">Email %1$d is invalid. Correct this and try
         again.</string>
-    <string name="create_group_failed_alert_title">Create Group Failed</string>
-    <string name="create_group_failed_alert_message">Create group failed. Please try again
-        later.</string>
     <string name="duplicate_email_alert_title">Duplicate Email</string>
     <string name="duplicate_email_alert_message">
         Hmm, you seem to have a duplicate email. Correct this and try again.
     </string>
+    <string name="network_connection_create_group_alert_message">You are not connected to the
+        internet and cannot create a group. Please try again when you gain connectivity.</string>
 
     <string name="create_transaction">Create Transaction</string>
     <string name="user_no_groups_toast">You must be in at least one group to create a
@@ -62,6 +61,9 @@
     <string name="transaction_amount_hint">$0.00</string>
     <string name="split_bill">Split Bill</string>
     <string name="invalid_amount_toast">The amount you entered is invalid.</string>
+    <string name="network_connection_create_transaction_alert_message">You are not connected to the
+        internet and cannot create a transaction. Please try again when you gain connectivity.
+    </string>
 
     <string name="transaction_group_owes_you">%1$s owes you</string>
     <string name="transaction_you_owe_group">You owe %1$s</string>

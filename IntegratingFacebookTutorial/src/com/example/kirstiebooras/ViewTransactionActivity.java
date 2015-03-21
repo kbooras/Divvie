@@ -13,17 +13,12 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.parse.FindCallback;
-import com.parse.GetCallback;
-import com.parse.ParseException;
 import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
 
 import java.util.ArrayList;
 import java.util.Currency;
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -52,7 +47,7 @@ public class ViewTransactionActivity extends Activity {
 
         String transactionId = mIntent.getStringExtra("parseObjectId");
 
-        ParseObject object = ParseMethods.findParseObjectById(Constants.CLASSNAME_TRANSACTION,
+        ParseObject object = ParseMethods.findLocalParseObjectById(Constants.CLASSNAME_TRANSACTION,
                 transactionId);
         if (object != null) {
             setViewText(object);
@@ -95,7 +90,8 @@ public class ViewTransactionActivity extends Activity {
         ArrayList<String> datePaid = (ArrayList<String>) object.get(Constants.TRANSACTION_DATE_PAID);
 
         for (int i = 0; i < displayName.size(); i++) {
-            if (displayName.get(i).equals(ParseUser.getCurrentUser().getString("fullName"))) {
+            if (displayName.get(i).equals(ParseUser.getCurrentUser()
+                    .getString(Constants.USER_FULL_NAME))) {
                 // Do not display the current user as part of the transaction
                 continue;
             }
@@ -133,7 +129,10 @@ public class ViewTransactionActivity extends Activity {
         switch(item.getItemId()){
             case R.id.logout:
                 ParseUser.logOut();
-                Log.v(TAG, "User signed out!");
+                Log.i(TAG, "User signed out!");
+                ParseMethods.unpinData(Constants.CLASSNAME_TRANSACTION);
+                ParseMethods.unpinData(Constants.CLASSNAME_GROUP);
+                startSigninRegisterActivity();
                 return true;
 
             case android.R.id.home:
@@ -143,5 +142,12 @@ public class ViewTransactionActivity extends Activity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void startSigninRegisterActivity() {
+        Intent intent = new Intent(this, SigninRegisterActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 }

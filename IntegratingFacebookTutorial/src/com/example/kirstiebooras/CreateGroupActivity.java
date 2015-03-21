@@ -2,7 +2,10 @@ package com.example.kirstiebooras;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
@@ -44,7 +47,6 @@ public class CreateGroupActivity extends Activity {
     private EditText mGroupName;
     private int mEmailViewCount;
     private HashMap<Integer, EditText> mAllEditTexts;
-    private Resources mResources;
     private static final int LAYOUT_ID_CONSTANT = 1000;
     private static final int EDIT_TEXT_ID_CONSTANT = 2000;
     private static final int BUTTON_ID_CONSTANT = 3000;
@@ -56,8 +58,6 @@ public class CreateGroupActivity extends Activity {
         setContentView(R.layout.create_group_activity);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
-
-        mResources = getResources();
 
         ScrollView mScrollView = (ScrollView) findViewById(R.id.scroll);
         mLayout = (LinearLayout) mScrollView.findViewById(R.id.layout);
@@ -80,7 +80,10 @@ public class CreateGroupActivity extends Activity {
         switch(item.getItemId()){
             case R.id.logout:
                 ParseUser.logOut();
-                Log.v(TAG, "User signed out!");
+                Log.i(TAG, "User signed out!");
+                ParseMethods.unpinData(Constants.CLASSNAME_TRANSACTION);
+                ParseMethods.unpinData(Constants.CLASSNAME_GROUP);
+                startSigninRegisterActivity();
                 return true;
 
             case android.R.id.home:
@@ -90,6 +93,13 @@ public class CreateGroupActivity extends Activity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void startSigninRegisterActivity() {
+        Intent intent = new Intent(this, SigninRegisterActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     public void onAddEditTextClick(View v) {
@@ -113,8 +123,7 @@ public class CreateGroupActivity extends Activity {
 
         EditText editText = (EditText) ll.findViewById(R.id.emailText);
         editText.setId(EDIT_TEXT_ID_CONSTANT + mEmailViewCount);
-        editText.setHint(String.format(mResources.getString(R.string.create_group_email),
-                mEmailViewCount));
+        editText.setHint(String.format(getString(R.string.create_group_email), mEmailViewCount));
 
         mAllEditTexts.put(mEmailViewCount, editText);
 
@@ -135,6 +144,11 @@ public class CreateGroupActivity extends Activity {
     }
 
     public void onCreateGroupClick(View v) {
+        if (!isNetworkConnected()) {
+            Log.i(TAG, "Cannot create Group. Not connected to internet.");
+            displayNoNetworkConnectionMessage();
+            return;
+        }
         String groupNameTxt = mGroupName.getText().toString();
         ParseUser current = ParseUser.getCurrentUser();
 
@@ -147,9 +161,18 @@ public class CreateGroupActivity extends Activity {
         memberEmails.add(current.getEmail());
         ArrayList<String> memberNames = getMemberNames(memberEmails);
 
-        createParseGroupObject(groupNameTxt, memberEmails, memberNames);
+        ParseMethods.createParseGroupObject(groupNameTxt, memberEmails, memberNames);
 
         finish();
+    }
+
+    /**
+     * Checks for network connection.
+     * @return true if connected
+     */
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null;
     }
 
     /**
@@ -192,6 +215,7 @@ public class CreateGroupActivity extends Activity {
      * @param memberEmails: The ArrayList of emails for the group members
      * @return the ArrayList of memberNames
      */
+    //TODO move to ParseMethods
     private ArrayList<String> getMemberNames(ArrayList<String> memberEmails) {
         ArrayList<String> memberNames = new ArrayList<String>(memberEmails.size());
         for (String email : memberEmails) {
@@ -202,73 +226,49 @@ public class CreateGroupActivity extends Activity {
                 memberNames.add(user.getString(Constants.USER_FULL_NAME));
             } catch (ParseException e) {
                 memberNames.add(email);
-                // sendNewUserEmail(mGroupName.getText().toString(), email);
+                // sendEmail(mGroupName.getText().toString(), email);
             }
         }
         return memberNames;
     }
 
-    private void sendNewUserEmail(String groupName, String email) {
+    /**
+     * Send email to person added to a group who does not yet have a Divvie account.
+     * @param groupName: The name of the group
+     * @param email: The email of the new user
+     */
+    private void sendEmail(String groupName, String email) {
+        String fromName = ParseUser.getCurrentUser().getString(Constants.USER_FULL_NAME);
         HashMap<String, Object> map = new HashMap<String, Object>();
-        String fromName = ParseUser.getCurrentUser().getString("fullName");
         map.put("key", getString(R.string.MANDRILL_API_KEY));
         map.put("toEmail", email);
         map.put("fromName", fromName);
         map.put("groupName", groupName);
-
-        ParseCloud.callFunctionInBackground("sendNewUserEmail", map, new FunctionCallback<Object>() {
-            @Override
-            public void done(Object o, ParseException e) {
-                if (e == null) {
-                    Log.v(TAG, (String) o);
-                } else {
-                    e.printStackTrace();
-                    Log.v(TAG, "Send email error: " + e.toString());
-                }
-            }
-        });
+        ParseMethods.sendNewUserEmail(map);
     }
 
-    private void createParseGroupObject(String name, ArrayList<String> memberEmails,
-                                        ArrayList<String> memberNames){
-        ParseObject newGroup = new ParseObject("Group");
-        newGroup.put(Constants.GROUP_NAME, name);
-        newGroup.put(Constants.GROUP_MEMBERS, memberEmails);
-        newGroup.put(Constants.GROUP_DISPLAY_NAMES, memberNames);
-        try {
-            newGroup.save();
-            Log.v(TAG, "Saved new group successfully!");
-            // Update the ArrayAdapter
-        } catch (ParseException e) {
-            // Display error message.
-            displayCreateGroupFailedMessage();
-            Log.v(TAG, "Save new group failed :(");
-            e.printStackTrace();
-        }
+    private void displayNoNetworkConnectionMessage() {
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.no_network_connection))
+                .setMessage(getString(R.string.network_connection_create_group_alert_message))
+                .setPositiveButton(getString(R.string.ok), null)
+                .show();
     }
 
     private void displayInvalidEmailMessage (int emailNumber) {
         new AlertDialog.Builder(this)
-                .setTitle(mResources.getString(R.string.group_invalid_email_alert_title))
-                .setMessage(String.format(mResources.getString(
+                .setTitle(getString(R.string.group_invalid_email_alert_title))
+                .setMessage(String.format(getString(
                         R.string.group_invalid_email_alert_message), emailNumber))
-                .setPositiveButton(mResources.getString(R.string.ok), null)
-                .show();
-    }
-
-    private void displayCreateGroupFailedMessage () {
-        new AlertDialog.Builder(this)
-                .setTitle(mResources.getString(R.string.create_group_failed_alert_title))
-                .setMessage(mResources.getString(R.string.create_group_failed_alert_message))
-                .setPositiveButton(mResources.getString(R.string.ok), null)
+                .setPositiveButton(getString(R.string.ok), null)
                 .show();
     }
 
     private void displayDuplicateEmailMessage() {
         new AlertDialog.Builder(this)
-                .setTitle(mResources.getString(R.string.duplicate_email_alert_title))
-                .setMessage(mResources.getString(R.string.duplicate_email_alert_message))
-                .setPositiveButton(mResources.getString(R.string.ok), null)
+                .setTitle(getString(R.string.duplicate_email_alert_title))
+                .setMessage(getString(R.string.duplicate_email_alert_message))
+                .setPositiveButton(getString(R.string.ok), null)
                 .show();
     }
 }
