@@ -8,6 +8,7 @@
     android:layout_gravity="center" >
 
     <ImageView
+        android:contentDescription="@string/divvie_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/divvie_logo_pink"/>
@@ -42,7 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginLeft="60dp"
-        android:text="Forgot password?"
+        android:text="@string/forgot_password"
         android:clickable="true"
         android:onClick="onForgotPasswordClick"/>
 

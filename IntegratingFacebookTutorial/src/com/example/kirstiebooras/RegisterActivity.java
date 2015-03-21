@@ -75,6 +75,7 @@ public class RegisterActivity extends Activity {
         }
     }
 
+    // TODO Move to ParseMethods
     private void registerUser(final String email, final String password, final String fullName) {
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put(Constants.USER_EMAIL, email);

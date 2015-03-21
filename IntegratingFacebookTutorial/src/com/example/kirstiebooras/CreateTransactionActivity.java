@@ -171,7 +171,7 @@ public class CreateTransactionActivity extends Activity {
 
     /**
      * Check if the amount entered by the user is valid.
-     * @param amount: The amound the user entered
+     * @param amount: The amount the user entered
      * @return True if valid
      */
     private boolean validMonetaryInput(String amount) {

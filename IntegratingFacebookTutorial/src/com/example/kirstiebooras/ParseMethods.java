@@ -11,7 +11,6 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
-import com.parse.integratingfacebooktutorial.R;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -226,7 +225,7 @@ public final class ParseMethods {
      * Find a ParseObject in the Local Datastore
      * @param className: The type of ParseObject
      * @param objectId: The id for the object
-     * @return: The ParseObject or null if one is not found.
+     * @return The ParseObject or null if one is not found.
      */
     public static ParseObject findLocalParseObjectById(String className, String objectId) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery(className);
