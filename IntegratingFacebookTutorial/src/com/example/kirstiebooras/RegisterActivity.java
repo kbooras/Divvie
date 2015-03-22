@@ -29,15 +29,12 @@ public class RegisterActivity extends Activity {
     private EditText mFullName;
     private EditText mPassword;
     private EditText mReenterPassword;
-    private Resources mResources;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.register_activity);
-
-        mResources = getResources();
 
         mEmail = (EditText) findViewById(R.id.email);
         mFullName = (EditText) findViewById(R.id.fullName);
@@ -54,20 +51,16 @@ public class RegisterActivity extends Activity {
 
         // User must fill up the form
         if (emailTxt.equals("") || fullNameTxt.equals("") || passwordTxt.equals("")) {
-            Toast.makeText(getApplicationContext(),
-                    mResources.getString(R.string.complete_form_toast),
+            Toast.makeText(getApplicationContext(), getString(R.string.complete_form_toast),
                     Toast.LENGTH_LONG).show();
         } else if (passwordTxt.length() < 6) {
-            Toast.makeText(getApplicationContext(),
-                    mResources.getString(R.string.password_length_toast),
+            Toast.makeText(getApplicationContext(), getString(R.string.password_length_toast),
                     Toast.LENGTH_LONG).show();
         } else if (!isValidEmail(emailTxt)) {
-            Toast.makeText(getApplicationContext(),
-                    mResources.getString(R.string.enter_valid_email_toast),
+            Toast.makeText(getApplicationContext(), getString(R.string.enter_valid_email_toast),
                     Toast.LENGTH_LONG).show();
         } else if (!passwordTxt.equals(reenterPasswordTxt)){
-            Toast.makeText(getApplicationContext(),
-                    mResources.getString(R.string.password_match_toast),
+            Toast.makeText(getApplicationContext(), getString(R.string.password_match_toast),
                     Toast.LENGTH_LONG).show();
         } else {
             // Save new user data into Parse.com Data Storage
@@ -75,8 +68,8 @@ public class RegisterActivity extends Activity {
         }
     }
 
-    // TODO Move to ParseMethods
-    private void registerUser(final String email, final String password, final String fullName) {
+    public void registerUser(final String email, final String password, final String fullName) {
+        Log.d(TAG, "regusterUser");
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put(Constants.USER_EMAIL, email);
         map.put("password", password);
@@ -85,27 +78,23 @@ public class RegisterActivity extends Activity {
             @Override
             public void done(Object o, ParseException e) {
                 if (e == null) {
-                    Log.v(TAG, "no error ");
                     try {
                         ParseUser.logIn(email, password);
+                        Intent intent = new Intent(getApplicationContext(),
+                                HomeActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
                     } catch (ParseException e2) {
-                        Log.v(TAG, e2.toString());
+                        Log.v(TAG, "Error logging in new user: " + e2.getMessage());
                     }
-                    Intent intent = new Intent(getApplicationContext(),
-                            HomeActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
                 } else if (e.getCode() == ParseException.EMAIL_TAKEN
                         || e.getCode() == ParseException.USERNAME_TAKEN) {
                     Log.v(TAG, "error code " + e.toString());
-                        Toast.makeText(getApplicationContext(),
-                                mResources.getString(R.string.account_email_exists_toast),
-                                Toast.LENGTH_LONG).show();
-                } else if (e.getCode() == ParseException.CONNECTION_FAILED) {
-
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.account_email_exists_toast), Toast.LENGTH_LONG).show();
                 }
                 else {
-                        Log.v(TAG, "Sign up failed :( " + e.getCode() + " " + e.toString());
+                    Log.v(TAG, "Sign up failed :( " + e.getMessage());
                 }
             }
         });

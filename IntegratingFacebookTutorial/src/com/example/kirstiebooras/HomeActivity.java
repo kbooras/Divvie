@@ -32,6 +32,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
     private static final String TAG = "HomeActivity";
     private static final int CREATE_TRANSACTION_REQUEST_CODE = 1;
     private static final int CREATE_GROUP_REQUEST_CODE = 2;
+    private ParseTools mParseTools;
     private ActionBar mActionBar;
     private ViewPager mViewPager;
     private List<ParseObject> mTransactionsData;
@@ -45,6 +46,20 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         setContentView(R.layout.home_activity);
 
         checkForCurrentUser();
+
+        mParseTools = ((DivvieApplication) getApplication()).getParseTools();
+        mParseTools.setGetParseDataListener(new ParseTools.GetParseDataListener() {
+            @Override
+            public void onGetParseDataComplete(String className) {
+                // When Local Datastore is updated, update values of Lists
+                if (className.equals(Constants.CLASSNAME_TRANSACTION)) {
+                    mTransactionsData = mParseTools.getLocalData(className);
+                }
+                else if (className.equals(Constants.CLASSNAME_GROUP)) {
+                    mGroupsData = mParseTools.getLocalData(className);
+                }
+            }
+        });
 
         mTabsAdapter = new TabsFragmentPagerAdapter(getSupportFragmentManager());
 
@@ -105,9 +120,8 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
      */
     private void updateLocalDatastore(String className) {
         if (isNetworkConnected()) {
-            ParseMethods.getParseData(className);
+            mParseTools.getParseData(className);
         }
-        // TODO on finish call updateFragmentData. But how do you know if it's finished?
     }
 
     private boolean isNetworkConnected() {
@@ -120,7 +134,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
      */
     private List<ParseObject> getArrayFromLocalDataStore(String className) {
         Log.d(TAG, className + ": getArrayFromLocalDataStore");
-        return ParseMethods.getLocalData(className);
+        return mParseTools.getLocalData(className);
     }
 
     public void setTabsBelowActionBar() {
@@ -156,8 +170,8 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 //                        session.closeAndClearTokenInformation();
 //                    }
 //                }
-                ParseMethods.unpinData(Constants.CLASSNAME_TRANSACTION);
-                ParseMethods.unpinData(Constants.CLASSNAME_GROUP);
+                mParseTools.unpinData(Constants.CLASSNAME_TRANSACTION);
+                mParseTools.unpinData(Constants.CLASSNAME_GROUP);
                 ParseUser.logOut();
                 Log.i(TAG, "User signed out!");
                 startSigninRegisterActivity();

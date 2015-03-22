@@ -11,6 +11,7 @@ import com.parse.integratingfacebooktutorial.R;
 public class DivvieApplication extends Application {
 
     public static final String TAG = "DivvieApplication";
+    public ParseTools mParseTools;
 
     @Override
     public void onCreate() {
@@ -21,5 +22,13 @@ public class DivvieApplication extends Application {
                 getString(R.string.PARSE_APPLICATION_ID),
                 getString(R.string.PARSE_CLIENT_ID)
         );
+
+        mParseTools = new ParseTools(this);
     }
+
+    public ParseTools getParseTools() {
+        return mParseTools;
+    }
+
+
 }

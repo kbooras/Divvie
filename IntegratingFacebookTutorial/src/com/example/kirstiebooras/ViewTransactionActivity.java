@@ -29,6 +29,7 @@ public class ViewTransactionActivity extends Activity {
 
     private static final String TAG = "ViewTransactionActivity";
 
+    private ParseTools mParseTools;
     private LinearLayout mBaseLayout;
     private Resources mResources;
     private Intent mIntent;
@@ -39,6 +40,8 @@ public class ViewTransactionActivity extends Activity {
 
         setContentView(R.layout.view_transaction_activity);
 
+        mParseTools = ((DivvieApplication) getApplication()).getParseTools();
+
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
         mBaseLayout = (LinearLayout) findViewById(R.id.baseLayout);
@@ -47,7 +50,7 @@ public class ViewTransactionActivity extends Activity {
 
         String transactionId = mIntent.getStringExtra("parseObjectId");
 
-        ParseObject object = ParseMethods.findLocalParseObjectById(Constants.CLASSNAME_TRANSACTION,
+        ParseObject object = mParseTools.findLocalParseObjectById(Constants.CLASSNAME_TRANSACTION,
                 transactionId);
         if (object != null) {
             setViewText(object);
@@ -130,8 +133,8 @@ public class ViewTransactionActivity extends Activity {
             case R.id.logout:
                 ParseUser.logOut();
                 Log.i(TAG, "User signed out!");
-                ParseMethods.unpinData(Constants.CLASSNAME_TRANSACTION);
-                ParseMethods.unpinData(Constants.CLASSNAME_GROUP);
+                mParseTools.unpinData(Constants.CLASSNAME_TRANSACTION);
+                mParseTools.unpinData(Constants.CLASSNAME_GROUP);
                 startSigninRegisterActivity();
                 return true;
 

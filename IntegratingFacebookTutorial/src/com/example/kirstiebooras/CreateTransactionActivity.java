@@ -37,6 +37,7 @@ public class CreateTransactionActivity extends Activity {
 
     private static final String TAG = "CreateTransactionActivity";
 
+    private ParseTools mParseTools;
     private ArrayAdapter<ParseObject> mAdapter;
     private ArrayList<ParseObject> mGroupsList;
     private Spinner mSpinner;
@@ -46,6 +47,8 @@ public class CreateTransactionActivity extends Activity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
         setContentView(R.layout.create_transaction_activity);
+
+        mParseTools = ((DivvieApplication) getApplication()).getParseTools();
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -74,8 +77,8 @@ public class CreateTransactionActivity extends Activity {
             case R.id.logout:
                 ParseUser.logOut();
                 Log.i(TAG, "User signed out!");
-                ParseMethods.unpinData(Constants.CLASSNAME_TRANSACTION);
-                ParseMethods.unpinData(Constants.CLASSNAME_GROUP);
+                mParseTools.unpinData(Constants.CLASSNAME_TRANSACTION);
+                mParseTools.unpinData(Constants.CLASSNAME_GROUP);
                 startSigninRegisterActivity();
                 return true;
 
@@ -143,7 +146,7 @@ public class CreateTransactionActivity extends Activity {
         String splitAmount = getSplitAmount(amountValue, members.size());
 
         // Create the object
-        ParseMethods.createTransactionParseObject(groupId, groupName, personOwedEmail, description,
+        mParseTools.createTransactionParseObject(groupId, groupName, personOwedEmail, description,
                 totalAmount, members, displayNames, splitAmount);
 
         // Send emails to group members
@@ -194,7 +197,7 @@ public class CreateTransactionActivity extends Activity {
         map.put("chargeDescription", chargeDescription);
         map.put("amount", amount);
         map.put("key", getString(R.string.MANDRILL_API_KEY));
-        ParseMethods.sendNewTransactionEmails(map, members);
+        mParseTools.sendNewTransactionEmails(map, members);
     }
 
     @Override

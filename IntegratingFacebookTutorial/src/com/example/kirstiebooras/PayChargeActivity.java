@@ -32,6 +32,7 @@ public class PayChargeActivity extends Activity {
 
     private static final String TAG = "PayChargeActivity";
     private static final int REQUEST_CODE_VENMO_APP_SWITCH = 1;
+    private ParseTools mParseTools;
     private String mTransactionObjectId;
     private String mDescription;
     private String mPersonOwed;
@@ -43,19 +44,21 @@ public class PayChargeActivity extends Activity {
 
         setContentView(R.layout.pay_charge_activity);
 
+        mParseTools = ((DivvieApplication) getApplication()).getParseTools();
+
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
         TextView payAmount = (TextView) findViewById(R.id.payAmount);
         TextView payPerson = (TextView) findViewById(R.id.payPerson);
 
         payAmount.setText(Currency.getInstance(Locale.getDefault()).getSymbol() + mSplitAmount);
-        String displayName = ParseMethods.getUserDisplayName(mPersonOwed);
+        String displayName = mParseTools.getUserDisplayName(mPersonOwed);
         if (displayName != null) {
             payPerson.setText(displayName);
         }
 
         mTransactionObjectId = getIntent().getStringExtra("parseObjectId");
-        ParseObject transaction = ParseMethods.findLocalParseObjectById(
+        ParseObject transaction = mParseTools.findLocalParseObjectById(
                 Constants.CLASSNAME_TRANSACTION, mTransactionObjectId);
         mPersonOwed = transaction.getString(Constants.TRANSACTION_PERSON_OWED);
         mSplitAmount = transaction.getString(Constants.TRANSACTION_SPLIT_AMOUNT);
@@ -95,7 +98,7 @@ public class PayChargeActivity extends Activity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 // Mark charge as paid
-                                ParseMethods.markChargePaid(mTransactionObjectId);
+                                mParseTools.markChargePaid(mTransactionObjectId);
                                 finish();
                             }
                         })
@@ -150,7 +153,7 @@ public class PayChargeActivity extends Activity {
                             // Payment successful.
                             Toast.makeText(this, getString(R.string.venmo_success),
                                     Toast.LENGTH_LONG).show();
-                            ParseMethods.markChargePaid(mTransactionObjectId);
+                            mParseTools.markChargePaid(mTransactionObjectId);
                         }
                     }
                     else {

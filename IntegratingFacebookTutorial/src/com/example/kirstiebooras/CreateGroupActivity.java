@@ -19,8 +19,6 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ScrollView;
 
-import com.parse.ParseException;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
 
@@ -39,6 +37,7 @@ public class CreateGroupActivity extends Activity {
 
     private static final String TAG = "CreateGroupActivity";
 
+    private ParseTools mParseTools;
     private LinearLayout mLayout;
     private EditText mGroupName;
     private int mEmailViewCount;
@@ -52,6 +51,8 @@ public class CreateGroupActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.create_group_activity);
+
+        mParseTools = ((DivvieApplication) getApplication()).getParseTools();
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -77,8 +78,8 @@ public class CreateGroupActivity extends Activity {
             case R.id.logout:
                 ParseUser.logOut();
                 Log.i(TAG, "User signed out!");
-                ParseMethods.unpinData(Constants.CLASSNAME_TRANSACTION);
-                ParseMethods.unpinData(Constants.CLASSNAME_GROUP);
+                mParseTools.unpinData(Constants.CLASSNAME_TRANSACTION);
+                mParseTools.unpinData(Constants.CLASSNAME_GROUP);
                 startSigninRegisterActivity();
                 return true;
 
@@ -156,7 +157,7 @@ public class CreateGroupActivity extends Activity {
         }
         memberEmails.add(current.getEmail());
 
-        ParseMethods.createParseGroupObject(groupNameTxt, memberEmails);
+        mParseTools.createParseGroupObject(groupNameTxt, memberEmails);
 
         finish();
     }

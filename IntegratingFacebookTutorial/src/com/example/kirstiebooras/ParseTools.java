@@ -1,18 +1,17 @@
 package com.example.kirstiebooras;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.FunctionCallback;
-import com.parse.GetCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
-import com.parse.integratingfacebooktutorial.R;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -20,26 +19,31 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Utility class to handle calls to the parse server
+ * Utility class to handle queries to the Parse server and Local Datastore
  * Created by kirstiebooras on 3/20/15.
  */
-public final class ParseMethods {
+public class ParseTools {
 
-    private static final String TAG = "ParseQueries";
+    private static final String TAG = "ParseTools";
+    private GetParseDataListener mGetParseDataListener;
+    private Context mContext;
 
-//    private ParseMethods() {
-//
-//    }
-//
-//    public interface GetParseDataListener {
-//        public void onGetParseDataComplete(String className);
-//    }
-//
+    public ParseTools(Context applicationContext) {
+        mContext = applicationContext;
+    }
+
+    public interface GetParseDataListener {
+        public void onGetParseDataComplete(String className);
+    }
+
+    public void setGetParseDataListener(GetParseDataListener listener) {
+        mGetParseDataListener = listener;
+    }
 
     /*
      * Get data for the specified object type from the Parse server and update the Local Datastore.
      */
-    public static void getParseData(final String className) {
+    public void getParseData(final String className) {
         Log.d(TAG, className + ": getParseData");
         ParseUser currentUser = ParseUser.getCurrentUser();
         if (currentUser == null) {
@@ -53,6 +57,9 @@ public final class ParseMethods {
                 if (e != null) {
                     Log.e(TAG, "Query error: " + e.getMessage());
                 } else {
+                    if (mGetParseDataListener != null) {
+                        mGetParseDataListener.onGetParseDataComplete(className);
+                    }
                     // Release any objects previously pinned for this query.
                     Log.i(TAG, className + ": Found " + parseObjects.size());
                     ParseObject.unpinAllInBackground(className, parseObjects, new DeleteCallback() {
@@ -76,7 +83,7 @@ public final class ParseMethods {
     /*
      * Get data for the specified object type from the Local Datastore.
      */
-    public static List<ParseObject> getLocalData(final String className) {
+    public List<ParseObject> getLocalData(final String className) {
         Log.d(TAG, className + ": getLocalData");
         ParseUser currentUser = ParseUser.getCurrentUser();
         if (currentUser == null) {
@@ -101,7 +108,7 @@ public final class ParseMethods {
     /*
      * Find a ParseObject in the Local Datastore given the object type and objectId
      */
-    public static ParseObject findLocalParseObjectById(String className, String objectId) {
+    public ParseObject findLocalParseObjectById(String className, String objectId) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery(className);
         query.whereEqualTo(Constants.OBJECT_ID, objectId);
         query.fromLocalDatastore();
@@ -118,7 +125,7 @@ public final class ParseMethods {
     /*
      * Remove ParseObjects of the given type from the Local Datastore.
      */
-    public static void unpinData(final String className) {
+    public void unpinData(final String className) {
         Log.d(TAG, "unpinData");
         ParseObject.unpinAllInBackground(className, new DeleteCallback() {
             @Override
@@ -136,7 +143,7 @@ public final class ParseMethods {
     /*
      * Get a user's full name given their email.
      */
-    public static String getUserDisplayName(String email) {
+    public String getUserDisplayName(String email) {
         Log.d(TAG, "getUserDisplayName");
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         query.whereEqualTo(Constants.USER_EMAIL, email);
@@ -152,7 +159,7 @@ public final class ParseMethods {
     /*
      * Create a Transaction object and save to the Parse server.
      */
-    public static void createTransactionParseObject(String groupId, String groupName,
+    public void createTransactionParseObject(String groupId, String groupName,
                                               String personOwed, String descriptionTxt,
                                               String totalAmount, ArrayList<String> members,
                                               ArrayList<String> displayNames, String splitAmount) {
@@ -190,7 +197,6 @@ public final class ParseMethods {
             public void done(ParseException e) {
                 if (e != null) {
                     Log.e(TAG, "Create Transaction object error: " + e.getMessage());
-                    // TODO notify the user
                 }
                 else {
                     Log.i(TAG, "Saved new transaction successfully!");
@@ -205,7 +211,7 @@ public final class ParseMethods {
     /*
      * Send notification email to every one splitting the transaction.
      */
-    public static void sendNewTransactionEmails(HashMap<String, Object> map, String[] members) {
+    public void sendNewTransactionEmails(HashMap<String, Object> map, String[] members) {
         for(String email : members) {
             map.put("toEmail", email);
             // TODO: move this loop to the cloud
@@ -223,7 +229,7 @@ public final class ParseMethods {
     /*
      * Mark user as having paid charge. Check if the transaction is now complete.
      */
-    public static void markChargePaid(String transactionId) {
+    public void markChargePaid(String transactionId) {
         Log.d(TAG, "Mark charge as paid");
         ParseObject transaction =
                 findLocalParseObjectById(Constants.CLASSNAME_TRANSACTION, transactionId);
@@ -264,7 +270,6 @@ public final class ParseMethods {
             public void done(ParseException e) {
                 if (e != null) {
                     Log.e(TAG, "Error marking charge as paid: " + e.getMessage());
-                    // TODO: notify the user
                 }
                 else {
                     Log.i(TAG, "Marked charge as paid successfully!");
@@ -277,7 +282,7 @@ public final class ParseMethods {
     /*
      * Create a Group object and save to the Parse server.
      */
-    public static void createParseGroupObject(String groupName, ArrayList<String> memberEmails) {
+    public void createParseGroupObject(String groupName, ArrayList<String> memberEmails) {
         ArrayList<String> memberDisplayNames = getMemberDisplayNames(memberEmails);
         // Todo: Send invite emails to new users and notification email to existing users
         ParseObject newGroup = new ParseObject(Constants.CLASSNAME_GROUP);
@@ -289,7 +294,6 @@ public final class ParseMethods {
             public void done(ParseException e) {
                 if (e != null) {
                     Log.e(TAG, "Create Group object error: " + e.getMessage());
-                    // TODO notify the user: return boolean
                 }
                 else {
                     Log.i(TAG, "Saved new group successfully!");
@@ -303,8 +307,7 @@ public final class ParseMethods {
      * Get display names for members of a group.
      * Add the corresponding name, or email if there is no existing user.
      */
-    // Todo get api key from context when this class is no longer static
-    private static ArrayList<String> getMemberDisplayNames(ArrayList<String> memberEmails) {
+    private ArrayList<String> getMemberDisplayNames(ArrayList<String> memberEmails) {
         ArrayList<String> memberNames = new ArrayList<String>(memberEmails.size());
         for (String email : memberEmails) {
             ParseQuery<ParseUser> query = ParseUser.getQuery();
@@ -322,11 +325,11 @@ public final class ParseMethods {
     /*
      * Send email to person added to a group who does not yet have a Divvie account.
      */
-    public static void sendInviteEmails(ArrayList<String> noDivvieAccount,
+    public void sendInviteEmails(ArrayList<String> noDivvieAccount,
                                         HashMap<String, Object> map) {
 //        String fromName = ParseUser.getCurrentUser().getString(Constants.USER_FULL_NAME);
 //        HashMap<String, Object> map = new HashMap<String, Object>();
-//        map.put("key", getString(R.string.MANDRILL_API_KEY));
+//        map.put("key", mContext.getString(R.string.MANDRILL_API_KEY));
 //        map.put("toEmail", email);
 //        map.put("fromName", fromName);
 //        map.put("groupName", groupName);
