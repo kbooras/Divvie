@@ -221,11 +221,17 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         if (resultCode == RESULT_OK) {
             if(requestCode == CREATE_TRANSACTION_REQUEST_CODE) {
                 mTransactionsData = getArrayFromLocalDataStore(Constants.CLASSNAME_TRANSACTION);
-                mTabsAdapter.getTransactionsFragment().bindData(mTransactionsData);
+                TransactionsFragment fragment = mTabsAdapter.getTransactionsFragment();
+                if (fragment != null) {
+                    fragment.bindData(mTransactionsData);
+                }
             }
             else if (requestCode == CREATE_GROUP_REQUEST_CODE) {
                 mGroupsData = getArrayFromLocalDataStore(Constants.CLASSNAME_GROUP);
-                mTabsAdapter.getGroupsFragment().bindData(mGroupsData);
+                GroupsFragment fragment = mTabsAdapter.getGroupsFragment();
+                if (fragment != null) {
+                    fragment.bindData(mGroupsData);
+                }
             }
         }
 

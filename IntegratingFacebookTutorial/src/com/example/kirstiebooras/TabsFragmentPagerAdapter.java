@@ -52,7 +52,7 @@ public class TabsFragmentPagerAdapter extends FragmentPagerAdapter {
                 Log.wtf(TAG, "Value returned from getGroupsFragment not instance of TransactionsFragment");
                 return null;
             } else {
-                Log.v(TAG, "returned fragment");
+                Log.v(TAG, "returned Transactions fragment");
                 return (TransactionsFragment) fragment;
             }
         }
@@ -69,6 +69,7 @@ public class TabsFragmentPagerAdapter extends FragmentPagerAdapter {
                 Log.wtf(TAG, "Value returned from getGroupsFragment not instance of GroupsFragment");
                 return null;
             } else {
+                Log.v(TAG, "returned Groups fragment");
                 return (GroupsFragment) fragment;
             }
         }
@@ -77,6 +78,7 @@ public class TabsFragmentPagerAdapter extends FragmentPagerAdapter {
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         super.destroyItem(container, position, object);
+        Log.v(TAG, "destroyitem " + object.getClass().toString());
         mPageReferenceMap.remove(position);
     }
 
