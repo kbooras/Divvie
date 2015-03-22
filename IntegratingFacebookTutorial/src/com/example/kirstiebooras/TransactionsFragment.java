@@ -85,7 +85,6 @@ public class TransactionsFragment extends ListFragment {
             // Display transaction
             Intent intent = new Intent(getActivity(), ViewTransactionActivity.class);
             intent.putExtra("parseObjectId", transaction.getObjectId());
-            intent.putExtra("transactionStatus", transactionStatus.getText().toString());
             startActivity(intent);
         }
     }

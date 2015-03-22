@@ -64,7 +64,6 @@ public class ViewTransactionActivity extends Activity {
         TextView group = (TextView) findViewById(R.id.group);
         TextView transactionAmount = (TextView) findViewById(R.id.transactionAmount);
         TextView transactionDescription = (TextView) findViewById(R.id.transactionDescription);
-        TextView transactionStatus = (TextView) findViewById(R.id.transactionStatus);
 
         group.setText(String.format(mResources.getString(R.string.transaction_group_owes_you),
                 object.getString(Constants.TRANSACTION_GROUP_NAME)));
@@ -72,14 +71,6 @@ public class ViewTransactionActivity extends Activity {
         transactionDescription.setText(String.format(
                 mResources.getString(R.string.transaction_description),
                 object.getString(Constants.TRANSACTION_DESCRIPTION)));
-        String status = mIntent.getStringExtra("transactionStatus");
-        transactionStatus.setText(status);
-        if (status.equals(mResources.getString(R.string.complete))) {
-            transactionStatus.setTextColor(mResources.getColor(R.color.light_grey));
-        } else {
-            transactionStatus.setTextColor(mResources.getColor(R.color.pink));
-        }
-
     }
 
     private void displayMembers(ParseObject object) {
