@@ -20,7 +20,7 @@ import java.util.ArrayList;
 public class GroupsAdapter extends ArrayAdapter<ParseObject> {
 
     private final Context mContext;
-    private final ArrayList<ParseObject> mGroups;
+    private ArrayList<ParseObject> mGroups;
 
 
     public GroupsAdapter(Context context, ArrayList<ParseObject> groups) {

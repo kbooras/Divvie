@@ -22,7 +22,7 @@ import java.util.Locale;
  */
 public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
 
-    private final ArrayList<ParseObject> mTransactions;
+    private ArrayList<ParseObject> mTransactions;
     private Resources mResources;
     private String mSymbol;
 

@@ -48,9 +48,8 @@ public class TransactionsFragment extends ListFragment {
         getListView().setDivider(null);
     }
 
-    /**
+    /*
      * Attach the data passed in from HomeActivity to the adapter
-     * @param data: The data from HomeActivity
      */
     public void bindData(List<ParseObject> data) {
         Log.v(TAG, "bindData");
@@ -59,17 +58,12 @@ public class TransactionsFragment extends ListFragment {
             return;
         }
         mTransactions.clear();
-        mTransactions.addAll(data);
+        ArrayList<ParseObject> a = new ArrayList<ParseObject>();
+        a.addAll(data);
+        mTransactions.addAll(a);
         mAdapter.notifyDataSetChanged();
     }
 
-    /**
-     * Display appropriate action when a list item is clicked depending on the type of transaction
-     * @param l: The ListView
-     * @param v: The item clicked in the ListView
-     * @param position: The index clicked in the ListView
-     * @param id:
-     */
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         TextView transactionStatus = (TextView) v.findViewById(R.id.transactionStatus);
