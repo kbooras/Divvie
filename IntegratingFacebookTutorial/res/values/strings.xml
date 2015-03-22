@@ -10,6 +10,7 @@
     <string name="choose_payment_method">Choose a payment method:</string>
     <string name="complete">Complete</string>
     <string name="complete_form_toast">Please complete the form.</string>
+    <string name="confirm">Confirm</string>
     <string name="create_group">Create Group</string>
     <string name="create_group_add_another">+ Add another</string>
     <string name="create_group_email">Email %1$d</string>
@@ -23,6 +24,7 @@
     <string name="email">Email</string>
     <string name="email_1">Email 1</string>
     <string name="enter_valid_email_toast">Please enter a valid email.</string>
+    <string name="for_description">for %1$s</string>
     <string name="forgot_password">Forgot password?</string>
     <string name="forgot_password_alert_message">Enter the email associated with your
         account.</string>
@@ -44,6 +46,8 @@
         and cannot sign in. Please try again when you gain connectivity.</string>
     <string name="no_network_connection">No Network Connection</string>
     <string name="ok">OK</string>
+    <string name="on">on</string>
+    <string name="override">Paid?</string>
     <string name="paid">Paid</string>
     <string name="password">Password</string>
     <string name="password_length_toast">Password must be at least 6 characters.</string>
@@ -51,11 +55,13 @@
     <string name="pay_now">Pay Now</string>
     <string name="pay_person">Pay %1$s</string>
     <string name="pay_with_venmo">Pay with Venmo</string>
-    <string name="person_paid_you">%1$s paid you on</string>
+    <string name="person_owes_you">%1$s owes you %2$s</string>
+    <string name="person_paid_you">%1$s paid you</string>
     <string name="record">Record</string>
     <string name="record_cash_payment">Record cash payment</string>
     <string name="reenter_password">Re-enter password</string>
     <string name="register">Register</string>
+    <string name="remind">Remind</string>
     <string name="reset">Reset</string>
     <string name="reset_failed_alert_message">The reset password failed. Please try again
         later.</string>
@@ -84,5 +90,6 @@
     <string name="venmo_success">Payment successful!</string>
     <string name="verify_record_cash_payment">Are you sure you would like to record this charge as
         paid?</string>
+    <string name="with">with</string>
 
 </resources>

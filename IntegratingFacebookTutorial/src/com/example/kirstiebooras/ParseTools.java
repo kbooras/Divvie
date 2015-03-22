@@ -12,10 +12,13 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.parse.integratingfacebooktutorial.R;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -267,9 +270,10 @@ public class ParseTools {
             if (members.get(i).equals(currentUser)) {
                 // Mark this person as paid and set their date paid
                 paid.set(i, 1);
-                String month = String.valueOf(Calendar.getInstance().get(Calendar.MONTH));
-                String date = String.valueOf(Calendar.getInstance().get(Calendar.DATE));
-                datePaid.set(i,month + "/" + date);
+                Date date = new Date(System.currentTimeMillis());
+                String today = new SimpleDateFormat("MM/dd/yy").format(date);
+                // TODO add year
+                datePaid.set(i,today);
             }
             if (paid.get(i) == 0) {
                 // Check if this transaction is complete or not
@@ -356,11 +360,34 @@ public class ParseTools {
                 @Override
                 public void done(Object o, ParseException e) {
                     if (e != null) {
+                        Log.i(TAG, "Send new user email sent successfully!");
+                    }
+                    else {
                         Log.e(TAG, "Send new user email error: " + e.toString());
                     }
                 }
             });
         }
+    }
+
+    public void sendReminderEmail(String toEmail, String description, String fromName) {
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put("key", mContext.getString(R.string.MANDRILL_API_KEY));
+        map.put("toEmail", toEmail);
+        map.put("fromName", fromName);
+        map.put("description", description);
+//        ParseCloud.callFunctionInBackground("sendReminderEmail", map, new FunctionCallback<Object>() {
+//            @Override
+//            public void done(Object o, ParseException e) {
+//                if (e != null) {
+//                    Log.i(TAG, "Send reminder email sent successfully!");
+//                }
+//                else {
+//                    Log.e(TAG, "Send reminder email error: " + e.toString());
+//                }
+//            }
+//        });
+//
     }
 
 }

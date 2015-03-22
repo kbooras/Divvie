@@ -55,6 +55,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.kirstiebooras.HomeActivity" />
         </activity>
+        <activity android:name="com.example.kirstiebooras.OverridePaymentActivity"
+            android:theme="@style/DivvieThemeSecondary">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.kirstiebooras.ViewTransactionActivity" />
+        </activity>
         <activity android:name="com.example.kirstiebooras.RegisterActivity"
             android:theme="@style/NoActionBar"/>
         <activity android:name="com.example.kirstiebooras.SigninActivity"

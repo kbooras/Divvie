@@ -159,6 +159,7 @@ public class CreateGroupActivity extends Activity {
 
         mParseTools.createParseGroupObject(groupNameTxt, memberEmails);
 
+        setResult(RESULT_OK);
         finish();
     }
 
@@ -203,13 +204,6 @@ public class CreateGroupActivity extends Activity {
 
     private boolean isValidEmail(CharSequence emailTxt) {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(emailTxt).matches();
-    }
-
-    @Override
-    public void finish() {
-        // TODO Tell homeactivity specifically what object to get using data.putExtra()
-        setResult(RESULT_OK);
-        super.finish();
     }
 
     private void displayNoNetworkConnectionMessage() {

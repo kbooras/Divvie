@@ -217,12 +217,14 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "onActivityResult");
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if(requestCode == CREATE_TRANSACTION_REQUEST_CODE) {
                 mTransactionsData = getArrayFromLocalDataStore(Constants.CLASSNAME_TRANSACTION);
                 TransactionsFragment fragment = mTabsAdapter.getTransactionsFragment();
                 if (fragment != null) {
+                    Log.d(TAG, "onActivityResult bind mTransactionsData");
                     fragment.bindData(mTransactionsData);
                 }
             }
@@ -230,11 +232,11 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
                 mGroupsData = getArrayFromLocalDataStore(Constants.CLASSNAME_GROUP);
                 GroupsFragment fragment = mTabsAdapter.getGroupsFragment();
                 if (fragment != null) {
+                    Log.d(TAG, "onActivityResult bind mGroupsData");
                     fragment.bindData(mGroupsData);
                 }
             }
         }
-
     }
 
     @Override

@@ -24,12 +24,9 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
 
-import java.math.BigDecimal;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Activity to create a new transaction within a group.
@@ -141,6 +138,7 @@ public class CreateTransactionActivity extends Activity {
         // Send emails to group members
         // TODO sendEmails(personOwedName, groupName, description, splitAmount, (String[]) members.toArray());
 
+        setResult(RESULT_OK);
         finish();
     }
 
@@ -177,13 +175,6 @@ public class CreateTransactionActivity extends Activity {
         map.put("amount", amount);
         map.put("key", getString(R.string.MANDRILL_API_KEY));
         mParseTools.sendNewTransactionEmails(map, members);
-    }
-
-    @Override
-    public void finish() {
-        // TODO Tell homeactivity specifically what object to get using data.putExtra()
-        setResult(RESULT_OK);
-        super.finish();
     }
 
     private void getGroupsFromParse() {
