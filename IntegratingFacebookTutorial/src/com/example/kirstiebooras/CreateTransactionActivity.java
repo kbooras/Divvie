@@ -125,31 +125,18 @@ public class CreateTransactionActivity extends Activity {
             return;
         }
 
-        double amountValue = Double.valueOf(amount);
-        String totalAmount = String.format("%.2f", amountValue);
+        double totalAmount = Double.valueOf(amount);
 
         // Get person owed info
         ParseUser personOwed = ParseUser.getCurrentUser();
         String personOwedEmail = personOwed.getEmail();
-        String personOwedName = personOwed.getString(Constants.USER_FULL_NAME);
 
         // Get group info
         ParseObject group = (ParseObject) mSpinner.getSelectedItem();
         String groupId = group.getObjectId();
-        String groupName = group.getString(Constants.GROUP_NAME);
-
-        // Get members of the group to create arrays for paid and datePaid and to get split amount
-        @SuppressWarnings("unchecked")
-        ArrayList<String> members = (ArrayList<String>) group.get(Constants.GROUP_MEMBERS);
-        @SuppressWarnings("unchecked")
-        ArrayList<String> displayNames = (ArrayList<String>) group.get(Constants.GROUP_DISPLAY_NAMES);
-
-        // Get split amount
-        String splitAmount = getSplitAmount(amountValue, members.size());
 
         // Create the object
-        mParseTools.createTransactionParseObject(groupId, groupName, personOwedEmail, description,
-                totalAmount, members, displayNames, splitAmount);
+        mParseTools.createTransactionParseObject(groupId, personOwedEmail, description, totalAmount);
 
         // Send emails to group members
         // TODO sendEmails(personOwedName, groupName, description, splitAmount, (String[]) members.toArray());
@@ -179,15 +166,6 @@ public class CreateTransactionActivity extends Activity {
     }
 
     /*
-     * Determine amount to be paid by each member of the group.
-     */
-    private String getSplitAmount(double amountValue, double numMembers) {
-        double dividedAmount = amountValue / numMembers;
-        BigDecimal bd = new BigDecimal(dividedAmount);
-        return bd.setScale(2, BigDecimal.ROUND_FLOOR).toString();
-    }
-
-    /*
      * Send email to every one splitting the transaction.
      */
     private void sendEmails(String fromName, String groupName, String chargeDescription,
@@ -213,7 +191,6 @@ public class CreateTransactionActivity extends Activity {
             ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Group");
             groupQuery.whereEqualTo(Constants.GROUP_MEMBERS, ParseUser.getCurrentUser().getEmail());
             groupQuery.fromLocalDatastore();
-            // TODO find in background && move to ParseMethods??
             try {
                 List<ParseObject> groups = groupQuery.find();
                 Log.i(TAG, "Found " + groups.size() + " objects.");

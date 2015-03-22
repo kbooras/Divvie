@@ -88,12 +88,15 @@ public class ViewTransactionActivity extends Activity {
         @SuppressWarnings("unchecked")
         ArrayList<Integer> paid = (ArrayList<Integer>) object.get(Constants.TRANSACTION_PAID);
         @SuppressWarnings("unchecked")
-        ArrayList<String> displayName = (ArrayList<String>) object.get(Constants.GROUP_DISPLAY_NAMES);
-        @SuppressWarnings("unchecked")
         ArrayList<String> datePaid = (ArrayList<String>) object.get(Constants.TRANSACTION_DATE_PAID);
 
-        for (int i = 0; i < displayName.size(); i++) {
-            if (displayName.get(i).equals(ParseUser.getCurrentUser()
+        ParseObject group = mParseTools.findLocalParseObjectById(Constants.CLASSNAME_GROUP,
+                object.getString(Constants.TRANSACTION_GROUP_ID));
+        @SuppressWarnings("unchecked")
+        ArrayList<String> displayNames = (ArrayList<String>) group.get(Constants.GROUP_DISPLAY_NAMES);
+
+        for (int i = 0; i < displayNames.size(); i++) {
+            if (displayNames.get(i).equals(ParseUser.getCurrentUser()
                     .getString(Constants.USER_FULL_NAME))) {
                 // Do not display the current user as part of the transaction
                 continue;
@@ -106,13 +109,13 @@ public class ViewTransactionActivity extends Activity {
                 // If they have not paid, display what they owe
                 member.setText(String.format(
                         mResources.getString(R.string.transaction_group_owes_you),
-                        displayName.get(i)));
+                        displayNames.get(i)));
                 status.setText(symbol + object.getString(Constants.TRANSACTION_SPLIT_AMOUNT));
                 status.setTextColor(mResources.getColor(R.color.pink));
             } else {
                 // Otherwise, display the date paid
                 member.setText(String.format(mResources.getString(R.string.person_paid_you),
-                        displayName.get(i)));
+                        displayNames.get(i)));
                 status.setText(datePaid.get(i));
                 status.setTextColor(mResources.getColor(R.color.dark_grey));
             }

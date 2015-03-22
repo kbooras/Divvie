@@ -13,6 +13,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -159,20 +160,28 @@ public class ParseTools {
     /*
      * Create a Transaction object and save to the Parse server.
      */
-    public void createTransactionParseObject(String groupId, String groupName,
-                                              String personOwed, String descriptionTxt,
-                                              String totalAmount, ArrayList<String> members,
-                                              ArrayList<String> displayNames, String splitAmount) {
-        ParseObject newTransaction = new ParseObject("Transaction");
+    public void createTransactionParseObject(String groupId, String personOwed, String descriptionTxt,
+                                              Double totalAmount) {
+        Log.d(TAG, "createTransactionParseObject");
+        ParseObject group = findLocalParseObjectById(Constants.CLASSNAME_GROUP, groupId);
+        if (group == null) {
+            Log.wtf(TAG, "The group for the new transaction is not found on the device.");
+            return;
+        }
+        @SuppressWarnings("unchecked")
+        ArrayList<String> members = (ArrayList<String>) group.get(Constants.GROUP_MEMBERS);
 
+        String totalAmountString = String.format("%.2f", totalAmount);
+        String splitAmount = getSplitAmount(totalAmount, members.size());
+
+        ParseObject newTransaction = new ParseObject(Constants.CLASSNAME_TRANSACTION);
         newTransaction.put(Constants.TRANSACTION_GROUP_ID, groupId);
-        newTransaction.put(Constants.TRANSACTION_GROUP_NAME, groupName);
+        newTransaction.put(Constants.TRANSACTION_GROUP_NAME, group.getString(Constants.GROUP_NAME));
+        newTransaction.put(Constants.GROUP_MEMBERS, members);
         newTransaction.put(Constants.TRANSACTION_PERSON_OWED, personOwed);
         newTransaction.put(Constants.TRANSACTION_DESCRIPTION, descriptionTxt);
-        newTransaction.put(Constants.TRANSACTION_TOTAL_AMOUNT, totalAmount);
+        newTransaction.put(Constants.TRANSACTION_TOTAL_AMOUNT, totalAmountString);
         newTransaction.put(Constants.TRANSACTION_SPLIT_AMOUNT, splitAmount);
-        newTransaction.put(Constants.GROUP_MEMBERS, members);
-        newTransaction.put(Constants.GROUP_DISPLAY_NAMES, displayNames);
 
         // Set paid values and date paid values. PersonOwed is set as paid.
         ArrayList<Integer> paid = new ArrayList<Integer>(members.size());
@@ -206,6 +215,15 @@ public class ParseTools {
         //TODO Extend ParseObject and use UUID and SaveEventually and write to Local Datastore
         Log.i(TAG, "Saved new transaction successfully!");
 
+    }
+
+    /*
+     * Determine amount to be paid by each member of the group.
+     */
+    private String getSplitAmount(double amountValue, double numMembers) {
+        double dividedAmount = amountValue / numMembers;
+        BigDecimal bd = new BigDecimal(dividedAmount);
+        return bd.setScale(2, BigDecimal.ROUND_FLOOR).toString();
     }
 
     /*
