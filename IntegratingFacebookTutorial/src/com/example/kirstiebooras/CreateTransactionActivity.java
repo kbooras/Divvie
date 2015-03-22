@@ -25,9 +25,11 @@ import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Activity to create a new transaction within a group.
@@ -170,11 +172,10 @@ public class CreateTransactionActivity extends Activity {
 
     /*
      * Check if the amount entered by the user is valid.
+     * From www.RegExLib.com by Kirk Fuller, Gregg Durishan.
      */
     private boolean validMonetaryInput(String amount) {
-        int decimal = amount.lastIndexOf('.');
-        int decimalPlaces = amount.substring(decimal+1).length();
-        return !(decimalPlaces > 2 || decimalPlaces < -1);
+        return amount.matches("^\\$?\\-?([1-9]{1}[0-9]{0,2}(\\,\\d{3})*(\\.\\d{0,2})?|[1-9]{1}\\d{0,}(\\.\\d{0,2})?|0(\\.\\d{0,2})?|(\\.\\d{1,2}))$|^\\-?\\$?([1-9]{1}\\d{0,2}(\\,\\d{3})*(\\.\\d{0,2})?|[1-9]{1}\\d{0,}(\\.\\d{0,2})?|0(\\.\\d{0,2})?|(\\.\\d{1,2}))$|^\\(\\$?([1-9]{1}\\d{0,2}(\\,\\d{3})*(\\.\\d{0,2})?|[1-9]{1}\\d{0,}(\\.\\d{0,2})?|0(\\.\\d{0,2})?|(\\.\\d{1,2}))\\)$");
     }
 
     /*
