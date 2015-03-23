@@ -1,4 +1,4 @@
-package com.example.kirstiebooras;
+package com.example.kirstiebooras.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -18,6 +18,10 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.kirstiebooras.DivvieApplication;
+import com.example.kirstiebooras.adapters.GroupsSpinnerAdapter;
+import com.example.kirstiebooras.helpers.ParseTools;
+import com.example.kirstiebooras.helpers.Constants;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;

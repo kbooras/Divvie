@@ -1,4 +1,4 @@
-package com.example.kirstiebooras;
+package com.example.kirstiebooras.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -19,6 +19,9 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ScrollView;
 
+import com.example.kirstiebooras.DivvieApplication;
+import com.example.kirstiebooras.helpers.ParseTools;
+import com.example.kirstiebooras.helpers.Constants;
 import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
 

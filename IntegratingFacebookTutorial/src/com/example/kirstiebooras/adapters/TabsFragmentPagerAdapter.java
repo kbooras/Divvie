@@ -1,10 +1,13 @@
-package com.example.kirstiebooras;
+package com.example.kirstiebooras.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.util.Log;
 import android.view.ViewGroup;
+
+import com.example.kirstiebooras.fragments.GroupsFragment;
+import com.example.kirstiebooras.fragments.TransactionsFragment;
 
 import java.util.HashMap;
 import java.util.Map;

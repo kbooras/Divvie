@@ -1,4 +1,4 @@
-package com.example.kirstiebooras;
+package com.example.kirstiebooras.venmo;
 
 import android.content.ComponentName;
 import android.content.Context;

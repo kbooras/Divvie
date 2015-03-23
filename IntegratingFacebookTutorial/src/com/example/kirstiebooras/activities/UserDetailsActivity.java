@@ -1,4 +1,4 @@
-package com.example.kirstiebooras;
+package com.example.kirstiebooras.activities;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.kirstiebooras.DivvieApplication;
 import com.facebook.FacebookRequestError;
 import com.facebook.Request;
 import com.facebook.Response;

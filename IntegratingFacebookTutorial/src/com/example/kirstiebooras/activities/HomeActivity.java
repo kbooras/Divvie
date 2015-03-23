@@ -1,4 +1,4 @@
-package com.example.kirstiebooras;
+package com.example.kirstiebooras.activities;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
@@ -15,6 +15,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.kirstiebooras.DivvieApplication;
+import com.example.kirstiebooras.fragments.GroupsFragment;
+import com.example.kirstiebooras.helpers.ParseTools;
+import com.example.kirstiebooras.adapters.TabsFragmentPagerAdapter;
+import com.example.kirstiebooras.fragments.TransactionsFragment;
+import com.example.kirstiebooras.helpers.Constants;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;

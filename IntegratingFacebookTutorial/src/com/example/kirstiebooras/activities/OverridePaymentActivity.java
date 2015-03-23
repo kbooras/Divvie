@@ -1,4 +1,4 @@
-package com.example.kirstiebooras;
+package com.example.kirstiebooras.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +13,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.kirstiebooras.fragments.DatePickerFragment;
+import com.example.kirstiebooras.DivvieApplication;
+import com.example.kirstiebooras.helpers.ParseTools;
+import com.example.kirstiebooras.helpers.Constants;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
@@ -80,6 +84,7 @@ public class OverridePaymentActivity extends FragmentActivity {
         mDatePaidButton.setText(datePaid);
     }
 
+    @SuppressWarnings("unchecked")
     public void onConfirmClick(View view) {
         ParseTools parseTools = ((DivvieApplication) getApplication()).getParseTools();
         final ParseObject object =

@@ -1,4 +1,4 @@
-package com.example.kirstiebooras;
+package com.example.kirstiebooras.activities;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.example.kirstiebooras.helpers.Constants;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.model.GraphUser;

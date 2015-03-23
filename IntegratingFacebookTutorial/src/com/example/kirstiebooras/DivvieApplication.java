@@ -2,6 +2,7 @@ package com.example.kirstiebooras;
 
 import android.app.Application;
 
+import com.example.kirstiebooras.helpers.ParseTools;
 import com.parse.Parse;
 import com.parse.integratingfacebooktutorial.R;
 

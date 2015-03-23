@@ -1,4 +1,4 @@
-package com.example.kirstiebooras;
+package com.example.kirstiebooras.helpers;
 
 import android.content.Context;
 import android.util.Log;
@@ -366,7 +366,7 @@ public class ParseTools {
             ParseCloud.callFunctionInBackground("sendInviteEmails", map, new FunctionCallback<Object>() {
                 @Override
                 public void done(Object o, ParseException e) {
-                    if (e != null) {
+                    if (e == null) {
                         Log.i(TAG, "Send new user email sent successfully!");
                     }
                     else {
@@ -387,7 +387,7 @@ public class ParseTools {
         ParseCloud.callFunctionInBackground("sendReminderEmail", map, new FunctionCallback<Object>() {
             @Override
             public void done(Object o, ParseException e) {
-                if (e != null) {
+                if (e == null) {
                     Log.i(TAG, "Send reminder email sent successfully!");
                     mSendReminderEmailListener.onReminderEmailSent();
                 }

@@ -1,4 +1,4 @@
-package com.example.kirstiebooras;
+package com.example.kirstiebooras.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,10 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.kirstiebooras.activities.HomeActivity;
+import com.example.kirstiebooras.activities.PayChargeActivity;
+import com.example.kirstiebooras.activities.ViewTransactionActivity;
+import com.example.kirstiebooras.adapters.TransactionsAdapter;
 import com.parse.ParseObject;
 import com.parse.integratingfacebooktutorial.R;
 

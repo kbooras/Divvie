@@ -1,4 +1,4 @@
-package com.example.kirstiebooras;
+package com.example.kirstiebooras.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.kirstiebooras.helpers.Constants;
 import com.parse.ParseObject;
 import com.parse.integratingfacebooktutorial.R;
 
@@ -38,6 +39,7 @@ public class GroupsAdapter extends ArrayAdapter<ParseObject> {
         } else {
             rowView = convertView;
         }
+        // TODO differentiate the name from the members more obviously
 
         TextView textView = (TextView) rowView.findViewById(R.id.groupName);
         LinearLayout membersLayout = (LinearLayout) rowView.findViewById(R.id.membersLayout);

@@ -1,10 +1,12 @@
-package com.example.kirstiebooras;
+package com.example.kirstiebooras.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.View;
 
+import com.example.kirstiebooras.activities.HomeActivity;
+import com.example.kirstiebooras.adapters.GroupsAdapter;
 import com.parse.ParseObject;
 
 import java.util.ArrayList;

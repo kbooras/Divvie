@@ -1,4 +1,4 @@
-package com.example.kirstiebooras;
+package com.example.kirstiebooras.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -15,6 +15,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.kirstiebooras.DivvieApplication;
+import com.example.kirstiebooras.helpers.ParseTools;
+import com.example.kirstiebooras.helpers.Constants;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
@@ -85,6 +88,7 @@ public class ViewTransactionActivity extends Activity {
                 mDescription));
     }
 
+    @SuppressWarnings("unchecked")
     private void displayMembers(ParseObject object) {
         Log.d(TAG, "displayMembers");
         String symbol = Currency.getInstance(Locale.getDefault()).getSymbol();

@@ -1,4 +1,4 @@
-package com.example.kirstiebooras;
+package com.example.kirstiebooras.helpers;
 
 /**
  * Class containing all constants for the app.

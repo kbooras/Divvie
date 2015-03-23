@@ -1,4 +1,4 @@
-package com.example.kirstiebooras;
+package com.example.kirstiebooras.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -15,11 +15,15 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.kirstiebooras.DivvieApplication;
+import com.example.kirstiebooras.helpers.ParseTools;
+import com.example.kirstiebooras.venmo.VenmoLibrary;
+import com.example.kirstiebooras.helpers.Constants;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
 
-import com.example.kirstiebooras.VenmoLibrary.VenmoResponse;
+import com.example.kirstiebooras.venmo.VenmoLibrary.VenmoResponse;
 
 import java.util.Currency;
 import java.util.Locale;
