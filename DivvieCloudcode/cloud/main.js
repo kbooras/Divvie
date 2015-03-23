@@ -79,31 +79,7 @@ Parse.Cloud.define("registerUser", function(request, response) {
     });
 });
 
-Parse.Cloud.define("getTransactionsDescending", function(request, response) {
-    var query = new Parse.Query("Transaction");
-    query.equalTo("members", request.params.currentUser);
-    query.descending("createdAt");
-    query.find({
-        success: function(results) { 
-            console.log("getTransactionsDescending found " + results.length + "results.");
-            response.success(results);
-        }
-    });
-}); 
-
-Parse.Cloud.define("getGroupsDescending", function(request, response) {
-    var query = new Parse.Query("Group");
-    query.equalTo("members", request.params.currentUser);
-    query.descending("createdAt");
-    query.find({
-        success: function(results) { 
-            console.log("getGroupsDescending found " + results.length + "results.");
-            response.success(results);
-        }
-    });
-});
-
-Parse.Cloud.define("sendNewUserEmail", function(request, response) {
+Parse.Cloud.define("sendInviteEmails", function(request, response) {
     var key = request.params.key;
 
     var toEmail = request.params.toEmail;
@@ -146,8 +122,36 @@ Parse.Cloud.define("sendChargeEmail", function(request, response) {
     Mandrill.initialize(key);
     Mandrill.sendEmail({
         message: {
-        subject: "You have been charged " + amount + ".",
+        subject: "You have been charged " + amount,
         text: fromName + " has charged your group " + groupName + " for " + chargeDescription + ".",
+        from_email: "divvie-no-reply@parseapps.com",
+        from_name: "Divvie App",
+        to: [{
+                email: toEmail,
+                name: toName
+            }]
+        },
+        async: true
+    }, {
+        success: function(httpResponse) { response.success("Email sent!"); },
+        error: function(httpResponse) { response.error("Uh oh, something went wrong"); }
+    });
+});
+
+Parse.Cloud.define("sendReminderEmail", function(request, response) {
+    var key = request.params.key;
+
+    var toEmail = request.params.toEmail;
+    var toName = request.params.toName;
+    var fromName = request.params.fromName;
+    var chargeDescription = request.params.chargeDescription;
+
+    var Mandrill = require('mandrill');
+    Mandrill.initialize(key);
+    Mandrill.sendEmail({
+        message: {
+        subject: "Payment Reminder",
+        text: "This is a reminder that you owe " + fromName + " for " + chargeDescription + ".",
         from_email: "divvie-no-reply@parseapps.com",
         from_name: "Divvie App",
         to: [{

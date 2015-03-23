@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.parse.ParseObject;
 import com.parse.ParseUser;
@@ -44,6 +45,13 @@ public class ViewTransactionActivity extends Activity {
         setContentView(R.layout.view_transaction_activity);
 
         mParseTools = ((DivvieApplication) getApplication()).getParseTools();
+        mParseTools.setSendReminderEmailListener(new ParseTools.SendReminderEmailListener() {
+            @Override
+            public void onReminderEmailSent() {
+                Toast.makeText(getApplicationContext(), R.string.sent_reminder_email,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -145,7 +153,7 @@ public class ViewTransactionActivity extends Activity {
                 .setNegativeButton(getString(R.string.remind), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        mParseTools.sendReminderEmail(email, mDescription,
+                        mParseTools.sendReminderEmail(email, name, mDescription,
                                 ParseUser.getCurrentUser().getString(Constants.USER_FULL_NAME));
                     }
                 })

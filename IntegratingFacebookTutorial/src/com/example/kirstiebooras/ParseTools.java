@@ -30,6 +30,7 @@ public class ParseTools {
 
     private static final String TAG = "ParseTools";
     private GetParseDataListener mGetParseDataListener;
+    private SendReminderEmailListener mSendReminderEmailListener;
     private Context mContext;
 
     public ParseTools(Context applicationContext) {
@@ -42,6 +43,14 @@ public class ParseTools {
 
     public void setGetParseDataListener(GetParseDataListener listener) {
         mGetParseDataListener = listener;
+    }
+
+    public interface SendReminderEmailListener {
+        public void onReminderEmailSent();
+    }
+
+    public void setSendReminderEmailListener(SendReminderEmailListener listener) {
+        mSendReminderEmailListener = listener;
     }
 
     /*
@@ -272,7 +281,6 @@ public class ParseTools {
                 paid.set(i, 1);
                 Date date = new Date(System.currentTimeMillis());
                 String today = new SimpleDateFormat("MM/dd/yy").format(date);
-                // TODO add year
                 datePaid.set(i,today);
             }
             if (paid.get(i) == 0) {
@@ -347,16 +355,15 @@ public class ParseTools {
     /*
      * Send email to person added to a group who does not yet have a Divvie account.
      */
-    public void sendInviteEmails(ArrayList<String> noDivvieAccount,
-                                        HashMap<String, Object> map) {
-//        String fromName = ParseUser.getCurrentUser().getString(Constants.USER_FULL_NAME);
-//        HashMap<String, Object> map = new HashMap<String, Object>();
-//        map.put("key", mContext.getString(R.string.MANDRILL_API_KEY));
-//        map.put("toEmail", email);
-//        map.put("fromName", fromName);
-//        map.put("groupName", groupName);
+    public void sendInviteEmails(ArrayList<String> noDivvieAccount, String fromName, String groupName) {
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put("key", mContext.getString(R.string.MANDRILL_API_KEY));
+        map.put("fromName", fromName);
+        map.put("groupName", groupName);
         for (String email : noDivvieAccount) {
-            ParseCloud.callFunctionInBackground("sendNewUserEmail", map, new FunctionCallback<Object>() {
+            map.remove("toEmail");
+            map.put("toEmail", email);
+            ParseCloud.callFunctionInBackground("sendInviteEmails", map, new FunctionCallback<Object>() {
                 @Override
                 public void done(Object o, ParseException e) {
                     if (e != null) {
@@ -370,24 +377,26 @@ public class ParseTools {
         }
     }
 
-    public void sendReminderEmail(String toEmail, String description, String fromName) {
+    public void sendReminderEmail(String toEmail, String toName, String description, String fromName) {
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("key", mContext.getString(R.string.MANDRILL_API_KEY));
         map.put("toEmail", toEmail);
+        map.put("toName", toName);
         map.put("fromName", fromName);
-        map.put("description", description);
-//        ParseCloud.callFunctionInBackground("sendReminderEmail", map, new FunctionCallback<Object>() {
-//            @Override
-//            public void done(Object o, ParseException e) {
-//                if (e != null) {
-//                    Log.i(TAG, "Send reminder email sent successfully!");
-//                }
-//                else {
-//                    Log.e(TAG, "Send reminder email error: " + e.toString());
-//                }
-//            }
-//        });
-//
+        map.put("chargeDescription", description);
+        ParseCloud.callFunctionInBackground("sendReminderEmail", map, new FunctionCallback<Object>() {
+            @Override
+            public void done(Object o, ParseException e) {
+                if (e != null) {
+                    Log.i(TAG, "Send reminder email sent successfully!");
+                    mSendReminderEmailListener.onReminderEmailSent();
+                }
+                else {
+                    Log.e(TAG, "Send reminder email error: " + e.toString());
+                }
+            }
+        });
+
     }
 
 }

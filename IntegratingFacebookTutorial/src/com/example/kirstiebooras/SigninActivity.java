@@ -73,7 +73,7 @@ public class SigninActivity extends Activity {
                         new AlertDialog.Builder(SigninActivity.this)
                                 .setIconAttribute(android.R.attr.alertDialogIcon)
                                 .setTitle(getString(R.string.sign_in))
-                                .setMessage(getString(R.string.signin_failed_alert_message))
+                                .setMessage(getString(R.string.sign_in_failed_alert_message))
                                 .setPositiveButton(getString(R.string.ok),
                                         new DialogInterface.OnClickListener() {
                                             @Override

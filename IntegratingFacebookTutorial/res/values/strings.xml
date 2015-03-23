@@ -70,9 +70,10 @@
     <string name="reset_no_account_alert_message"> The email you entered is not associated with an
         account.</string>
     <string name="reset_success_toast">Reset email sent!</string>
+    <string name="sent_reminder_email">Reminder email sent!</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_in_with_facebook">Sign in with Facebook</string>
-    <string name="signin_failed_alert_message">Email or password invalid.</string>
+    <string name="sign_in_failed_alert_message">Email or password invalid.</string>
     <string name="split_bill">Split Bill</string>
     <string name="transaction_amount_hint">$0.00</string>
     <string name="transaction_amount_owed">%1$s%2$s owed</string>
