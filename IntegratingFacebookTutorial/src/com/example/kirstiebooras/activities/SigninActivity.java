@@ -106,7 +106,7 @@ public class SigninActivity extends Activity {
                 .show();
     }
 
-    public void resetPassword(String resetPasswordEmailTxt) {
+    private void resetPassword(String resetPasswordEmailTxt) {
         ParseUser.requestPasswordResetInBackground(resetPasswordEmailTxt,
                 new RequestPasswordResetCallback() {
                     public void done(ParseException e) {
@@ -125,7 +125,7 @@ public class SigninActivity extends Activity {
                 });
     }
 
-    public void displayResetErrorMessage(int errorCode) {
+    private void displayResetErrorMessage(int errorCode) {
         String message;
         if (errorCode == ParseException.INVALID_EMAIL_ADDRESS) {
             message = getString(R.string.reset_invalid_email_alert_message);

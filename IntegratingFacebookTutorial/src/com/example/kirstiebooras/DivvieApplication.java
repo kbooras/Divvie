@@ -12,7 +12,7 @@ import com.parse.integratingfacebooktutorial.R;
 public class DivvieApplication extends Application {
 
     public static final String TAG = "DivvieApplication";
-    public ParseTools mParseTools;
+    private ParseTools mParseTools;
 
     @Override
     public void onCreate() {

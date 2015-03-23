@@ -39,7 +39,7 @@ public class GroupsSpinnerAdapter extends ArrayAdapter<ParseObject> {
         return getCustomView(position, convertView, parent);
     }
 
-    public View getCustomView(int position, View convertView, ViewGroup parent) {
+    private View getCustomView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(mContext);
             convertView = inflater.inflate(R.layout.groups_spinner, parent, false);

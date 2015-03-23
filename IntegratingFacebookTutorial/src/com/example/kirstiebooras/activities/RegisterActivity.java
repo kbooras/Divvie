@@ -68,7 +68,7 @@ public class RegisterActivity extends Activity {
         }
     }
 
-    public void registerUser(final String email, final String password, final String fullName) {
+    private void registerUser(final String email, final String password, final String fullName) {
         Log.d(TAG, "regusterUser");
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put(Constants.USER_EMAIL, email);

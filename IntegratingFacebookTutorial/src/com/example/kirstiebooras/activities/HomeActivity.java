@@ -143,7 +143,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         return mParseTools.getLocalData(className);
     }
 
-    public void setTabsBelowActionBar() {
+    private void setTabsBelowActionBar() {
         try {
             final Method setHasEmbeddedTabsMethod = mActionBar.getClass()
                     .getDeclaredMethod("setHasEmbeddedTabs", boolean.class);
