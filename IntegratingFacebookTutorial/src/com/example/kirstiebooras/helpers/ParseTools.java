@@ -109,7 +109,7 @@ public class ParseTools {
         query.orderByDescending("createdAt");
         try {
             List<ParseObject> parseObjects = query.find();
-            Log.i(TAG, "Found " + parseObjects.size() + " objects in Local Datastore.");
+            Log.i(TAG, "Found " + parseObjects.size() + " " + className + " objects in Local Datastore.");
             return parseObjects;
         }
         catch (ParseException e) {
@@ -259,6 +259,7 @@ public class ParseTools {
     /*
      * Mark user as having paid charge. Check if the transaction is now complete.
      */
+    @SuppressWarnings("unchecked")
     public void markChargePaid(String transactionId) {
         Log.d(TAG, "Mark charge as paid");
         ParseObject transaction =
@@ -266,11 +267,9 @@ public class ParseTools {
         if (transaction == null) {
             return;
         }
-        @SuppressWarnings("unchecked")
+
         ArrayList<String> members = (ArrayList<String>) transaction.get(Constants.GROUP_MEMBERS);
-        @SuppressWarnings("unchecked")
         ArrayList<Integer> paid = (ArrayList<Integer>) transaction.get(Constants.TRANSACTION_PAID);
-        @SuppressWarnings("unchecked")
         ArrayList<String> datePaid = (ArrayList<String>) transaction.get(Constants.TRANSACTION_DATE_PAID);
 
         String currentUser = ParseUser.getCurrentUser().getEmail();

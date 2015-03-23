@@ -41,8 +41,6 @@ public class CreateTransactionActivity extends Activity {
     private static final String TAG = "CreateTransactionActivity";
 
     private ParseTools mParseTools;
-    private ArrayAdapter<ParseObject> mAdapter;
-    private ArrayList<ParseObject> mGroupsList;
     private Spinner mSpinner;
 
     @Override
@@ -58,13 +56,13 @@ public class CreateTransactionActivity extends Activity {
         RelativeLayout rl = (RelativeLayout) findViewById(R.id.relativeLayout);
         mSpinner = (Spinner) rl.findViewById(R.id.groupsDropDown);
 
-        mGroupsList = new ArrayList<ParseObject>();
-        mAdapter = new GroupsSpinnerAdapter(getApplicationContext(), mGroupsList);
+        ParseTools parseTools = ((DivvieApplication) getApplication()).getParseTools();
+        ArrayList<ParseObject> mGroupsList =
+                (ArrayList<ParseObject>) parseTools.getLocalData(Constants.CLASSNAME_GROUP);
+        ArrayAdapter<ParseObject> mAdapter =
+                new GroupsSpinnerAdapter(getApplicationContext(), mGroupsList);
         mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(mAdapter);
-
-        getGroupsFromParse();
-        // TODO: get this from the HomeActivity. Just need to send groupName and group objectId
     }
 
     @Override
@@ -179,25 +177,5 @@ public class CreateTransactionActivity extends Activity {
         map.put("amount", amount);
         map.put("key", getString(R.string.MANDRILL_API_KEY));
         mParseTools.sendNewTransactionEmails(map, members);
-    }
-
-    private void getGroupsFromParse() {
-        if (ParseUser.getCurrentUser() != null) {
-            ParseQuery<ParseObject> groupQuery = ParseQuery.getQuery("Group");
-            groupQuery.whereEqualTo(Constants.GROUP_MEMBERS, ParseUser.getCurrentUser().getEmail());
-            groupQuery.fromLocalDatastore();
-            try {
-                List<ParseObject> groups = groupQuery.find();
-                Log.i(TAG, "Found " + groups.size() + " objects.");
-                // Query should generate Spinner data using an array adapter
-                // Create a key-value pairing the name to the object id so we can get the id
-                mGroupsList.clear();
-                mGroupsList.addAll(groups);
-                mAdapter.notifyDataSetChanged();
-            }
-            catch (ParseException e) {
-                Log.e(TAG, "Query error: " + e.getMessage());
-            }
-        }
     }
 }
