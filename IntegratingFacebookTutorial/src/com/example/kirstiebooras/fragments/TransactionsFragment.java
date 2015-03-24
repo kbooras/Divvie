@@ -79,7 +79,6 @@ public class TransactionsFragment extends ListFragment {
             intent.putExtra("parseObjectId", transaction.getObjectId());
             startActivity(intent);
         } else if (!transactionStatus.getText().equals(getString(R.string.paid))) {
-            // TODO popup for remind or override
             // Display transaction
             Intent intent = new Intent(getActivity(), ViewTransactionActivity.class);
             intent.putExtra("parseObjectId", transaction.getObjectId());
