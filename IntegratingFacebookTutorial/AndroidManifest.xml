@@ -32,34 +32,34 @@
             android:theme="@style/DivvieThemeSecondary" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.kirstiebooras.HomeActivity" />
+                android:value="com.example.kirstiebooras.activities.HomeActivity" />
         </activity>
         <activity
             android:name="com.example.kirstiebooras.activities.CreateTransactionActivity"
             android:theme="@style/DivvieThemeSecondary" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.kirstiebooras.HomeActivity" />
+                android:value="com.example.kirstiebooras.activities.HomeActivity" />
         </activity>
         <activity
             android:name="com.example.kirstiebooras.activities.PayChargeActivity"
             android:theme="@style/DivvieThemeSecondary" >
         <meta-data
             android:name="android.support.PARENT_ACTIVITY"
-            android:value="com.example.kirstiebooras.HomeActivity" />
+            android:value="com.example.kirstiebooras.activities.HomeActivity" />
         </activity>
         <activity
             android:name="com.example.kirstiebooras.activities.ViewTransactionActivity"
             android:theme="@style/DivvieThemeSecondary" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.kirstiebooras.HomeActivity" />
+                android:value="com.example.kirstiebooras.activities.HomeActivity" />
         </activity>
         <activity android:name="com.example.kirstiebooras.activities.OverridePaymentActivity"
             android:theme="@style/DivvieThemeSecondary">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.kirstiebooras.ViewTransactionActivity" />
+                android:value="com.example.kirstiebooras.activities.ViewTransactionActivity" />
         </activity>
         <activity android:name="com.example.kirstiebooras.activities.RegisterActivity"
             android:theme="@style/NoActionBar"/>
