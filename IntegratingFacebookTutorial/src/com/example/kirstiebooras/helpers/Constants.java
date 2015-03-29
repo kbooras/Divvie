@@ -22,7 +22,6 @@ public final class Constants {
     public static final String TRANSACTION_DESCRIPTION = "description";
     public static final String TRANSACTION_TOTAL_AMOUNT = "totalAmount";
     public static final String TRANSACTION_SPLIT_AMOUNT = "splitAmount";
-    public static final String TRANSACTION_PAID = "paid";
     public static final String TRANSACTION_DATE_PAID = "datePaid";
     public static final String TRANSACTION_COMPLETE = "complete";
 }

@@ -22,15 +22,12 @@ import com.example.kirstiebooras.DivvieApplication;
 import com.example.kirstiebooras.adapters.GroupsSpinnerAdapter;
 import com.example.kirstiebooras.helpers.ParseTools;
 import com.example.kirstiebooras.helpers.Constants;
-import com.parse.ParseException;
 import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Activity to create a new transaction within a group.
@@ -38,7 +35,7 @@ import java.util.List;
  */
 public class CreateTransactionActivity extends Activity {
 
-    private static final String TAG = "CreateTransactionActivity";
+    private static final String TAG = "CreateTransaction";
 
     private ParseTools mParseTools;
     private Spinner mSpinner;

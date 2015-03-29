@@ -195,22 +195,18 @@ public class ParseTools {
         newTransaction.put(Constants.TRANSACTION_TOTAL_AMOUNT, totalAmountString);
         newTransaction.put(Constants.TRANSACTION_SPLIT_AMOUNT, splitAmount);
 
-        // Set paid values and date paid values. PersonOwed is set as paid.
-        ArrayList<Integer> paid = new ArrayList<Integer>(members.size());
+        // Set date paid values. PersonOwed is set as paid on today's date.
         ArrayList<String> datePaid = new ArrayList<String>(members.size());
         for (String user : members) {
             if (user.equals(personOwed)) {
-                paid.add(1);
                 String month = String.valueOf(Calendar.getInstance().get(Calendar.MONTH));
                 String date = String.valueOf(Calendar.getInstance().get(Calendar.DATE));
                 datePaid.add(month + "/" + date);
             } else {
-                paid.add(0);
                 datePaid.add("");
             }
         }
 
-        newTransaction.put(Constants.TRANSACTION_PAID, paid);
         newTransaction.put(Constants.TRANSACTION_DATE_PAID, datePaid);
         newTransaction.put(Constants.TRANSACTION_COMPLETE, false);
         newTransaction.saveInBackground(new SaveCallback() {
@@ -257,7 +253,8 @@ public class ParseTools {
     }
 
     /*
-     * Mark user as having paid charge. Check if the transaction is now complete.
+     * Mark user as having paid charge. Since we are linearly traversing the array, simultaneously
+     * check if the transaction is now complete.
      */
     @SuppressWarnings("unchecked")
     public void markChargePaid(String transactionId) {
@@ -269,27 +266,25 @@ public class ParseTools {
         }
 
         ArrayList<String> members = (ArrayList<String>) transaction.get(Constants.GROUP_MEMBERS);
-        ArrayList<Integer> paid = (ArrayList<Integer>) transaction.get(Constants.TRANSACTION_PAID);
         ArrayList<String> datePaid = (ArrayList<String>) transaction.get(Constants.TRANSACTION_DATE_PAID);
 
         String currentUser = ParseUser.getCurrentUser().getEmail();
         boolean complete = true;
         for (int i = 0; i < members.size(); i++) {
             if (members.get(i).equals(currentUser)) {
-                // Mark this person as paid and set their date paid
-                paid.set(i, 1);
+                // Set this person's date paid
                 Date date = new Date(System.currentTimeMillis());
                 String today = new SimpleDateFormat("MM/dd/yy").format(date);
                 datePaid.set(i,today);
             }
-            if (paid.get(i) == 0) {
+            if (datePaid.get(i).equals("")) {
                 // Check if this transaction is complete or not
                 complete = false;
             }
         }
 
-        transaction.put(Constants.TRANSACTION_PAID, paid);
         transaction.put(Constants.TRANSACTION_DATE_PAID, datePaid);
+
         if (complete) {
             transaction.put(Constants.TRANSACTION_COMPLETE, true);
             Log.i(TAG, "Transaction completed!");

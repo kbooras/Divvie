@@ -96,21 +96,21 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
         @SuppressWarnings("unchecked")
         ArrayList<String> members = (ArrayList<String>) group.get(Constants.GROUP_MEMBERS);
         @SuppressWarnings("unchecked")
-        ArrayList<Integer> paid = (ArrayList<Integer>) group.get(Constants.TRANSACTION_PAID);
+        ArrayList<String> datePaid = (ArrayList<String>) group.get(Constants.TRANSACTION_DATE_PAID);
 
         int i;
         for (i = 0; i < members.size(); i++) {
             if (members.get(i).equals(ParseUser.getCurrentUser().getEmail())) {
                 break;
             }
-            if (paid.get(i) == 1) {
-                statusText.setText(mResources.getString(R.string.paid));
-                statusText.setTextColor(mResources.getColor(R.color.light_grey));
-                amountText.setTextColor(mResources.getColor(R.color.dark_grey));
-            } else {
+            if (datePaid.get(i).equals("")) {
                 statusText.setText(mResources.getString(R.string.pay_now));
                 statusText.setTextColor(mResources.getColor(R.color.light_grey));
                 amountText.setTextColor(mResources.getColor(R.color.pink));
+            } else {
+                statusText.setText(mResources.getString(R.string.paid));
+                statusText.setTextColor(mResources.getColor(R.color.light_grey));
+                amountText.setTextColor(mResources.getColor(R.color.dark_grey));
             }
         }
     }
@@ -119,11 +119,11 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
     private void setAmountStillOwed(TextView statusText, ParseObject group) {
         double splitAmount = Double.valueOf(group.getString(Constants.TRANSACTION_SPLIT_AMOUNT));
         @SuppressWarnings("unchecked")
-        ArrayList<Integer> paid = (ArrayList<Integer>) group.get(Constants.TRANSACTION_PAID);
+        ArrayList<String> datePaid = (ArrayList<String>) group.get(Constants.TRANSACTION_DATE_PAID);
         int notPaid = 0;
 
-        for (Integer p : paid) {
-            if (p == 0) {
+        for (String p : datePaid) {
+            if (p.equals("")) {
                 notPaid++;
             }
         }

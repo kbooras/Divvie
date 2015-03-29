@@ -91,19 +91,16 @@ public class OverridePaymentActivity extends FragmentActivity {
                 parseTools.findLocalParseObjectById(Constants.CLASSNAME_TRANSACTION, mTransactionId);
 
         if(object != null) {
-            ArrayList<Integer> paid = (ArrayList<Integer>) object.get(Constants.TRANSACTION_PAID);
             ArrayList<String> datePaid = (ArrayList<String>) object.get(Constants.TRANSACTION_DATE_PAID);
 
             if (mMemberIndex == -1) {
                 return;
             }
-            paid.set(mMemberIndex, 1);
 
             final String datePaidTxt = mDatePaidButton.getText().toString();
             datePaid.set(mMemberIndex, datePaidTxt);
 
             // Update in parse server
-            object.put(Constants.TRANSACTION_PAID, paid);
             object.put(Constants.TRANSACTION_DATE_PAID, datePaid);
             object.saveInBackground(new SaveCallback() {
                 @Override

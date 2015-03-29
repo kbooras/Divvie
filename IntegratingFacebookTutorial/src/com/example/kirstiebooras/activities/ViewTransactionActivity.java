@@ -93,7 +93,6 @@ public class ViewTransactionActivity extends Activity {
         Log.d(TAG, "displayMembers");
         String symbol = Currency.getInstance(Locale.getDefault()).getSymbol();
 
-        ArrayList<Integer> paid = (ArrayList<Integer>) object.get(Constants.TRANSACTION_PAID);
         ArrayList<String> datePaid = (ArrayList<String>) object.get(Constants.TRANSACTION_DATE_PAID);
         final ArrayList<String> memberEmails = (ArrayList<String>) object.get(Constants.GROUP_MEMBERS);
 
@@ -120,7 +119,7 @@ public class ViewTransactionActivity extends Activity {
             TextView member = (TextView) memberRow.findViewById(R.id.member);
             TextView status = (TextView) memberRow.findViewById(R.id.status);
 
-            if (paid.get(i) == 0) {
+            if (datePaid.get(i).equals("")) {
                 // If they have not paid, display what they owe
                 member.setText(String.format(getString(R.string.transaction_group_owes_you),
                         displayNames.get(i)));
