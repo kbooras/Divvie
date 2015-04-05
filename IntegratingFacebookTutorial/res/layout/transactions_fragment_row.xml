@@ -49,7 +49,7 @@
             android:layout_height="30dp"
             android:layout_weight="1"
             android:textSize="20sp"
-            android:textColor="@color/light_grey"
+            android:textColor="@color/dark_grey"
             android:ellipsize="end"
             android:singleLine="true"/>
 

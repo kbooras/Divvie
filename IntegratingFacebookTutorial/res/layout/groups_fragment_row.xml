@@ -4,28 +4,26 @@
     android:id="@+id/layout"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
 
     <TextView
         android:id="@+id/groupName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginBottom="4dp"
         android:gravity="center_vertical"
-        android:textSize="23sp"
-        android:textColor="@color/dark_grey"/>
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/teal"/>
 
     <LinearLayout
         android:id="@+id/membersLayout"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="5dp">
+        android:layout_height="wrap_content" >
     </LinearLayout>
 
 

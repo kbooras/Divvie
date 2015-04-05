@@ -25,7 +25,7 @@ public class GroupsAdapter extends ArrayAdapter<ParseObject> {
 
 
     public GroupsAdapter(Context context, ArrayList<ParseObject> groups) {
-        super(context, R.layout.groups_list_row, groups);
+        super(context, R.layout.groups_fragment_row, groups);
         mContext = context;
         mGroups = groups;
     }
@@ -35,7 +35,7 @@ public class GroupsAdapter extends ArrayAdapter<ParseObject> {
         View rowView;
         if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(mContext);
-            rowView = inflater.inflate(R.layout.groups_list_row, parent, false);
+            rowView = inflater.inflate(R.layout.groups_fragment_row, parent, false);
         } else {
             rowView = convertView;
         }

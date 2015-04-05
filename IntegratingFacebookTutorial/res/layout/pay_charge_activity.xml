@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:textColor="@color/dark_grey"
-        android:textSize="22sp"/>
+        android:textSize="20sp"/>
 
     <TextView
         android:id="@+id/payAmount"
@@ -23,7 +23,7 @@
         android:layout_marginTop="16dp"
         android:gravity="right"
         android:textColor="@color/dark_grey"
-        android:textSize="22sp"/>
+        android:textSize="20sp"/>
 
     <TextView
         android:id="@+id/choosePaymentMethod"
@@ -32,7 +32,7 @@
         android:layout_below="@id/payPerson"
         android:layout_marginTop="20dp"
         android:gravity="center_horizontal"
-        android:textSize="22sp"
+        android:textSize="20sp"
         android:textColor="@color/dark_grey"
         android:text="@string/choose_payment_method"/>
 

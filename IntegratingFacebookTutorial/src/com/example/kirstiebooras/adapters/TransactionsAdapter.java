@@ -108,12 +108,12 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
         if (datePaid.get(index).equals("")) {
             Log.v("transactionsadapter", "pay now");
             statusText.setText(mResources.getString(R.string.pay_now));
-            statusText.setTextColor(mResources.getColor(R.color.light_grey));
+            statusText.setTextColor(mResources.getColor(R.color.dark_grey));
             amountText.setTextColor(mResources.getColor(R.color.pink));
         } else {
             Log.v("transactionsadapter", "paid");
             statusText.setText(mResources.getString(R.string.paid));
-            statusText.setTextColor(mResources.getColor(R.color.light_grey));
+            statusText.setTextColor(mResources.getColor(R.color.dark_grey));
             amountText.setTextColor(mResources.getColor(R.color.dark_grey));
         }
 
@@ -143,7 +143,7 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
 
         if (notPaid == 0) {
             statusText.setText(mResources.getString(R.string.complete));
-            statusText.setTextColor(mResources.getColor(R.color.light_grey));
+            statusText.setTextColor(mResources.getColor(R.color.dark_grey));
         } else {
             statusText.setText(String.format(mResources.getString(R.string.transaction_amount_owed),
                     mSymbol, String.format("%.2f", splitAmount * notPaid)));
