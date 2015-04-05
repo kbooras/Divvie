@@ -111,7 +111,6 @@ public class PayChargeActivity extends Activity {
     }
 
     public void venmoPaymentClick(View v) {
-        // TODO: user's enter venmo id, email, or phone number preferred
         if(VenmoLibrary.isVenmoInstalled(this)) {
             // Direct the user to Venmo to make this payment
             Intent venmoIntent = VenmoLibrary.openVenmoPayment(

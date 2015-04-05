@@ -46,7 +46,7 @@ public class ParseTools {
     }
 
     public interface SendReminderEmailListener {
-        public void onReminderEmailSent();
+        public void onReminderEmailSent(boolean sent);
     }
 
     public void setSendReminderEmailListener(SendReminderEmailListener listener) {
@@ -223,7 +223,6 @@ public class ParseTools {
                 }
             }
         });
-        //TODO Extend ParseObject and use UUID and SaveEventually and write to Local Datastore
     }
 
     /*
@@ -326,7 +325,6 @@ public class ParseTools {
                 }
             }
         });
-        //TODO Extend ParseObject and use UUID and write to Local Datastore
     }
 
     /*
@@ -385,10 +383,11 @@ public class ParseTools {
             public void done(Object o, ParseException e) {
                 if (e == null) {
                     Log.i(TAG, "Send reminder email sent successfully!");
-                    mSendReminderEmailListener.onReminderEmailSent();
+                    mSendReminderEmailListener.onReminderEmailSent(true);
                 }
                 else {
                     Log.e(TAG, "Send reminder email error: " + e.toString());
+                    mSendReminderEmailListener.onReminderEmailSent(false);
                 }
             }
         });

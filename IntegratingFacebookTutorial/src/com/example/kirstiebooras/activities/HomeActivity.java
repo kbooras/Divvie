@@ -222,12 +222,10 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 
     @Override
     public void onTabReselected(ActionBar.Tab arg0, FragmentTransaction arg1) {
-        // TODO Auto-generated method stub
     }
 
     @Override
     public void onTabUnselected(ActionBar.Tab arg0, FragmentTransaction arg1) {
-        // TODO Auto-generated method stub
     }
 
     @Override

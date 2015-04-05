@@ -68,6 +68,7 @@
         account.</string>
     <string name="reset_success_toast">Reset email sent!</string>
     <string name="sent_reminder_email">Reminder email sent!</string>
+    <string name="send_reminder_email_failed">Reminder email send failed :(</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_in_with_facebook">Sign in with Facebook</string>
     <string name="sign_in_failed_alert_message">Email or password invalid.</string>

@@ -139,7 +139,6 @@ public class CreateGroupActivity extends Activity {
         ll.setVisibility(View.GONE);
         // Delete the EditText from the hashmap
         mAllEditTexts.remove(emailRow);
-        // TODO: Adjust the numbers of the other EditTexts
     }
 
     public void onCreateGroupClick(View v) {

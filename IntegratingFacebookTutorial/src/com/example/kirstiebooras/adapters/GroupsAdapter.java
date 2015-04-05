@@ -39,7 +39,6 @@ public class GroupsAdapter extends ArrayAdapter<ParseObject> {
         } else {
             rowView = convertView;
         }
-        // TODO differentiate the name from the members more obviously
 
         TextView textView = (TextView) rowView.findViewById(R.id.groupName);
         LinearLayout membersLayout = (LinearLayout) rowView.findViewById(R.id.membersLayout);

@@ -50,9 +50,15 @@ public class ViewTransactionActivity extends Activity {
         mParseTools = ((DivvieApplication) getApplication()).getParseTools();
         mParseTools.setSendReminderEmailListener(new ParseTools.SendReminderEmailListener() {
             @Override
-            public void onReminderEmailSent() {
-                Toast.makeText(getApplicationContext(), R.string.sent_reminder_email,
-                        Toast.LENGTH_SHORT).show();
+            public void onReminderEmailSent(boolean sent) {
+                if (sent) {
+                    Toast.makeText(getApplicationContext(), R.string.sent_reminder_email,
+                            Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), R.string.send_reminder_email_failed,
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
