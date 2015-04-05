@@ -21,7 +21,6 @@
         this and try again.</string>
     <string name="duplicate_email_alert_title">Duplicate Email</string>
     <string name="email">Email</string>
-    <string name="email_1">Email 1</string>
     <string name="enter_valid_email_toast">Please enter a valid email.</string>
     <string name="for_description">for %1$s</string>
     <string name="forgot_password">Forgot password?</string>
