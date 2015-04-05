@@ -110,7 +110,6 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         if (currentUser == null) {
             // If the current user is null, send to sign in or register
             startSigninRegisterActivity();
-            finish();
         }
     }
 
@@ -119,6 +118,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+        finish();
     }
 
     /*
