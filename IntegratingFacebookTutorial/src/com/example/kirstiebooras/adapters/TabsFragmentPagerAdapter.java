@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public class TabsFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    private static final String TAG = "TabsFragmentPagerAdapter";
+    private static final String TAG = "TabsPagerAdapter";
     private Map<Integer, Fragment> mPageReferenceMap;
 
     public TabsFragmentPagerAdapter(FragmentManager manager) {

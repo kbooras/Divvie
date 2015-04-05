@@ -3,7 +3,6 @@
     <string name="app_name">divvie</string>
 
     <string name="account_email_exists_toast">There is already an account with this email.</string>
-    <string name="action_settings">Settings</string>
     <string name="add">Add</string>
     <string name="bill">Bill</string>
     <string name="cancel">Cancel</string>
