@@ -45,6 +45,8 @@ public class OverridePaymentActivity extends FragmentActivity {
 
         setContentView(R.layout.override_payment_activity);
 
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+
         mDatePaidButton = (Button) findViewById(R.id.dateDropDown);
 
         Intent intent = getIntent();
