@@ -33,11 +33,10 @@ import java.util.List;
  * Shows who has paid them, who still owes them, and completed group charges.
  * Created by kirstiebooras on 1/16/15.
  */
-public class HomeActivity extends FragmentActivity implements ActionBar.TabListener {
+public class HomeActivity extends FragmentActivity implements ActionBar.TabListener,
+        ParseTools.GetParseDataListener {
 
     private static final String TAG = "HomeActivity";
-    private static final int CREATE_TRANSACTION_REQUEST_CODE = 1;
-    private static final int CREATE_GROUP_REQUEST_CODE = 2;
     private ParseTools mParseTools;
     private ActionBar mActionBar;
     private ViewPager mViewPager;
@@ -54,18 +53,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         checkForCurrentUser();
 
         mParseTools = ((DivvieApplication) getApplication()).getParseTools();
-        mParseTools.setGetParseDataListener(new ParseTools.GetParseDataListener() {
-            @Override
-            public void onGetParseDataComplete(String className) {
-                // When Local Datastore is updated, update values of Lists
-                if (className.equals(Constants.CLASSNAME_TRANSACTION)) {
-                    mTransactionsData = mParseTools.getLocalData(className);
-                }
-                else if (className.equals(Constants.CLASSNAME_GROUP)) {
-                    mGroupsData = mParseTools.getLocalData(className);
-                }
-            }
-        });
+        mParseTools.setGetParseDataListener(this);
 
         mTabsAdapter = new TabsFragmentPagerAdapter(getSupportFragmentManager());
 
@@ -91,17 +79,20 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
                 getResources().getString(R.string.groups)).setTabListener(this));
         setTabsBelowActionBar();
 
-        // Load data into the Lists
+        // Load locally stored data into the Lists
         if(mTransactionsData == null) {
-            mTransactionsData = getArrayFromLocalDataStore(Constants.CLASSNAME_TRANSACTION);
+            mTransactionsData = mParseTools.getLocalData(Constants.CLASSNAME_TRANSACTION);
         }
         if (mGroupsData == null) {
-            mGroupsData = getArrayFromLocalDataStore(Constants.CLASSNAME_GROUP);
+            mGroupsData = mParseTools.getLocalData(Constants.CLASSNAME_GROUP);
         }
 
-        // Update the data in the Local Datastore
-        updateLocalDatastore(Constants.CLASSNAME_TRANSACTION);
-        updateLocalDatastore(Constants.CLASSNAME_GROUP);
+        // If there is a network connection, fetch data from Parse and store locally
+        if (isNetworkConnected()) {
+            mParseTools.getParseData(Constants.CLASSNAME_TRANSACTION);
+            mParseTools.getParseData(Constants.CLASSNAME_GROUP);
+        }
+
     }
 
     private void checkForCurrentUser() {
@@ -122,25 +113,34 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
     }
 
     /*
-     * Update objects of the specified type in the Local Datastore with data from Parse.
+     * Callback for when the Local Datastore is updated with data from the Parse server.
+     * Update the data in the corresponding array and bind the new data to the fragment.
      */
-    private void updateLocalDatastore(String className) {
-        if (isNetworkConnected()) {
-            mParseTools.getParseData(className);
+    @Override
+    public void onGetParseDataComplete(String className) {
+        Log.d(TAG, "onGetParseDataComplete");
+        // When Local Datastore is updated, update the values in the Fragment.
+        if (className.equals(Constants.CLASSNAME_TRANSACTION)) {
+            mTransactionsData = mParseTools.getLocalData(className);
+            TransactionsFragment fragment = mTabsAdapter.getTransactionsFragment();
+            if (fragment != null) {
+                Log.d(TAG, "onGetParseDataComplete bind mTransactionsData");
+                fragment.bindData(mTransactionsData);
+            }
+        }
+        else if (className.equals(Constants.CLASSNAME_GROUP)) {
+            mGroupsData = mParseTools.getLocalData(className);
+            GroupsFragment fragment = mTabsAdapter.getGroupsFragment();
+            if (fragment != null) {
+                Log.d(TAG, "onGetParseDataComplete bind mGroupsData");
+                fragment.bindData(mGroupsData);
+            }
         }
     }
 
     private boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null;
-    }
-
-    /*
-     * Get array of specified type of ParseObjects from Local Datastore
-     */
-    private List<ParseObject> getArrayFromLocalDataStore(String className) {
-        Log.d(TAG, className + ": getArrayFromLocalDataStore");
-        return mParseTools.getLocalData(className);
     }
 
     private void setTabsBelowActionBar() {
@@ -188,18 +188,16 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
                 if (currentFragment == 0) {
                     if (userHasGroups()) {
                         // User must have at least one group to make a transaction
-                        Log.v(TAG, "Start create transaction");
                         Intent intent = new Intent(this, CreateTransactionActivity.class);
-                        startActivityForResult(intent, CREATE_TRANSACTION_REQUEST_CODE);
+                        startActivity(intent);
                     }
                     else {
                         Toast.makeText(this, getResources().getString(R.string.user_no_groups_toast),
                                 Toast.LENGTH_LONG).show();
                     }
                 } else {
-                    Log.v(TAG, "Start create transaction");
                     Intent intent = new Intent(this, CreateGroupActivity.class);
-                    startActivityForResult(intent, CREATE_GROUP_REQUEST_CODE);
+                    startActivity(intent);
                 }
                 return true;
             default:
@@ -214,34 +212,6 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         else {
             Log.wtf(TAG, "mGroupsData is null");
             return false;
-        }
-    }
-
-    /*
-     * Result from CreateTransactionActivity or CreateGroupActivity letting HomeActivity know a new
-     * ParseObject was created and the List data should be reloaded.
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onActivityResult");
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if(requestCode == CREATE_TRANSACTION_REQUEST_CODE) {
-                mTransactionsData = getArrayFromLocalDataStore(Constants.CLASSNAME_TRANSACTION);
-                TransactionsFragment fragment = mTabsAdapter.getTransactionsFragment();
-                if (fragment != null) {
-                    Log.d(TAG, "onActivityResult bind mTransactionsData");
-                    fragment.bindData(mTransactionsData);
-                }
-            }
-            else if (requestCode == CREATE_GROUP_REQUEST_CODE) {
-                mGroupsData = getArrayFromLocalDataStore(Constants.CLASSNAME_GROUP);
-                GroupsFragment fragment = mTabsAdapter.getGroupsFragment();
-                if (fragment != null) {
-                    Log.d(TAG, "onActivityResult bind mGroupsData");
-                    fragment.bindData(mGroupsData);
-                }
-            }
         }
     }
 

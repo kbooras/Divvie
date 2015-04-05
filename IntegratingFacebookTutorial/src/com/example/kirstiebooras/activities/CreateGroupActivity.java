@@ -160,22 +160,20 @@ public class CreateGroupActivity extends Activity {
         }
         memberEmails.add(current.getEmail());
 
-        mParseTools.createParseGroupObject(groupNameTxt, memberEmails);
+        mParseTools.createGroupParseObject(groupNameTxt, memberEmails);
 
-        setResult(RESULT_OK);
         finish();
     }
 
-    /**
-     * Checks for network connection.
-     * @return true if connected
+    /*
+     * Checks for network connection and returns true if connected.
      */
     private boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null;
     }
 
-    /**
+    /*
      * Validate all the emails from the EditTexts and check for duplicates.
      * @param emailTexts: The collection of EditTexts containing the member emails.
      * @return the ArrayList of memberEmails

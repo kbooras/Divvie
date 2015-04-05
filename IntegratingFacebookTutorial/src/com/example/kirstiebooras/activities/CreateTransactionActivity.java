@@ -54,10 +54,11 @@ public class CreateTransactionActivity extends Activity {
         mSpinner = (Spinner) rl.findViewById(R.id.groupsDropDown);
 
         ParseTools parseTools = ((DivvieApplication) getApplication()).getParseTools();
-        ArrayList<ParseObject> mGroupsList =
-                (ArrayList<ParseObject>) parseTools.getLocalData(Constants.CLASSNAME_GROUP);
+        ArrayList<ParseObject> groupsList = new ArrayList<ParseObject>();
+        groupsList.addAll(parseTools.getLocalData(Constants.CLASSNAME_GROUP));
+
         ArrayAdapter<ParseObject> mAdapter =
-                new GroupsSpinnerAdapter(getApplicationContext(), mGroupsList);
+                new GroupsSpinnerAdapter(getApplicationContext(), groupsList);
         mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(mAdapter);
     }
@@ -137,7 +138,6 @@ public class CreateTransactionActivity extends Activity {
         // Send emails to group members
         // TODO sendEmails(personOwedName, groupName, description, splitAmount, (String[]) members.toArray());
 
-        setResult(RESULT_OK);
         finish();
     }
 

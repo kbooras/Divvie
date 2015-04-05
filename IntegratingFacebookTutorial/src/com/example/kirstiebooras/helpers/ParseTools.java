@@ -70,11 +70,7 @@ public class ParseTools {
                 if (e != null) {
                     Log.e(TAG, "Query error: " + e.getMessage());
                 } else {
-                    if (mGetParseDataListener != null) {
-                        mGetParseDataListener.onGetParseDataComplete(className);
-                    }
                     // Release any objects previously pinned for this query.
-                    Log.i(TAG, className + ": Found " + parseObjects.size());
                     ParseObject.unpinAllInBackground(className, parseObjects, new DeleteCallback() {
                         public void done(ParseException e) {
                             if (e != null) {
@@ -84,8 +80,15 @@ public class ParseTools {
                             }
 
                             // Add the latest results for this query to the cache.
-                            Log.i(TAG, className + ": Pinned " + parseObjects.size());
-                            ParseObject.pinAllInBackground(className, parseObjects);
+                            ParseObject.pinAllInBackground(className, parseObjects, new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    Log.i(TAG, className + ": Pinned " + parseObjects.size());
+                                    if (mGetParseDataListener != null) {
+                                        mGetParseDataListener.onGetParseDataComplete(className);
+                                    }
+                                }
+                            });
                         }
                     });
                 }
@@ -126,7 +129,6 @@ public class ParseTools {
         query.whereEqualTo(Constants.OBJECT_ID, objectId);
         query.fromLocalDatastore();
         try {
-            Log.v(TAG, "Found object");
             return query.getFirst();
         }
         catch (ParseException e) {
@@ -217,12 +219,11 @@ public class ParseTools {
                 }
                 else {
                     Log.i(TAG, "Saved new transaction successfully!");
+                    getParseData(Constants.CLASSNAME_TRANSACTION);
                 }
             }
         });
         //TODO Extend ParseObject and use UUID and SaveEventually and write to Local Datastore
-        Log.i(TAG, "Saved new transaction successfully!");
-
     }
 
     /*
@@ -258,7 +259,7 @@ public class ParseTools {
      */
     @SuppressWarnings("unchecked")
     public void markChargePaid(String transactionId) {
-        Log.d(TAG, "Mark charge as paid");
+        Log.d(TAG, "markChargePaid");
         ParseObject transaction =
                 findLocalParseObjectById(Constants.CLASSNAME_TRANSACTION, transactionId);
         if (transaction == null) {
@@ -306,7 +307,7 @@ public class ParseTools {
     /*
      * Create a Group object and save to the Parse server.
      */
-    public void createParseGroupObject(String groupName, ArrayList<String> memberEmails) {
+    public void createGroupParseObject(String groupName, ArrayList<String> memberEmails) {
         ArrayList<String> memberDisplayNames = getMemberDisplayNames(memberEmails);
         // Todo: Send invite emails to new users and notification email to existing users
         ParseObject newGroup = new ParseObject(Constants.CLASSNAME_GROUP);
@@ -321,6 +322,7 @@ public class ParseTools {
                 }
                 else {
                     Log.i(TAG, "Saved new group successfully!");
+                    getParseData(Constants.CLASSNAME_GROUP);
                 }
             }
         });
