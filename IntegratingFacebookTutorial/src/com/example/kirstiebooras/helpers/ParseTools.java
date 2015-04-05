@@ -140,17 +140,12 @@ public class ParseTools {
      */
     public void unpinData(final String className) {
         Log.d(TAG, "unpinData");
-        ParseObject.unpinAllInBackground(className, new DeleteCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e != null) {
-                    // There was some error.
-                    Log.e(TAG, "Unpin error: " + e.getMessage());
-                } else {
-                    Log.i(TAG, "Unpinned " + className + " successfully.");
-                }
-            }
-        });
+        try {
+            ParseObject.unpinAll(className);
+            Log.i(TAG, "Unpinned " + className + " successfully.");
+        } catch (ParseException e) {
+            Log.e(TAG, "Unpin error: " + e.getMessage());
+        }
     }
 
     /*
