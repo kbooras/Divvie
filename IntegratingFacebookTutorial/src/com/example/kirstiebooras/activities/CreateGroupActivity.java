@@ -123,7 +123,6 @@ public class CreateGroupActivity extends Activity {
 
         EditText editText = (EditText) ll.findViewById(R.id.emailText);
         editText.setId(EDIT_TEXT_ID_CONSTANT + mEmailViewCount);
-        editText.setHint(String.format(getString(R.string.create_group_email), mEmailViewCount));
 
         mAllEditTexts.put(mEmailViewCount, editText);
 
