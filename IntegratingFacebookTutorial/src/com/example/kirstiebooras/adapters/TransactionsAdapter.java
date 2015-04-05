@@ -2,6 +2,7 @@ package com.example.kirstiebooras.adapters;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,6 +78,7 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
         transactionGroup.setText(String.format(
                 mResources.getString(R.string.transaction_you_owe_group),
                 transaction.getString(Constants.TRANSACTION_GROUP_NAME)));
+        transactionAmount.setTextColor(mResources.getColor(R.color.pink));
         transactionAmount.setText(mSymbol +
                 transaction.getString(Constants.TRANSACTION_SPLIT_AMOUNT));
     }
@@ -93,26 +95,37 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
 
     // Return string based on if user has paid or not
     private void setPaidStatus(TextView amountText, TextView statusText, ParseObject group) {
+        Log.v("transactionsadapter", "setPaidStatus");
         @SuppressWarnings("unchecked")
         ArrayList<String> members = (ArrayList<String>) group.get(Constants.GROUP_MEMBERS);
         @SuppressWarnings("unchecked")
         ArrayList<String> datePaid = (ArrayList<String>) group.get(Constants.TRANSACTION_DATE_PAID);
 
-        int i;
-        for (i = 0; i < members.size(); i++) {
+        int index = getIndexForCurrentUser(members);
+        if (index == -1) {
+            return;
+        }
+        if (datePaid.get(index).equals("")) {
+            Log.v("transactionsadapter", "pay now");
+            statusText.setText(mResources.getString(R.string.pay_now));
+            statusText.setTextColor(mResources.getColor(R.color.light_grey));
+            amountText.setTextColor(mResources.getColor(R.color.pink));
+        } else {
+            Log.v("transactionsadapter", "paid");
+            statusText.setText(mResources.getString(R.string.paid));
+            statusText.setTextColor(mResources.getColor(R.color.light_grey));
+            amountText.setTextColor(mResources.getColor(R.color.dark_grey));
+        }
+
+    }
+
+    private int getIndexForCurrentUser(ArrayList<String> members) {
+        for (int i = 0; i < members.size(); i++) {
             if (members.get(i).equals(ParseUser.getCurrentUser().getEmail())) {
-                break;
-            }
-            if (datePaid.get(i).equals("")) {
-                statusText.setText(mResources.getString(R.string.pay_now));
-                statusText.setTextColor(mResources.getColor(R.color.light_grey));
-                amountText.setTextColor(mResources.getColor(R.color.pink));
-            } else {
-                statusText.setText(mResources.getString(R.string.paid));
-                statusText.setTextColor(mResources.getColor(R.color.light_grey));
-                amountText.setTextColor(mResources.getColor(R.color.dark_grey));
+                return i;
             }
         }
+        return -1;
     }
 
     // Return string based on if transaction is complete or not

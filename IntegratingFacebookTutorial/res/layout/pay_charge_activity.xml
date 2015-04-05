@@ -22,7 +22,7 @@
         android:layout_toRightOf="@+id/payPerson"
         android:layout_marginTop="16dp"
         android:gravity="right"
-        android:textColor="@color/pink"
+        android:textColor="@color/dark_grey"
         android:textSize="22sp"/>
 
     <TextView

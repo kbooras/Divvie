@@ -52,21 +52,21 @@ public class PayChargeActivity extends Activity {
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        TextView payAmount = (TextView) findViewById(R.id.payAmount);
-        TextView payPerson = (TextView) findViewById(R.id.payPerson);
-
-        payAmount.setText(Currency.getInstance(Locale.getDefault()).getSymbol() + mSplitAmount);
-        String displayName = mParseTools.getUserDisplayName(mPersonOwed);
-        if (displayName != null) {
-            payPerson.setText(displayName);
-        }
-
         mTransactionObjectId = getIntent().getStringExtra("parseObjectId");
         ParseObject transaction = mParseTools.findLocalParseObjectById(
                 Constants.CLASSNAME_TRANSACTION, mTransactionObjectId);
         mPersonOwed = transaction.getString(Constants.TRANSACTION_PERSON_OWED);
         mSplitAmount = transaction.getString(Constants.TRANSACTION_SPLIT_AMOUNT);
         mDescription = transaction.getString(Constants.TRANSACTION_DESCRIPTION);
+
+        TextView payAmount = (TextView) findViewById(R.id.payAmount);
+        TextView payPerson = (TextView) findViewById(R.id.payPerson);
+
+        payAmount.setText(Currency.getInstance(Locale.getDefault()).getSymbol() + mSplitAmount);
+        String displayName = mParseTools.getUserDisplayName(mPersonOwed);
+        if (displayName != null) {
+            payPerson.setText(String.format(getString(R.string.pay_person), displayName));
+        }
 
     }
 
