@@ -50,7 +50,8 @@
         </activity>
         <activity
             android:name="com.example.kirstiebooras.activities.ViewTransactionActivity"
-            android:theme="@style/DivvieThemeSecondary" >
+            android:theme="@style/DivvieThemeSecondary"
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.kirstiebooras.activities.HomeActivity" />
