@@ -107,17 +107,14 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
         }
         if (datePaid.get(index).equals("")) {
             statusText.setText(mResources.getString(R.string.pay_now));
-            amountText.setTextColor(mResources.getColor(R.color.pink));
         } else if (datePaid.get(index).charAt(0) == 'p') {
             statusText.setText(mResources.getString(R.string.transaction_pending));
             statusText.setTypeface(null, Typeface.ITALIC);
-            amountText.setTextColor(mResources.getColor(R.color.pink));
-            // TODO if pending cannot be clicked
         } else {
             statusText.setText(mResources.getString(R.string.paid));
-            amountText.setTextColor(mResources.getColor(R.color.dark_grey));
         }
         statusText.setTextColor(mResources.getColor(R.color.dark_grey));
+        amountText.setTextColor(mResources.getColor(R.color.pink));
 
     }
 

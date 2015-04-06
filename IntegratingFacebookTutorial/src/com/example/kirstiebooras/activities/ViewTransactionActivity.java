@@ -81,7 +81,7 @@ public class ViewTransactionActivity extends Activity {
     private void setViewText(ParseObject object) {
         Log.d(TAG, "setViewText");
         String symbol = Currency.getInstance(Locale.getDefault()).getSymbol();
-        mSplitAmount = symbol + object.getString(Constants.TRANSACTION_TOTAL_AMOUNT);
+        mSplitAmount = symbol + object.getString(Constants.TRANSACTION_SPLIT_AMOUNT);
         mDescription = object.getString(Constants.TRANSACTION_DESCRIPTION);
 
         TextView group = (TextView) findViewById(R.id.group);
@@ -100,7 +100,7 @@ public class ViewTransactionActivity extends Activity {
         Log.d(TAG, "displayMembers");
         String symbol = Currency.getInstance(Locale.getDefault()).getSymbol();
 
-        ArrayList<String> datePaid = (ArrayList<String>) object.get(Constants.TRANSACTION_DATE_PAID);
+        final ArrayList<String> datePaid = (ArrayList<String>) object.get(Constants.TRANSACTION_DATE_PAID);
         final ArrayList<String> memberEmails = (ArrayList<String>) object.get(Constants.GROUP_MEMBERS);
 
         ParseObject group = mParseTools.findLocalParseObjectById(Constants.CLASSNAME_GROUP,
@@ -144,7 +144,7 @@ public class ViewTransactionActivity extends Activity {
                 @Override
                 public void onClick(View view) {
                     if (status.getText().toString().equals(getString(R.string.transaction_pending))) {
-                        createConfirmPopup(displayNames.get(index), index);
+                        createConfirmPopup(displayNames.get(index), datePaid.get(index), index);
                     }
                     else {
                         createRemindOverridePopup(displayNames.get(index), memberEmails.get(index), index);
@@ -155,7 +155,7 @@ public class ViewTransactionActivity extends Activity {
         }
     }
 
-    private void createConfirmPopup(final String name, final int index) {
+    private void createConfirmPopup(final String name, final String date, final int index) {
         String message = String.format(getString(R.string.transaction_pending_message), name);
         new AlertDialog.Builder(this)
                 .setMessage(message)
@@ -163,14 +163,15 @@ public class ViewTransactionActivity extends Activity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         mParseTools.updatePendingPayment(mTransactionId, index, true);
-                        // TODO update the view immediately
+                        updateMemberRow(index, date.substring(1));
                     }
                 })
                 .setNegativeButton(getString(R.string.deny), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         mParseTools.updatePendingPayment(mTransactionId, index, false);
-                        // TODO update the view immediately
+                        View view = findViewById(R.id.baseLayout);
+                        view.invalidate();
                     }
                 })
                 .setNeutralButton(getString(R.string.cancel), null)
@@ -216,6 +217,7 @@ public class ViewTransactionActivity extends Activity {
     }
 
     // Update member row showing the member has paid
+    // TODO, instead use a callback for when this is updated. It will be updated automatically in the local datastore. You have to just refresh the view then
     private void updateMemberRow(int index, String date) {
         View memberRow = findViewById(index);
         TextView status = (TextView) memberRow.findViewById(R.id.status);

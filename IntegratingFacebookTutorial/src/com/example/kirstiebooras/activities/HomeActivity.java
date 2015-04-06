@@ -37,6 +37,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         ParseTools.GetParseDataListener {
 
     private static final String TAG = "HomeActivity";
+    public static final int PAY_REQUEST_CODE = 1;
     private ParseTools mParseTools;
     private ActionBar mActionBar;
     private ViewPager mViewPager;

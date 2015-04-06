@@ -355,7 +355,7 @@ public class ParseTools {
                 else {
                     Log.i(TAG, "Updated pending charge successfully!");
                     getParseData(Constants.CLASSNAME_TRANSACTION);
-                    // TODO, only update the data for this item in the local datastore!
+                    // TODO, only update the data for this item in the local datastore! It should be updated in local storage automatically. Just have to issue a callback to refresh the data
                 }
             }
         });
