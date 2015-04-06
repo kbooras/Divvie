@@ -14,6 +14,7 @@
     <string name="create_group_add_another">+ Add another</string>
     <string name="create_new_group_text">Create a New Group</string>
     <string name="create_transaction">Create Transaction</string>
+    <string name="deny">Deny</string>
     <string name="divvie_logo">Divvie Logo</string>
     <string name="download_venmo">Download Venmo</string>
     <string name="duplicate_email_alert_message"> Hmm, you seem to have a duplicate email. Correct
@@ -79,6 +80,9 @@
     <string name="transaction_description_hint">Enter a description</string>
     <string name="transaction_owes_you">%1$s owes you</string>
     <string name="transaction_pending">Pending</string>
+    <string name="transaction_pending_message">%1$s says they paid you for this transaction with
+        cash.
+    </string>
     <string name="transaction_you_owe">You owe %1$s</string>
     <string name="transactions">Transactions</string>
     <string name="user_no_groups_toast">You must be in at least one group to create a

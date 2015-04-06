@@ -115,16 +115,10 @@ public class ViewTransactionActivity extends Activity {
                 // Do not display the current user as part of the transaction
                 continue;
             }
-            View memberRow = View.inflate(this, R.layout.view_transaction_row, null);
-            memberRow.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    createRemindOverridePopup(displayNames.get(index), memberEmails.get(index), index);
-                }
-            });
-            memberRow.setId(i);
+            final View memberRow = View.inflate(this, R.layout.view_transaction_row, null);
             TextView member = (TextView) memberRow.findViewById(R.id.member);
-            TextView status = (TextView) memberRow.findViewById(R.id.status);
+            final TextView status = (TextView) memberRow.findViewById(R.id.status);
+            memberRow.setId(i);
 
             if (datePaid.get(i).equals("")) {
                 // If they have not paid, display what they owe
@@ -146,8 +140,41 @@ public class ViewTransactionActivity extends Activity {
                 status.setText(datePaid.get(i));
                 status.setTextColor(getResources().getColor(R.color.dark_grey));
             }
+            memberRow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (status.getText().toString().equals(getString(R.string.transaction_pending))) {
+                        createConfirmPopup(displayNames.get(index), index);
+                    }
+                    else {
+                        createRemindOverridePopup(displayNames.get(index), memberEmails.get(index), index);
+                    }
+                }
+            });
             mBaseLayout.addView(memberRow);
         }
+    }
+
+    private void createConfirmPopup(final String name, final int index) {
+        String message = String.format(getString(R.string.transaction_pending_message), name);
+        new AlertDialog.Builder(this)
+                .setMessage(message)
+                .setPositiveButton(getString(R.string.confirm), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mParseTools.updatePendingPayment(mTransactionId, index, true);
+                        // TODO update the view immediately
+                    }
+                })
+                .setNegativeButton(getString(R.string.deny), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mParseTools.updatePendingPayment(mTransactionId, index, false);
+                        // TODO update the view immediately
+                    }
+                })
+                .setNeutralButton(getString(R.string.cancel), null)
+                .show();
     }
 
     private void createRemindOverridePopup(final String name, final String email, final int index) {

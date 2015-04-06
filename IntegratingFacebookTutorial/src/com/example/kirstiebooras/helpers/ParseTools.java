@@ -302,6 +302,60 @@ public class ParseTools {
                 }
                 else {
                     Log.i(TAG, "Marked charge as paid successfully!");
+                    getParseData(Constants.CLASSNAME_TRANSACTION);
+                }
+            }
+        });
+
+    }
+
+    /*
+     *
+     */
+    public void updatePendingPayment(String transactionId, int memberIndex, boolean paid) {
+        Log.d(TAG, "updatePendingPayment");
+        ParseObject transaction =
+                findLocalParseObjectById(Constants.CLASSNAME_TRANSACTION, transactionId);
+        if (transaction == null) {
+            return;
+        }
+
+        boolean complete = true;
+        ArrayList<String> datePaid = (ArrayList<String>) transaction.get(Constants.TRANSACTION_DATE_PAID);
+
+        if (paid) {
+            // Mark as paid by removing pending flag.
+            datePaid.set(memberIndex, datePaid.get(memberIndex).substring(1));
+
+            //Check if complete
+            for (int i = 0; i < datePaid.size(); i++) {
+                if (datePaid.get(i).equals("")) {
+                    complete = false;
+                }
+            }
+        }
+        else {
+            // Mark as not paid
+            datePaid.set(memberIndex, "");
+            complete = false;
+        }
+
+        transaction.put(Constants.TRANSACTION_DATE_PAID, datePaid);
+
+        if (complete) {
+            transaction.put(Constants.TRANSACTION_COMPLETE, true);
+            Log.i(TAG, "Transaction completed!");
+        }
+        transaction.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e != null) {
+                    Log.e(TAG, "Error updating pending charge: " + e.getMessage());
+                }
+                else {
+                    Log.i(TAG, "Updated pending charge successfully!");
+                    getParseData(Constants.CLASSNAME_TRANSACTION);
+                    // TODO, only update the data for this item in the local datastore!
                 }
             }
         });

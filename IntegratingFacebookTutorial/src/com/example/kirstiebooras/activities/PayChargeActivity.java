@@ -103,7 +103,6 @@ public class PayChargeActivity extends Activity {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 // Mark charge as paid
                                 mParseTools.markChargePaid(mTransactionObjectId, true);
-                                setResult(RESULT_OK);
                                 finish();
                             }
                         })
