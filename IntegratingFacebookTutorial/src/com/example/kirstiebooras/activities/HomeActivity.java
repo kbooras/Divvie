@@ -37,6 +37,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         ParseTools.GetParseDataListener {
 
     private static final String TAG = "HomeActivity";
+    public static final int PAY_REQUEST_CODE = 1;
     private ParseTools mParseTools;
     private ActionBar mActionBar;
     private ViewPager mViewPager;
@@ -212,6 +213,18 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         else {
             Log.wtf(TAG, "mGroupsData is null");
             return false;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == PAY_REQUEST_CODE) {
+            Log.d(TAG, "onActivityResult");
+            // Update transaction view
+            if (isNetworkConnected()) {
+                mParseTools.getParseData(Constants.CLASSNAME_TRANSACTION);
+            }
         }
     }
 

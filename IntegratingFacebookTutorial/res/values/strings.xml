@@ -77,8 +77,9 @@
     <string name="transaction_amount_owed">%1$s%2$s owed</string>
     <string name="transaction_description">for %1$s</string>
     <string name="transaction_description_hint">Enter a description</string>
-    <string name="transaction_group_owes_you">%1$s owes you</string>
-    <string name="transaction_you_owe_group">You owe %1$s</string>
+    <string name="transaction_owes_you">%1$s owes you</string>
+    <string name="transaction_pending">Pending</string>
+    <string name="transaction_you_owe">You owe %1$s</string>
     <string name="transactions">Transactions</string>
     <string name="user_no_groups_toast">You must be in at least one group to create a
         transaction.</string>

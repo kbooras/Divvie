@@ -257,7 +257,7 @@ public class ParseTools {
      * check if the transaction is now complete.
      */
     @SuppressWarnings("unchecked")
-    public void markChargePaid(String transactionId) {
+    public void markChargePaid(String transactionId, boolean pending) {
         Log.d(TAG, "markChargePaid");
         ParseObject transaction =
                 findLocalParseObjectById(Constants.CLASSNAME_TRANSACTION, transactionId);
@@ -275,6 +275,11 @@ public class ParseTools {
                 // Set this person's date paid
                 Date date = new Date(System.currentTimeMillis());
                 String today = new SimpleDateFormat("MM/dd/yy").format(date);
+                // Flag if pending
+                if (pending) {
+                    today = "p" + today;
+                    // TODO Send notification to the person owed to verify
+                }
                 datePaid.set(i,today);
             }
             if (datePaid.get(i).equals("")) {

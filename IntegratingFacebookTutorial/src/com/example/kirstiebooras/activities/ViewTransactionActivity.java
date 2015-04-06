@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
@@ -87,7 +88,7 @@ public class ViewTransactionActivity extends Activity {
         TextView transactionAmount = (TextView) findViewById(R.id.transactionAmount);
         TextView transactionDescription = (TextView) findViewById(R.id.transactionDescription);
 
-        group.setText(String.format(getString(R.string.transaction_group_owes_you),
+        group.setText(String.format(getString(R.string.transaction_owes_you),
                 object.getString(Constants.TRANSACTION_GROUP_NAME)));
         transactionAmount.setText(mSplitAmount);
         transactionDescription.setText(String.format(getString(R.string.transaction_description),
@@ -127,10 +128,17 @@ public class ViewTransactionActivity extends Activity {
 
             if (datePaid.get(i).equals("")) {
                 // If they have not paid, display what they owe
-                member.setText(String.format(getString(R.string.transaction_group_owes_you),
+                member.setText(String.format(getString(R.string.transaction_owes_you),
                         displayNames.get(i)));
                 status.setText(symbol + object.getString(Constants.TRANSACTION_SPLIT_AMOUNT));
                 status.setTextColor(getResources().getColor(R.color.pink));
+            } else if (datePaid.get(i).charAt(0) == 'p') {
+                // Mark as pending
+                member.setText(String.format(getString(R.string.person_paid_you),
+                        displayNames.get(i)));
+                status.setText(getString(R.string.transaction_pending));
+                status.setTextColor(getResources().getColor(R.color.dark_grey));
+                status.setTypeface(null, Typeface.ITALIC);
             } else {
                 // Otherwise, display the date paid
                 member.setText(String.format(getString(R.string.person_paid_you),

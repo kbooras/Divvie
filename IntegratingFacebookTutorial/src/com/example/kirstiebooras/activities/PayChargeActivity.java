@@ -102,7 +102,8 @@ public class PayChargeActivity extends Activity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 // Mark charge as paid
-                                mParseTools.markChargePaid(mTransactionObjectId);
+                                mParseTools.markChargePaid(mTransactionObjectId, true);
+                                setResult(RESULT_OK);
                                 finish();
                             }
                         })
@@ -156,7 +157,9 @@ public class PayChargeActivity extends Activity {
                             // Payment successful.
                             Toast.makeText(this, getString(R.string.venmo_success),
                                     Toast.LENGTH_LONG).show();
-                            mParseTools.markChargePaid(mTransactionObjectId);
+                            mParseTools.markChargePaid(mTransactionObjectId, false);
+                            setResult(RESULT_OK);
+                            finish();
                         }
                     }
                     else {

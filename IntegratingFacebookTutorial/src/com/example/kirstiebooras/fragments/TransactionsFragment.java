@@ -66,13 +66,15 @@ public class TransactionsFragment extends ListFragment {
         TextView transactionStatus = (TextView) v.findViewById(R.id.transactionStatus);
         ParseObject transaction = mAdapter.getItem(position);
 
-        if (transactionStatus.getText().toString().equals(getString(R.string.pay_now))) {
+        String status = transactionStatus.getText().toString();
+        if (status.equals(getString(R.string.pay_now))) {
             // Start PayChargeActivity
             Intent intent = new Intent(getActivity(), PayChargeActivity.class);
             intent.putExtra("parseObjectId", transaction.getObjectId());
-            startActivity(intent);
-        } else if (!transactionStatus.getText().equals(getString(R.string.paid))) {
-            // Display transaction
+            getActivity().startActivityForResult(intent, 1);
+        } else if (!(status.equals(getString(R.string.paid))
+                || status.equals(getString(R.string.transaction_pending)))) {
+            // If not paid or pending, display transaction
             Intent intent = new Intent(getActivity(), ViewTransactionActivity.class);
             intent.putExtra("parseObjectId", transaction.getObjectId());
             startActivity(intent);

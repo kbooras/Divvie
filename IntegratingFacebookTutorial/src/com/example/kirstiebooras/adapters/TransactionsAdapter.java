@@ -2,6 +2,7 @@ package com.example.kirstiebooras.adapters;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -76,7 +77,7 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
     private void setUserOwesGroupTexts(ParseObject transaction, TextView transactionGroup,
                                        TextView transactionAmount) {
         transactionGroup.setText(String.format(
-                mResources.getString(R.string.transaction_you_owe_group),
+                mResources.getString(R.string.transaction_you_owe),
                 transaction.getString(Constants.TRANSACTION_GROUP_NAME)));
         transactionAmount.setTextColor(mResources.getColor(R.color.pink));
         transactionAmount.setText(mSymbol +
@@ -86,16 +87,15 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
     private void setGroupOwesUserTexts(ParseObject transaction, TextView transactionGroup,
                                        TextView transactionAmount) {
         transactionGroup.setText(String.format(
-                mResources.getString(R.string.transaction_group_owes_you),
+                mResources.getString(R.string.transaction_owes_you),
                 transaction.getString(Constants.TRANSACTION_GROUP_NAME)));
         transactionAmount.setTextColor(mResources.getColor(R.color.green));
         transactionAmount.setText(mSymbol +
                 transaction.getString(Constants.TRANSACTION_TOTAL_AMOUNT));
     }
 
-    // Return string based on if user has paid or not
+    // Return string based on if user has paid or not. This happens when the user owes a group.
     private void setPaidStatus(TextView amountText, TextView statusText, ParseObject group) {
-        Log.v("transactionsadapter", "setPaidStatus");
         @SuppressWarnings("unchecked")
         ArrayList<String> members = (ArrayList<String>) group.get(Constants.GROUP_MEMBERS);
         @SuppressWarnings("unchecked")
@@ -106,16 +106,18 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
             return;
         }
         if (datePaid.get(index).equals("")) {
-            Log.v("transactionsadapter", "pay now");
             statusText.setText(mResources.getString(R.string.pay_now));
-            statusText.setTextColor(mResources.getColor(R.color.dark_grey));
             amountText.setTextColor(mResources.getColor(R.color.pink));
+        } else if (datePaid.get(index).charAt(0) == 'p') {
+            statusText.setText(mResources.getString(R.string.transaction_pending));
+            statusText.setTypeface(null, Typeface.ITALIC);
+            amountText.setTextColor(mResources.getColor(R.color.pink));
+            // TODO if pending cannot be clicked
         } else {
-            Log.v("transactionsadapter", "paid");
             statusText.setText(mResources.getString(R.string.paid));
-            statusText.setTextColor(mResources.getColor(R.color.dark_grey));
             amountText.setTextColor(mResources.getColor(R.color.dark_grey));
         }
+        statusText.setTextColor(mResources.getColor(R.color.dark_grey));
 
     }
 
@@ -128,7 +130,7 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
         return -1;
     }
 
-    // Return string based on if transaction is complete or not
+    // Return string based on if transaction is complete or not. This happens when a user is owed.
     private void setAmountStillOwed(TextView statusText, ParseObject group) {
         double splitAmount = Double.valueOf(group.getString(Constants.TRANSACTION_SPLIT_AMOUNT));
         @SuppressWarnings("unchecked")
@@ -136,7 +138,8 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
         int notPaid = 0;
 
         for (String p : datePaid) {
-            if (p.equals("")) {
+            // If not paid or pending
+            if (p.equals("") || p.charAt(0) == 'p') {
                 notPaid++;
             }
         }
