@@ -294,7 +294,7 @@ public class ParseTools {
             transaction.put(Constants.TRANSACTION_COMPLETE, true);
             Log.i(TAG, "Transaction completed!");
         }
-        transaction.saveInBackground(new SaveCallback() {
+        transaction.saveEventually(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 if (e != null) {
@@ -302,11 +302,10 @@ public class ParseTools {
                 }
                 else {
                     Log.i(TAG, "Marked charge as paid successfully!");
-                    getParseData(Constants.CLASSNAME_TRANSACTION);
                 }
             }
         });
-
+        mGetParseDataListener.onGetParseDataComplete(Constants.CLASSNAME_TRANSACTION);
     }
 
     /*
@@ -339,14 +338,15 @@ public class ParseTools {
             datePaid.set(memberIndex, "");
             complete = false;
         }
-
         transaction.put(Constants.TRANSACTION_DATE_PAID, datePaid);
 
         if (complete) {
             transaction.put(Constants.TRANSACTION_COMPLETE, true);
             Log.i(TAG, "Transaction completed!");
         }
-        transaction.saveInBackground(new SaveCallback() {
+
+        // Updates the object in local datastore immediately, then pushes to server
+        transaction.saveEventually(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 if (e != null) {
@@ -354,12 +354,10 @@ public class ParseTools {
                 }
                 else {
                     Log.i(TAG, "Updated pending charge successfully!");
-                    getParseData(Constants.CLASSNAME_TRANSACTION);
-                    // TODO, only update the data for this item in the local datastore! It should be updated in local storage automatically. Just have to issue a callback to refresh the data
                 }
             }
         });
-
+        mGetParseDataListener.onGetParseDataComplete(Constants.CLASSNAME_TRANSACTION);
     }
 
     /*

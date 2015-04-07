@@ -110,12 +110,12 @@ public class ViewTransactionActivity extends Activity {
 
         for (int i = 0; i < displayNames.size(); i++) {
             final int index = i;
+            // Do not display the current user as part of the transaction
             if (displayNames.get(i).equals(ParseUser.getCurrentUser()
                     .getString(Constants.USER_FULL_NAME))) {
-                // Do not display the current user as part of the transaction
                 continue;
             }
-            final View memberRow = View.inflate(this, R.layout.view_transaction_row, null);
+            View memberRow = View.inflate(this, R.layout.view_transaction_row, null);
             TextView member = (TextView) memberRow.findViewById(R.id.member);
             final TextView status = (TextView) memberRow.findViewById(R.id.status);
             memberRow.setId(i);
@@ -143,10 +143,11 @@ public class ViewTransactionActivity extends Activity {
             memberRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (status.getText().toString().equals(getString(R.string.transaction_pending))) {
-                        createConfirmPopup(displayNames.get(index), datePaid.get(index), index);
+                    String statusTxt = status.getText().toString();
+                    if (statusTxt.equals(getString(R.string.transaction_pending))) {
+                        createValidatePopup(displayNames.get(index), datePaid.get(index), index);
                     }
-                    else {
+                    else if (statusTxt.equals(mSplitAmount)){
                         createRemindOverridePopup(displayNames.get(index), memberEmails.get(index), index);
                     }
                 }
@@ -155,7 +156,7 @@ public class ViewTransactionActivity extends Activity {
         }
     }
 
-    private void createConfirmPopup(final String name, final String date, final int index) {
+    private void createValidatePopup(final String name, final String date, final int index) {
         String message = String.format(getString(R.string.transaction_pending_message), name);
         new AlertDialog.Builder(this)
                 .setMessage(message)
@@ -170,8 +171,7 @@ public class ViewTransactionActivity extends Activity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         mParseTools.updatePendingPayment(mTransactionId, index, false);
-                        View view = findViewById(R.id.baseLayout);
-                        view.invalidate();
+                        updateMemberRow(index, mSplitAmount);
                     }
                 })
                 .setNeutralButton(getString(R.string.cancel), null)
@@ -216,13 +216,19 @@ public class ViewTransactionActivity extends Activity {
         }
     }
 
-    // Update member row showing the member has paid
-    // TODO, instead use a callback for when this is updated. It will be updated automatically in the local datastore. You have to just refresh the view then
-    private void updateMemberRow(int index, String date) {
+    // Update member row showing the member has paid or not
+    private void updateMemberRow(int index, String status) {
         View memberRow = findViewById(index);
-        TextView status = (TextView) memberRow.findViewById(R.id.status);
-        status.setText(date);
-        status.setTextColor(getResources().getColor(R.color.dark_grey));
+        TextView statusView = (TextView) memberRow.findViewById(R.id.status);
+        statusView.setText(status);
+        if (status.equals(mSplitAmount)) {
+            statusView.setTextColor(getResources().getColor(R.color.pink));
+            statusView.setTypeface(null, Typeface.NORMAL);
+        }
+        else {
+            statusView.setTextColor(getResources().getColor(R.color.dark_grey));
+            statusView.setTypeface(null, Typeface.NORMAL);
+        }
     }
 
     @Override
