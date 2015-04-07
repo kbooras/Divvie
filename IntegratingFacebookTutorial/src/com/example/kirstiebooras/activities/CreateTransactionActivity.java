@@ -64,23 +64,8 @@ public class CreateTransactionActivity extends Activity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.secondary_items, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
-            case R.id.logout:
-                ParseUser.logOut();
-                Log.i(TAG, "User signed out!");
-                mParseTools.unpinData(Constants.CLASSNAME_TRANSACTION);
-                mParseTools.unpinData(Constants.CLASSNAME_GROUP);
-                startSigninRegisterActivity();
-                return true;
-
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
