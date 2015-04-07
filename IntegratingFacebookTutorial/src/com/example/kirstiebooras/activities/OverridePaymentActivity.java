@@ -72,7 +72,7 @@ public class OverridePaymentActivity extends FragmentActivity {
         // Default set to today
         Button datePaid = (Button) findViewById(R.id.dateDropDown);
         Date date = new Date(System.currentTimeMillis());
-        String today = new SimpleDateFormat("MM/dd/yy").format(date);
+        String today = new SimpleDateFormat("M/d/yy").format(date);
         datePaid.setText(today);
     }
 

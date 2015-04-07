@@ -17,7 +17,6 @@ import com.parse.integratingfacebooktutorial.R;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -201,9 +200,9 @@ public class ParseTools {
         ArrayList<String> datePaid = new ArrayList<String>(members.size());
         for (String user : members) {
             if (user.equals(personOwed)) {
-                String month = String.valueOf(Calendar.getInstance().get(Calendar.MONTH));
-                String date = String.valueOf(Calendar.getInstance().get(Calendar.DATE));
-                datePaid.add(month + "/" + date);
+                Date date = new Date(System.currentTimeMillis());
+                String today = new SimpleDateFormat("M/d/yy").format(date);
+                datePaid.add(today);
             } else {
                 datePaid.add("");
             }
@@ -274,7 +273,7 @@ public class ParseTools {
             if (members.get(i).equals(currentUser)) {
                 // Set this person's date paid
                 Date date = new Date(System.currentTimeMillis());
-                String today = new SimpleDateFormat("MM/dd/yy").format(date);
+                String today = new SimpleDateFormat("M/d/yy").format(date);
                 // Flag if pending
                 if (pending) {
                     today = "p" + today;
