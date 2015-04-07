@@ -3,13 +3,10 @@ package com.example.kirstiebooras.activities;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -73,13 +70,6 @@ public class CreateTransactionActivity extends Activity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private void startSigninRegisterActivity() {
-        Intent intent = new Intent(this, SigninRegisterActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
     }
 
     public void onSplitBillClick(View view) {

@@ -7,9 +7,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -20,7 +17,6 @@ import com.example.kirstiebooras.helpers.ParseTools;
 import com.example.kirstiebooras.venmo.VenmoLibrary;
 import com.example.kirstiebooras.helpers.Constants;
 import com.parse.ParseObject;
-import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
 
 import com.example.kirstiebooras.venmo.VenmoLibrary.VenmoResponse;
@@ -34,7 +30,6 @@ import java.util.Locale;
  */
 public class PayChargeActivity extends Activity {
 
-    private static final String TAG = "PayChargeActivity";
     private static final int REQUEST_CODE_VENMO_APP_SWITCH = 1;
     private ParseTools mParseTools;
     private String mTransactionObjectId;

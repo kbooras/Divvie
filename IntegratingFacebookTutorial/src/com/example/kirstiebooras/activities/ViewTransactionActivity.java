@@ -232,6 +232,13 @@ public class ViewTransactionActivity extends Activity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.secondary_items, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case android.R.id.home:
@@ -241,12 +248,5 @@ public class ViewTransactionActivity extends Activity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private void startSigninRegisterActivity() {
-        Intent intent = new Intent(this, SigninRegisterActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
     }
 }
