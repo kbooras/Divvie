@@ -79,7 +79,7 @@ public class ViewTransactionActivity extends Activity {
     private void setViewText(ParseObject object) {
         Log.d(TAG, "setViewText");
         String symbol = Currency.getInstance(Locale.getDefault()).getSymbol();
-        mSplitAmount = symbol + object.getString(Constants.TRANSACTION_SPLIT_AMOUNT);
+        String totalAmount = symbol + object.getString(Constants.TRANSACTION_TOTAL_AMOUNT);
         mDescription = object.getString(Constants.TRANSACTION_DESCRIPTION);
 
         TextView group = (TextView) findViewById(R.id.group);
@@ -88,7 +88,7 @@ public class ViewTransactionActivity extends Activity {
 
         group.setText(String.format(getString(R.string.transaction_owes_you),
                 object.getString(Constants.TRANSACTION_GROUP_NAME)));
-        transactionAmount.setText(mSplitAmount);
+        transactionAmount.setText(totalAmount);
         transactionDescription.setText(String.format(getString(R.string.transaction_description),
                 mDescription));
     }
@@ -97,6 +97,7 @@ public class ViewTransactionActivity extends Activity {
     private void displayMembers(ParseObject object) {
         Log.d(TAG, "displayMembers");
         String symbol = Currency.getInstance(Locale.getDefault()).getSymbol();
+        mSplitAmount = symbol + object.getString(Constants.TRANSACTION_SPLIT_AMOUNT);
 
         final ArrayList<String> datePaid = (ArrayList<String>) object.get(Constants.TRANSACTION_DATE_PAID);
         final ArrayList<String> memberEmails = (ArrayList<String>) object.get(Constants.GROUP_MEMBERS);
@@ -122,7 +123,7 @@ public class ViewTransactionActivity extends Activity {
                 // If they have not paid, display what they owe
                 member.setText(String.format(getString(R.string.transaction_owes_you),
                         displayNames.get(i)));
-                status.setText(symbol + object.getString(Constants.TRANSACTION_SPLIT_AMOUNT));
+                status.setText(mSplitAmount);
                 status.setTextColor(getResources().getColor(R.color.pink));
             } else if (datePaid.get(i).charAt(0) == 'p') {
                 // Mark as pending
@@ -208,7 +209,6 @@ public class ViewTransactionActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == OVERRIDE_PAYMENT_REQUEST_CODE) {
             Log.d(TAG, "onActivityResult");
-            // TODO should get this from the object
             int memberIndex = data.getIntExtra("memberIndex", -1);
             String date = data.getStringExtra("datePaid");
             updateMemberRow(memberIndex, date);
