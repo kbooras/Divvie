@@ -252,11 +252,15 @@ public class ParseTools {
     }
 
     /*
-     * Mark user as having paid charge. Since we are linearly traversing the array, simultaneously
-     * check if the transaction is now complete.
+     * Mark member as having paid charge on the date 'datePaid'. Since we are linearly
+     * traversing the array, simultaneously check if the transaction is now complete.
+     * @param pending: True if the user's payment should be flagged as pending
+     * @param memberIndex: The index in the members array of the user being marked as paid. If null,
+     * this defaults to the current user.
+     * @param date: If null, this defaults to today's date.
      */
     @SuppressWarnings("unchecked")
-    public void markChargePaid(String transactionId, boolean pending) {
+    public void markChargePaid(String transactionId, boolean pending, int memberIndex, String date) {
         Log.d(TAG, "markChargePaid");
         ParseObject transaction =
                 findLocalParseObjectById(Constants.CLASSNAME_TRANSACTION, transactionId);
@@ -267,22 +271,29 @@ public class ParseTools {
         ArrayList<String> members = (ArrayList<String>) transaction.get(Constants.GROUP_MEMBERS);
         ArrayList<String> datePaid = (ArrayList<String>) transaction.get(Constants.TRANSACTION_DATE_PAID);
 
-        String currentUser = ParseUser.getCurrentUser().getEmail();
+        String member;
+        if (memberIndex == -1) {
+            member = ParseUser.getCurrentUser().getEmail();
+        } else {
+            member = members.get(memberIndex);
+        }
+
         boolean complete = true;
         for (int i = 0; i < members.size(); i++) {
-            if (members.get(i).equals(currentUser)) {
-                // Set this person's date paid
-                Date date = new Date(System.currentTimeMillis());
-                String today = new SimpleDateFormat("M/d/yy").format(date);
+            if (members.get(i).equals(member)) {
+                // Set this person's date paid as today if the parameter is null
+                if (date == null) {
+                    Date today = new Date(System.currentTimeMillis());
+                    date = new SimpleDateFormat("M/d/yy").format(today);
+                }
                 // Flag if pending
                 if (pending) {
-                    today = "p" + today;
+                    date = "p" + date;
                     // TODO Send notification to the person owed to verify
                 }
-                datePaid.set(i,today);
+                datePaid.set(i, date);
             }
             if (datePaid.get(i).equals("")) {
-                // Check if this transaction is complete or not
                 complete = false;
             }
         }
@@ -304,11 +315,12 @@ public class ParseTools {
                 }
             }
         });
+        //getParseData(Constants.CLASSNAME_TRANSACTION);
         mGetParseDataListener.onGetParseDataComplete(Constants.CLASSNAME_TRANSACTION);
     }
 
     /*
-     *
+     * Accept a pending payment as valid or reject it.
      */
     public void updatePendingPayment(String transactionId, int memberIndex, boolean paid) {
         Log.d(TAG, "updatePendingPayment");

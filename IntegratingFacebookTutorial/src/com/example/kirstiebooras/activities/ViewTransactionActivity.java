@@ -8,8 +8,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -210,6 +208,7 @@ public class ViewTransactionActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == OVERRIDE_PAYMENT_REQUEST_CODE) {
             Log.d(TAG, "onActivityResult");
+            // TODO should get this from the object
             int memberIndex = data.getIntExtra("memberIndex", -1);
             String date = data.getStringExtra("datePaid");
             updateMemberRow(memberIndex, date);
@@ -229,13 +228,6 @@ public class ViewTransactionActivity extends Activity {
             statusView.setTextColor(getResources().getColor(R.color.dark_grey));
             statusView.setTypeface(null, Typeface.NORMAL);
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.secondary_items, menu);
-        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
