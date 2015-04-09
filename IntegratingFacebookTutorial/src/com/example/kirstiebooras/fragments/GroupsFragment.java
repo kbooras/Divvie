@@ -1,10 +1,13 @@
 package com.example.kirstiebooras.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.View;
+import android.widget.ListView;
 
+import com.example.kirstiebooras.activities.CreateTransactionActivity;
 import com.example.kirstiebooras.activities.HomeActivity;
 import com.example.kirstiebooras.adapters.GroupsAdapter;
 import com.parse.ParseObject;
@@ -39,9 +42,8 @@ public class GroupsFragment extends ListFragment {
 
     }
 
-    /**
+    /*
      * Attach the data passed in from HomeActivity to the adapter
-     * @param data: The data from HomeActivity
      */
     public void bindData(List<ParseObject> data) {
         Log.v(TAG, "bindData");
@@ -54,4 +56,11 @@ public class GroupsFragment extends ListFragment {
         mAdapter.notifyDataSetChanged();
     }
 
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+        Intent intent = new Intent(getActivity(), CreateTransactionActivity.class);
+        intent.putExtra("groupIndex", position);
+        startActivity(intent);
+    }
 }

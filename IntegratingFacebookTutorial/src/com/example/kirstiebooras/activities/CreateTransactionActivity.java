@@ -58,6 +58,11 @@ public class CreateTransactionActivity extends Activity {
                 new GroupsSpinnerAdapter(getApplicationContext(), groupsList);
         mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(mAdapter);
+
+        // If we are directed here from a click in the groups fragment, set that group as selected
+        if(getIntent().hasExtra("groupIndex")) {
+            mSpinner.setSelection(getIntent().getIntExtra("groupIndex", 0));
+        }
     }
 
     @Override
