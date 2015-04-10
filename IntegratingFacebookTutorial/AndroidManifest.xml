@@ -63,7 +63,7 @@
                 android:value="com.example.kirstiebooras.activities.ViewTransactionActivity" />
         </activity>
         <activity
-            android:name="com.example.kirstiebooras.activities.ImportGroupsActivity"
+            android:name="com.example.kirstiebooras.activities.ImportFBGroupsActivity"
             android:theme="@style/DivvieThemeSecondary"
             android:launchMode="singleTop">
             <meta-data

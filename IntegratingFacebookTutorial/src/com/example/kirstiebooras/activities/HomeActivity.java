@@ -235,7 +235,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
     }
 
     private void startImportGroupActivity() {
-        Intent intent = new Intent(this, ImportGroupsActivity.class);
+        Intent intent = new Intent(this, ImportFBGroupsActivity.class);
         startActivity(intent);
     }
 

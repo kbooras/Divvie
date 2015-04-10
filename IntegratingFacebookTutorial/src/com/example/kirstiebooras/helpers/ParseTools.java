@@ -6,6 +6,7 @@ import android.util.Log;
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.FunctionCallback;
+import com.parse.GetCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -377,6 +378,53 @@ public class ParseTools {
     public void createGroupParseObject(String groupName, ArrayList<String> memberEmails) {
         ArrayList<String> memberDisplayNames = getMemberDisplayNames(memberEmails);
         // Todo: Send invite emails to new users and notification email to existing users
+        ParseObject newGroup = new ParseObject(Constants.CLASSNAME_GROUP);
+        newGroup.put(Constants.GROUP_NAME, groupName);
+        newGroup.put(Constants.GROUP_MEMBERS, memberEmails);
+        newGroup.put(Constants.GROUP_DISPLAY_NAMES, memberDisplayNames);
+        newGroup.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e != null) {
+                    Log.e(TAG, "Create Group object error: " + e.getMessage());
+                }
+                else {
+                    Log.i(TAG, "Saved new group successfully!");
+                    getParseData(Constants.CLASSNAME_GROUP);
+                }
+            }
+        });
+    }
+
+    public void createFBGroupParseObject(String groupName, HashMap<String, String> groupMembers) {
+        // If they have a fb account linked to divvie, add their email to the string
+        // else add their fbid
+        // Add name to displayname
+        // TODO when link FB account or sign up with FB account, find any groups that fb id is a part of
+        // Then, update the group member so their id is replaced by the email and update their display name
+        // Check for ids when sending emails!
+
+        ArrayList<String> memberEmails = new ArrayList<String>();
+
+        for (String id : groupMembers.keySet()) {
+            // Check if there is a Divvie account with this id
+            ParseQuery<ParseUser> query = ParseUser.getQuery();
+            query.whereEqualTo(Constants.FACEBOOK_ID, id);
+            try {
+                // TODO refactor memberEmails to be memberUsernames b/c it makes more sense
+                // If there is an account linked, add the user's email to the memberEmails
+                ParseUser user = query.getFirst();
+                memberEmails.add(user.getEmail());
+
+            } catch (ParseException e) {
+                // If there is no account linked, add the id to memberEmails
+                memberEmails.add(id);
+            }
+        }
+
+        ArrayList<String> memberDisplayNames = (ArrayList<String>) groupMembers.values();
+
+        // TODO reuse the code above by refactoring that method
         ParseObject newGroup = new ParseObject(Constants.CLASSNAME_GROUP);
         newGroup.put(Constants.GROUP_NAME, groupName);
         newGroup.put(Constants.GROUP_MEMBERS, memberEmails);

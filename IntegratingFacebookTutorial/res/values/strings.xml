@@ -16,6 +16,7 @@
     <string name="create_transaction">Create Transaction</string>
     <string name="deny">Deny</string>
     <string name="divvie_logo">Divvie Logo</string>
+    <string name="done">done</string>
     <string name="download_venmo">Download Venmo</string>
     <string name="duplicate_email_alert_message"> Hmm, you seem to have a duplicate email. Correct
         this and try again.</string>
@@ -44,6 +45,7 @@
     <string name="network_connection_sign_in_alert_message">You are not connected to the internet
         and cannot sign in. Please try again when you gain connectivity.</string>
     <string name="no_network_connection">No Network Connection</string>
+    <string name="num_groups_selected">%1$d groups selected</string>
     <string name="ok">OK</string>
     <string name="on">on</string>
     <string name="override">Paid?</string>
