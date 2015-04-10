@@ -34,6 +34,7 @@
     <string name="group_invalid_email_alert_title">Invalid Email</string>
     <string name="group_name">Group Name</string>
     <string name="groups">Groups</string>
+    <string name="import_groups">Import Groups</string>
     <string name="invalid_amount_toast">The amount you entered is invalid.</string>
     <string name="logout">Logout</string>
     <string name="network_connection_create_group_alert_message">You are not connected to the

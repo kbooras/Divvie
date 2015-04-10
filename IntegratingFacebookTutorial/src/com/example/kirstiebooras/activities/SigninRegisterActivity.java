@@ -67,8 +67,9 @@ public class SigninRegisterActivity extends Activity {
     public void onFacebookSignInClick(View v) {
         mProgressDialog = ProgressDialog.show(SigninRegisterActivity.this, "", "Logging in...", true);
 
-        List<String> permissions = Arrays.asList("public_profile", "email");
-        // NOTE: for extended permissions, like "user_about_me", your app must be reviewed by the Facebook team
+        // TODO display why we need groups
+        List<String> permissions = Arrays.asList("public_profile", "email", "user_groups");
+        // TODO NOTE: for extended permissions, like "user_about_me", your app must be reviewed by the Facebook team
         // (https://developers.facebook.com/docs/facebook-login/permissions/)
 
         ParseFacebookUtils.logIn(permissions, this, new LogInCallback() {
@@ -98,7 +99,7 @@ public class SigninRegisterActivity extends Activity {
                         if (user != null) {
                             // Save the user profile info in a user property
                             ParseUser currentUser = ParseUser.getCurrentUser();
-                            currentUser.put("facebookId", user.getId());
+                            currentUser.put(Constants.FACEBOOK_ID, user.getId());
                             currentUser.put(Constants.USER_FULL_NAME, user.getName());
                             if (user.getProperty("email") != null) {
                                 currentUser.put(Constants.USER_EMAIL, user.getProperty("email"));

@@ -8,9 +8,20 @@
         />
 
     <item
-        android:id="@+id/logout"
-        android:title="@string/logout"
-        android:icon="@drawable/ic_action_exit"
+        android:id="@+id/overflow"
+        android:orderInCategory="100"
         android:showAsAction="always"
-        />
+        android:icon="@drawable/ic_action_overflow"
+        android:title="">
+        <menu>
+            <item
+                android:id="@+id/import_groups"
+                android:title="@string/import_groups"/>
+
+            <item
+                android:id="@+id/logout"
+                android:title="@string/logout"/>
+        </menu>
+    </item>
+
 </menu>

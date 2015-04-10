@@ -21,11 +21,15 @@ import com.example.kirstiebooras.helpers.ParseTools;
 import com.example.kirstiebooras.adapters.TabsFragmentPagerAdapter;
 import com.example.kirstiebooras.fragments.TransactionsFragment;
 import com.example.kirstiebooras.helpers.Constants;
+import com.parse.ParseException;
+import com.parse.ParseFacebookUtils;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.parse.integratingfacebooktutorial.R;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -37,7 +41,6 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         ParseTools.GetParseDataListener {
 
     private static final String TAG = "HomeActivity";
-    public static final int PAY_REQUEST_CODE = 1;
     private ParseTools mParseTools;
     private ActionBar mActionBar;
     private ViewPager mViewPager;
@@ -169,21 +172,6 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         super.onOptionsItemSelected(item);
 
         switch(item.getItemId()){
-            case R.id.logout:
-//                // Logout Facebook user
-//                if (ParseFacebookUtils.isLinked(ParseUser.getCurrentUser())) {
-//                    Session session = ParseFacebookUtils.getSession();
-//                    if (session != null && session.isOpened()) {
-//                        session.closeAndClearTokenInformation();
-//                    }
-//                }
-                mParseTools.unpinData(Constants.CLASSNAME_TRANSACTION);
-                mParseTools.unpinData(Constants.CLASSNAME_GROUP);
-                ParseUser.logOut();
-                Log.i(TAG, "User signed out!");
-                startSigninRegisterActivity();
-                return true;
-
             case R.id.add:
                 int currentFragment = mViewPager.getCurrentItem();
                 if (currentFragment == 0) {
@@ -201,9 +189,54 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
                     startActivity(intent);
                 }
                 return true;
+
+            case R.id.import_groups:
+                if (!ParseFacebookUtils.isLinked(ParseUser.getCurrentUser())) {
+                    // User must have their FB account linked
+                    linkAccount(ParseUser.getCurrentUser());
+                }
+                else {
+                    startImportGroupActivity();
+                }
+                return true;
+            case R.id.logout:
+                // TODO:
+//                // Logout Facebook user
+//                if (ParseFacebookUtils.isLinked(ParseUser.getCurrentUser())) {
+//                    Session session = ParseFacebookUtils.getSession();
+//                    if (session != null && session.isOpened()) {
+//                        session.closeAndClearTokenInformation();
+//                    }
+//                }
+                mParseTools.unpinData(Constants.CLASSNAME_TRANSACTION);
+                mParseTools.unpinData(Constants.CLASSNAME_GROUP);
+                ParseUser.logOut();
+                Log.i(TAG, "User signed out!");
+                startSigninRegisterActivity();
+                return true;
+
             default:
                 return false;
         }
+    }
+
+    private void linkAccount(final ParseUser user) {
+        // TODO add option to unlink
+        List<String> permissions = Arrays.asList("public_profile", "email", "user_groups");
+        ParseFacebookUtils.link(user, permissions, this, new SaveCallback() {
+            @Override
+            public void done(ParseException ex) {
+                if (ParseFacebookUtils.isLinked(user)) {
+                    Log.i(TAG, "User linked their facebook");
+                    startImportGroupActivity();
+                }
+            }
+        });
+    }
+
+    private void startImportGroupActivity() {
+        Intent intent = new Intent(this, ImportGroupsActivity.class);
+        startActivity(intent);
     }
 
     private boolean userHasGroups() {

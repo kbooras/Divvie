@@ -12,6 +12,8 @@ public final class Constants {
     public static final String USER_EMAIL = "email";
     public static final String USER_FULL_NAME = "fullName";
 
+    public static final String FACEBOOK_ID = "facebookId";
+
     public static final String GROUP_NAME = "name";
     public static final String GROUP_MEMBERS = "members";
     public static final String GROUP_DISPLAY_NAMES = "displayNames";

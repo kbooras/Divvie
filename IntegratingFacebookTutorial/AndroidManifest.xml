@@ -62,6 +62,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.kirstiebooras.activities.ViewTransactionActivity" />
         </activity>
+        <activity
+            android:name="com.example.kirstiebooras.activities.ImportGroupsActivity"
+            android:theme="@style/DivvieThemeSecondary"
+            android:launchMode="singleTop">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.kirstiebooras.activities.HomeActivity" />
+        </activity>
         <activity android:name="com.example.kirstiebooras.activities.RegisterActivity"
             android:theme="@style/NoActionBar"/>
         <activity android:name="com.example.kirstiebooras.activities.SigninActivity"
