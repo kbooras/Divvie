@@ -30,7 +30,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Activity to import a user's groups from Facebook.
@@ -64,7 +63,7 @@ public class ImportFBGroupsActivity extends Activity {
             mFBGroups = new ArrayList<String>();
             mFBGroupIDs = new ArrayList<String>();
             mNumGroupsSelected = 0;
-            importGroupsFromFacebook();
+            loadFacebookGroups();
         }
 
         mAdapter = new ArrayAdapter<String>(this,
@@ -95,8 +94,8 @@ public class ImportFBGroupsActivity extends Activity {
         super.onSaveInstanceState(outState);
     }
 
-    private void importGroupsFromFacebook() {
-        Log.d(TAG, "importGroupsFromFacebook");
+    private void loadFacebookGroups() {
+        Log.d(TAG, "loadFacebookGroups");
         // TODO grey out any groups already imported
         ParseFacebookUtils.initialize(getString(R.string.app_id));
         Session session = ParseFacebookUtils.getSession();
@@ -141,13 +140,11 @@ public class ImportFBGroupsActivity extends Activity {
                 return true;
 
             case R.id.done:
-                ParseTools parseTools = ((DivvieApplication) getApplication()).getParseTools();
                 SparseBooleanArray checked = mListView.getCheckedItemPositions();
 
                 for (int i = 0; i < checked.size(); i++) {
                     if (checked.valueAt(i)) {
-                        HashMap<String, String> groupMembers = getGroupMembers(mFBGroupIDs.get(i));
-                        parseTools.createFBGroupParseObject(mFBGroups.get(i), groupMembers);
+                        createGroupFromFacebook(mFBGroups.get(i), mFBGroupIDs.get(i));
                     }
                 }
 
@@ -158,8 +155,12 @@ public class ImportFBGroupsActivity extends Activity {
         }
     }
 
-    private HashMap<String, String> getGroupMembers(String groupId) {
-        final HashMap<String, String> facebookGroupMembers = new HashMap<String, String>();
+    private void createGroupFromFacebook(final String groupName, String groupId) {
+        Log.d(TAG, "createGroupFromFacebook");
+        final ParseTools parseTools = ((DivvieApplication) getApplication()).getParseTools();
+        final ArrayList<String> names = new ArrayList<String>();
+        final ArrayList<String> ids = new ArrayList<String>();
+
         Session session = ParseFacebookUtils.getSession();
         if (session != null && session.isOpened()) {
             new Request(
@@ -172,11 +173,14 @@ public class ImportFBGroupsActivity extends Activity {
                             JSONObject jsonObject = response.getGraphObject().getInnerJSONObject();
                             try {
                                 JSONArray jsonArray = jsonObject.getJSONArray("data");
+
                                 for (int i = 0; i < jsonArray.length(); i++) {
-                                    facebookGroupMembers.put(
-                                            jsonArray.getJSONObject(i).getString("name"),
-                                            jsonArray.getJSONObject(i).getString("id"));
+                                    String id = jsonArray.getJSONObject(i).getString("id");
+                                    ids.add(parseTools.getDivvieMemberFromFBId(id));
+                                    names.add(jsonArray.getJSONObject(i).getString("name"));
                                 }
+
+                                parseTools.createGroupParseObject(groupName, ids, names);
 
                             } catch (JSONException e) {
                                 Log.e(TAG, "Error fetching FB group members: " + e.getMessage());
@@ -185,6 +189,5 @@ public class ImportFBGroupsActivity extends Activity {
                     }
             ).executeAsync();
         }
-        return facebookGroupMembers;
     }
 }

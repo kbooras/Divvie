@@ -125,14 +125,15 @@ public class CreateGroupActivity extends Activity {
         ParseUser current = ParseUser.getCurrentUser();
 
         // Create arrays of all emails and names added in the EditTexts + the current user.
-        ArrayList<String> memberEmails = validateEmails(mAllEditTexts.values());
-        if (memberEmails == null) {
+        ArrayList<String> members = validateEmails(mAllEditTexts.values());
+        if (members == null) {
             // There is an invalid email
             return;
         }
-        memberEmails.add(current.getEmail());
+        members.add(current.getEmail());
 
-        mParseTools.createGroupParseObject(groupNameTxt, memberEmails);
+        ArrayList<String> displayNames = mParseTools.getMemberDisplayNames(members);
+        mParseTools.createGroupParseObject(groupNameTxt, members, displayNames);
 
         finish();
     }

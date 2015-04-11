@@ -21,6 +21,7 @@ import com.example.kirstiebooras.helpers.ParseTools;
 import com.example.kirstiebooras.adapters.TabsFragmentPagerAdapter;
 import com.example.kirstiebooras.fragments.TransactionsFragment;
 import com.example.kirstiebooras.helpers.Constants;
+import com.facebook.Session;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseObject;
@@ -193,21 +194,21 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
             case R.id.import_groups:
                 if (!ParseFacebookUtils.isLinked(ParseUser.getCurrentUser())) {
                     // User must have their FB account linked
-                    linkAccount(ParseUser.getCurrentUser());
+                    linkFBAccount(ParseUser.getCurrentUser());
                 }
                 else {
                     startImportGroupActivity();
                 }
                 return true;
             case R.id.logout:
-                // TODO:
-//                // Logout Facebook user
-//                if (ParseFacebookUtils.isLinked(ParseUser.getCurrentUser())) {
-//                    Session session = ParseFacebookUtils.getSession();
-//                    if (session != null && session.isOpened()) {
-//                        session.closeAndClearTokenInformation();
-//                    }
-//                }
+                // Logout Facebook user
+                ParseFacebookUtils.initialize(getString(R.string.app_id));
+                if (ParseFacebookUtils.isLinked(ParseUser.getCurrentUser())) {
+                    Session session = ParseFacebookUtils.getSession();
+                    if (session != null && session.isOpened()) {
+                        session.closeAndClearTokenInformation();
+                    }
+                }
                 mParseTools.unpinData(Constants.CLASSNAME_TRANSACTION);
                 mParseTools.unpinData(Constants.CLASSNAME_GROUP);
                 ParseUser.logOut();
@@ -220,15 +221,21 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         }
     }
 
-    private void linkAccount(final ParseUser user) {
-        // TODO add option to unlink
+    private void linkFBAccount(final ParseUser user) {
+        Log.v(TAG, "link account");
         List<String> permissions = Arrays.asList("public_profile", "email", "user_groups");
-        ParseFacebookUtils.link(user, permissions, this, new SaveCallback() {
+        ParseFacebookUtils.initialize(getString(R.string.app_id));
+        ParseFacebookUtils.linkWithReadPermissionsInBackground(user, permissions, this, new SaveCallback() {
             @Override
             public void done(ParseException ex) {
+                Log.v(TAG, "done linking");
                 if (ParseFacebookUtils.isLinked(user)) {
                     Log.i(TAG, "User linked their facebook");
+                    mParseTools.updateDataForLinkedFacebookAccount(Constants.CLASSNAME_GROUP, user);
+                    mParseTools.updateDataForLinkedFacebookAccount(Constants.CLASSNAME_TRANSACTION, user);
                     startImportGroupActivity();
+                } else {
+                    Log.v(TAG, ex.toString());
                 }
             }
         });

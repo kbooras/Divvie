@@ -8,7 +8,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.example.kirstiebooras.DivvieApplication;
 import com.example.kirstiebooras.helpers.Constants;
+import com.example.kirstiebooras.helpers.ParseTools;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.model.GraphUser;
@@ -82,6 +84,9 @@ public class SigninRegisterActivity extends Activity {
                     Log.d(TAG, "User signed up and logged in through Facebook!");
                     // Set user's full name and email
                     setUserInfo();
+                    ParseTools parseTools = ((DivvieApplication) getApplication()).getParseTools();
+                    parseTools.updateDataForLinkedFacebookAccount(Constants.CLASSNAME_GROUP, user);
+                    parseTools.updateDataForLinkedFacebookAccount(Constants.CLASSNAME_TRANSACTION, user);
                     showHomeActivity();
                 } else {
                     Log.d(TAG, "User logged in through Facebook!");
