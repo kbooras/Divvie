@@ -8,9 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import com.example.kirstiebooras.DivvieApplication;
 import com.example.kirstiebooras.helpers.Constants;
-import com.example.kirstiebooras.helpers.ParseTools;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.model.GraphUser;
@@ -69,9 +67,8 @@ public class SigninRegisterActivity extends Activity {
     public void onFacebookSignInClick(View v) {
         mProgressDialog = ProgressDialog.show(SigninRegisterActivity.this, "", "Logging in...", true);
 
-        // TODO display why we need groups
-        List<String> permissions = Arrays.asList("public_profile", "email", "user_groups");
-        // TODO NOTE: for extended permissions, like "user_about_me", your app must be reviewed by the Facebook team
+        List<String> permissions = Arrays.asList("public_profile", "email");
+        // NOTE: for extended permissions, like "user_about_me", your app must be reviewed by the Facebook team
         // (https://developers.facebook.com/docs/facebook-login/permissions/)
 
         ParseFacebookUtils.logIn(permissions, this, new LogInCallback() {
@@ -84,9 +81,6 @@ public class SigninRegisterActivity extends Activity {
                     Log.d(TAG, "User signed up and logged in through Facebook!");
                     // Set user's full name and email
                     setUserInfo();
-                    ParseTools parseTools = ((DivvieApplication) getApplication()).getParseTools();
-                    parseTools.updateDataForLinkedFacebookAccount(Constants.CLASSNAME_GROUP, user);
-                    parseTools.updateDataForLinkedFacebookAccount(Constants.CLASSNAME_TRANSACTION, user);
                     showHomeActivity();
                 } else {
                     Log.d(TAG, "User logged in through Facebook!");
@@ -104,7 +98,7 @@ public class SigninRegisterActivity extends Activity {
                         if (user != null) {
                             // Save the user profile info in a user property
                             ParseUser currentUser = ParseUser.getCurrentUser();
-                            currentUser.put(Constants.FACEBOOK_ID, user.getId());
+                            currentUser.put("facebookId", user.getId());
                             currentUser.put(Constants.USER_FULL_NAME, user.getName());
                             if (user.getProperty("email") != null) {
                                 currentUser.put(Constants.USER_EMAIL, user.getProperty("email"));

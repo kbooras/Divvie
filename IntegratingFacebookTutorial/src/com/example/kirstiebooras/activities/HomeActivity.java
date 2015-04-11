@@ -21,16 +21,11 @@ import com.example.kirstiebooras.helpers.ParseTools;
 import com.example.kirstiebooras.adapters.TabsFragmentPagerAdapter;
 import com.example.kirstiebooras.fragments.TransactionsFragment;
 import com.example.kirstiebooras.helpers.Constants;
-import com.facebook.Session;
-import com.parse.ParseException;
-import com.parse.ParseFacebookUtils;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 import com.parse.integratingfacebooktutorial.R;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -42,6 +37,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         ParseTools.GetParseDataListener {
 
     private static final String TAG = "HomeActivity";
+    public static final int PAY_REQUEST_CODE = 1;
     private ParseTools mParseTools;
     private ActionBar mActionBar;
     private ViewPager mViewPager;
@@ -173,6 +169,21 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         super.onOptionsItemSelected(item);
 
         switch(item.getItemId()){
+            case R.id.logout:
+//                // Logout Facebook user
+//                if (ParseFacebookUtils.isLinked(ParseUser.getCurrentUser())) {
+//                    Session session = ParseFacebookUtils.getSession();
+//                    if (session != null && session.isOpened()) {
+//                        session.closeAndClearTokenInformation();
+//                    }
+//                }
+                mParseTools.unpinData(Constants.CLASSNAME_TRANSACTION);
+                mParseTools.unpinData(Constants.CLASSNAME_GROUP);
+                ParseUser.logOut();
+                Log.i(TAG, "User signed out!");
+                startSigninRegisterActivity();
+                return true;
+
             case R.id.add:
                 int currentFragment = mViewPager.getCurrentItem();
                 if (currentFragment == 0) {
@@ -190,60 +201,9 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
                     startActivity(intent);
                 }
                 return true;
-
-            case R.id.import_groups:
-                if (!ParseFacebookUtils.isLinked(ParseUser.getCurrentUser())) {
-                    // User must have their FB account linked
-                    linkFBAccount(ParseUser.getCurrentUser());
-                }
-                else {
-                    startImportGroupActivity();
-                }
-                return true;
-            case R.id.logout:
-                // Logout Facebook user
-                ParseFacebookUtils.initialize(getString(R.string.app_id));
-                if (ParseFacebookUtils.isLinked(ParseUser.getCurrentUser())) {
-                    Session session = ParseFacebookUtils.getSession();
-                    if (session != null && session.isOpened()) {
-                        session.closeAndClearTokenInformation();
-                    }
-                }
-                mParseTools.unpinData(Constants.CLASSNAME_TRANSACTION);
-                mParseTools.unpinData(Constants.CLASSNAME_GROUP);
-                ParseUser.logOut();
-                Log.i(TAG, "User signed out!");
-                startSigninRegisterActivity();
-                return true;
-
             default:
                 return false;
         }
-    }
-
-    private void linkFBAccount(final ParseUser user) {
-        Log.v(TAG, "link account");
-        List<String> permissions = Arrays.asList("public_profile", "email", "user_groups");
-        ParseFacebookUtils.initialize(getString(R.string.app_id));
-        ParseFacebookUtils.linkWithReadPermissionsInBackground(user, permissions, this, new SaveCallback() {
-            @Override
-            public void done(ParseException ex) {
-                Log.v(TAG, "done linking");
-                if (ParseFacebookUtils.isLinked(user)) {
-                    Log.i(TAG, "User linked their facebook");
-                    mParseTools.updateDataForLinkedFacebookAccount(Constants.CLASSNAME_GROUP, user);
-                    mParseTools.updateDataForLinkedFacebookAccount(Constants.CLASSNAME_TRANSACTION, user);
-                    startImportGroupActivity();
-                } else {
-                    Log.v(TAG, ex.toString());
-                }
-            }
-        });
-    }
-
-    private void startImportGroupActivity() {
-        Intent intent = new Intent(this, ImportFBGroupsActivity.class);
-        startActivity(intent);
     }
 
     private boolean userHasGroups() {

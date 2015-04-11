@@ -374,11 +374,12 @@ public class ParseTools {
     /*
      * Create a Group object and save to the Parse server.
      */
-    public void createGroupParseObject(String groupName, ArrayList<String> members,
-                                       ArrayList<String> memberDisplayNames) {
+    public void createGroupParseObject(String groupName, ArrayList<String> memberEmails) {
+        ArrayList<String> memberDisplayNames = getMemberDisplayNames(memberEmails);
+        // Todo: Send invite emails to new users and notification email to existing users
         ParseObject newGroup = new ParseObject(Constants.CLASSNAME_GROUP);
         newGroup.put(Constants.GROUP_NAME, groupName);
-        newGroup.put(Constants.GROUP_MEMBERS, members);
+        newGroup.put(Constants.GROUP_MEMBERS, memberEmails);
         newGroup.put(Constants.GROUP_DISPLAY_NAMES, memberDisplayNames);
         newGroup.saveInBackground(new SaveCallback() {
             @Override
@@ -389,38 +390,16 @@ public class ParseTools {
                 else {
                     Log.i(TAG, "Saved new group successfully!");
                     getParseData(Constants.CLASSNAME_GROUP);
-                    // Todo: Send invite emails to new users and notification email to existing users
                 }
             }
         });
     }
 
     /*
-     * Get member username for Divvie user from the passed in Facebook ID.
-     */
-    public String getDivvieMemberFromFBId(String id) {
-        Log.d(TAG, "getDivvieMemberFromFBId");
-        // Check if there is a Divvie account with this id
-        ParseQuery<ParseUser> query = ParseUser.getQuery();
-        query.whereEqualTo(Constants.FACEBOOK_ID, id);
-        try {
-            // If there is an account linked, the id is replaced with the email
-            ParseUser user = query.getFirst();
-            return user.getEmail();
-        } catch (ParseException e) {
-            // If there is no account linked, the id is left in the array
-            Log.i(TAG, "No user found with given Facebook ID.");
-            return id;
-        }
-
-
-    }
-
-    /*
      * Get display names for members of a group.
      * Add the corresponding name, or email if there is no existing user.
      */
-    public ArrayList<String> getMemberDisplayNames(ArrayList<String> memberEmails) {
+    private ArrayList<String> getMemberDisplayNames(ArrayList<String> memberEmails) {
         ArrayList<String> memberNames = new ArrayList<String>(memberEmails.size());
         for (String email : memberEmails) {
             ParseQuery<ParseUser> query = ParseUser.getQuery();
@@ -439,8 +418,6 @@ public class ParseTools {
      * Send email to person added to a group who does not yet have a Divvie account.
      */
     public void sendInviteEmails(ArrayList<String> noDivvieAccount, String fromName, String groupName) {
-        // TODO Check for ids when sending emails!
-        // TODO invite facebook friends
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("key", mContext.getString(R.string.MANDRILL_API_KEY));
         map.put("fromName", fromName);
@@ -463,7 +440,6 @@ public class ParseTools {
     }
 
     public void sendReminderEmail(String toEmail, String toName, String description, String fromName) {
-        // TODO Check for ids when sending emails!
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("key", mContext.getString(R.string.MANDRILL_API_KEY));
         map.put("toEmail", toEmail);
@@ -486,39 +462,4 @@ public class ParseTools {
 
     }
 
-    /*
-     * Called when a user links their FB account or signs up for Divvie with their FB account.
-     * Finds any groups or transactions their FB ID is a part of and updates the member info.
-     */
-    public void updateDataForLinkedFacebookAccount(final String className, final ParseUser user) {
-        final String fbID = user.getString(Constants.FACEBOOK_ID);
-        final String name = user.getString(Constants.USER_FULL_NAME);
-
-        ParseQuery<ParseObject> query = new ParseQuery<ParseObject>(className);
-        query.whereEqualTo(Constants.GROUP_MEMBERS, fbID);
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> parseObjects, ParseException e) {
-                if (e != null) {
-                    Log.e(TAG, "Error finding " + className + " for FB account: " + e.toString());
-                    return;
-                }
-                for (ParseObject object : parseObjects) {
-                    // Update the members array of each object
-                    ArrayList<String> members = (ArrayList<String>) object.get(Constants.GROUP_MEMBERS);
-                    ArrayList<String> displayNames = (ArrayList<String>) object.get(Constants.GROUP_DISPLAY_NAMES);
-                    for (int i = 0; i < members.size(); i++) {
-                        if (members.get(i).equals(fbID)) {
-                            members.set(i, user.getEmail());
-                            displayNames.set(i, name);
-                            object.put(Constants.GROUP_MEMBERS, members);
-                            object.put(Constants.GROUP_DISPLAY_NAMES, displayNames);
-                            object.saveInBackground();
-                            break;
-                        }
-                    }
-                }
-            }
-        });
-    }
 }

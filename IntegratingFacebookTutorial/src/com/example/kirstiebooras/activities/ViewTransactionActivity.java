@@ -100,7 +100,7 @@ public class ViewTransactionActivity extends Activity {
         mSplitAmount = symbol + object.getString(Constants.TRANSACTION_SPLIT_AMOUNT);
 
         final ArrayList<String> datePaid = (ArrayList<String>) object.get(Constants.TRANSACTION_DATE_PAID);
-        final ArrayList<String> members = (ArrayList<String>) object.get(Constants.GROUP_MEMBERS);
+        final ArrayList<String> memberEmails = (ArrayList<String>) object.get(Constants.GROUP_MEMBERS);
 
         ParseObject group = mParseTools.findLocalParseObjectById(Constants.CLASSNAME_GROUP,
                 object.getString(Constants.TRANSACTION_GROUP_ID));
@@ -147,7 +147,7 @@ public class ViewTransactionActivity extends Activity {
                         createValidatePopup(displayNames.get(index), datePaid.get(index), index);
                     }
                     else if (statusTxt.equals(mSplitAmount)){
-                        createRemindOverridePopup(displayNames.get(index), members.get(index), index);
+                        createRemindOverridePopup(displayNames.get(index), memberEmails.get(index), index);
                     }
                 }
             });
