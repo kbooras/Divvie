@@ -69,7 +69,7 @@ public class RegisterActivity extends Activity {
     }
 
     private void registerUser(final String email, final String password, final String fullName) {
-        Log.d(TAG, "regusterUser");
+        Log.d(TAG, "registerUser");
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put(Constants.USER_EMAIL, email);
         map.put("password", password);
@@ -87,8 +87,8 @@ public class RegisterActivity extends Activity {
                     } catch (ParseException e2) {
                         Log.v(TAG, "Error logging in new user: " + e2.getMessage());
                     }
-                } else if (e.getCode() == ParseException.EMAIL_TAKEN
-                        || e.getCode() == ParseException.USERNAME_TAKEN) {
+                } else if (e.getMessage().equals(String.valueOf(ParseException.EMAIL_TAKEN))
+                        || e.getMessage().equals(String.valueOf(ParseException.USERNAME_TAKEN))) {
                     Log.v(TAG, "error code " + e.toString());
                     Toast.makeText(getApplicationContext(),
                             getString(R.string.account_email_exists_toast), Toast.LENGTH_LONG).show();
