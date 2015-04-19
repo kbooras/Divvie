@@ -29,6 +29,13 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
     private Resources mResources;
     private String mSymbol;
 
+    enum paidStatus {
+        PAID,
+        PENDING,
+        UNPAID,
+        UNSET_UNDEFINED
+    }
+
     public TransactionsAdapter(Context context, ArrayList<ParseObject> transactions) {
         super(context, R.layout.transactions_fragment_row, transactions);
         mTransactions = transactions;
@@ -45,77 +52,104 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
         } else {
             rowView = convertView;
         }
-
         TextView transactionGroup = (TextView) rowView.findViewById(R.id.transactionGroup);
         TextView transactionDescription = (TextView) rowView.findViewById(R.id.transactionDescription);
         TextView transactionAmount = (TextView) rowView.findViewById(R.id.transactionAmount);
         TextView transactionStatus = (TextView) rowView.findViewById(R.id.transactionStatus);
-
+        TextView payButton = (TextView) rowView.findViewById(R.id.payButton);
+        transactionStatus.setVisibility(View.VISIBLE);
+        payButton.setVisibility(View.GONE);
         // We retrieve the object from the list
         ParseObject transaction = mTransactions.get(position);
         if (transaction != null) {
-            if (!transaction.getString(Constants.TRANSACTION_PERSON_OWED)
+            if (transaction.getString(Constants.TRANSACTION_PERSON_OWED)
                     .equals(ParseUser.getCurrentUser().getEmail())) {
-                // User owes the group
-                setUserOwesGroupTexts(transaction, transactionGroup, transactionAmount);
-                setPaidStatus(transactionAmount, transactionStatus, transaction);
-            } else {
                 // The group owes user
                 setGroupOwesUserTexts(transaction, transactionGroup, transactionAmount);
                 setAmountStillOwed(transactionStatus, transaction);
+            } else {
+                // User owes the group
+                setUserOwesGroupTexts(transaction, transactionGroup, transactionAmount);
+                setPaidStatus(transactionAmount, transactionStatus, payButton, transaction);
             }
-
             transactionDescription.setText(String.format(
                     mResources.getString(R.string.transaction_description),
                     transaction.getString(Constants.TRANSACTION_DESCRIPTION)));
-
         }
-
         return rowView;
     }
 
     private void setUserOwesGroupTexts(ParseObject transaction, TextView transactionGroup,
                                        TextView transactionAmount) {
-        transactionGroup.setText(String.format(
-                mResources.getString(R.string.transaction_you_owe),
-                transaction.getString(Constants.TRANSACTION_GROUP_NAME)));
-        transactionAmount.setTextColor(mResources.getColor(R.color.pink));
+        if (getPaidStatus(transaction) == paidStatus.PAID) {
+            transactionGroup.setText(String.format(
+                    mResources.getString(R.string.transaction_you_paid),
+                    transaction.getString(Constants.TRANSACTION_GROUP_NAME)));
+            transactionAmount.setTextColor(mResources.getColor(R.color.green));
+        } else {
+            transactionGroup.setText(String.format(
+                    mResources.getString(R.string.transaction_you_owe),
+                    transaction.getString(Constants.TRANSACTION_GROUP_NAME)));
+            transactionAmount.setTextColor(mResources.getColor(R.color.pink));
+        }
         transactionAmount.setText(mSymbol +
                 transaction.getString(Constants.TRANSACTION_SPLIT_AMOUNT));
     }
 
     private void setGroupOwesUserTexts(ParseObject transaction, TextView transactionGroup,
                                        TextView transactionAmount) {
-        transactionGroup.setText(String.format(
-                mResources.getString(R.string.transaction_owes_you),
-                transaction.getString(Constants.TRANSACTION_GROUP_NAME)));
-        transactionAmount.setTextColor(mResources.getColor(R.color.green));
+        if (getAmountOfUsersThatOwe(transaction) == 0) {
+            transactionGroup.setText(String.format(
+                    mResources.getString(R.string.transaction_paid_you),
+                    transaction.getString(Constants.TRANSACTION_GROUP_NAME)));
+            transactionAmount.setTextColor(mResources.getColor(R.color.green));
+        } else {
+            transactionGroup.setText(String.format(
+                    mResources.getString(R.string.transaction_owe_you),
+                    transaction.getString(Constants.TRANSACTION_GROUP_NAME)));
+            transactionAmount.setTextColor(mResources.getColor(R.color.dark_grey));
+        }
         transactionAmount.setText(mSymbol +
                 transaction.getString(Constants.TRANSACTION_TOTAL_AMOUNT));
     }
 
     // Return string based on if user has paid or not. This happens when the user owes a group.
-    private void setPaidStatus(TextView amountText, TextView statusText, ParseObject group) {
+    private void setPaidStatus(TextView amountText, TextView statusText, TextView payButton, ParseObject group) {
+        statusText.setTextColor(mResources.getColor(R.color.dark_grey));
+        switch (getPaidStatus(group)) {
+            case UNPAID:
+                statusText.setVisibility(View.GONE);
+                payButton.setText(mResources.getString(R.string.pay_now));
+                payButton.setVisibility(View.VISIBLE);
+                break;
+            case PENDING:
+                statusText.setText(mResources.getString(R.string.transaction_pending));
+                statusText.setTypeface(null, Typeface.ITALIC);
+                break;
+            case PAID:
+                statusText.setText(mResources.getString(R.string.paid));
+                break;
+            case UNSET_UNDEFINED:
+                break;
+        }
+    }
+
+    private paidStatus getPaidStatus(ParseObject group) {
         @SuppressWarnings("unchecked")
         ArrayList<String> members = (ArrayList<String>) group.get(Constants.GROUP_MEMBERS);
         @SuppressWarnings("unchecked")
         ArrayList<String> datePaid = (ArrayList<String>) group.get(Constants.TRANSACTION_DATE_PAID);
-
         int index = getIndexForCurrentUser(members);
         if (index == -1) {
-            return;
+            return paidStatus.UNSET_UNDEFINED;
         }
         if (datePaid.get(index).equals("")) {
-            statusText.setText(mResources.getString(R.string.pay_now));
-        } else if (datePaid.get(index).charAt(0) == 'p') {
-            statusText.setText(mResources.getString(R.string.transaction_pending));
-            statusText.setTypeface(null, Typeface.ITALIC);
-        } else {
-            statusText.setText(mResources.getString(R.string.paid));
+            return paidStatus.UNPAID;
         }
-        statusText.setTextColor(mResources.getColor(R.color.dark_grey));
-        amountText.setTextColor(mResources.getColor(R.color.pink));
-
+        if (datePaid.get(index).charAt(0) == 'p') {
+            return paidStatus.PENDING;
+        }
+        return paidStatus.PAID;
     }
 
     private int getIndexForCurrentUser(ArrayList<String> members) {
@@ -132,23 +166,28 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
         double splitAmount = Double.valueOf(group.getString(Constants.TRANSACTION_SPLIT_AMOUNT));
         @SuppressWarnings("unchecked")
         ArrayList<String> datePaid = (ArrayList<String>) group.get(Constants.TRANSACTION_DATE_PAID);
-        int notPaid = 0;
+        int amountOfUsersThatStillOwe = getAmountOfUsersThatOwe(group);
+        if (amountOfUsersThatStillOwe == 0) {
+            statusText.setText(mResources.getString(R.string.complete));
+            statusText.setTextColor(mResources.getColor(R.color.dark_grey));
+        } else {
+            statusText.setText(String.format(mResources.getString(R.string.transaction_amount_owed),
+                    mSymbol, String.format("%.2f", splitAmount * amountOfUsersThatStillOwe)));
+            statusText.setTextColor(mResources.getColor(R.color.pink));
+        }
+    }
 
+    private int getAmountOfUsersThatOwe(ParseObject group) {
+        @SuppressWarnings("unchecked")
+        ArrayList<String> datePaid = (ArrayList<String>) group.get(Constants.TRANSACTION_DATE_PAID);
+        int notPaid = 0;
         for (String p : datePaid) {
             // If not paid or pending
             if (p.equals("") || p.charAt(0) == 'p') {
                 notPaid++;
             }
         }
-
-        if (notPaid == 0) {
-            statusText.setText(mResources.getString(R.string.complete));
-            statusText.setTextColor(mResources.getColor(R.color.dark_grey));
-        } else {
-            statusText.setText(String.format(mResources.getString(R.string.transaction_amount_owed),
-                    mSymbol, String.format("%.2f", splitAmount * notPaid)));
-            statusText.setTextColor(mResources.getColor(R.color.pink));
-        }
+        return notPaid;
     }
 
 }

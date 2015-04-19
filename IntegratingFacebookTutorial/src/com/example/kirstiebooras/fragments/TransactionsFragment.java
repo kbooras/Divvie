@@ -65,9 +65,8 @@ public class TransactionsFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         TextView transactionStatus = (TextView) v.findViewById(R.id.transactionStatus);
         ParseObject transaction = mAdapter.getItem(position);
-
         String status = transactionStatus.getText().toString();
-        if (status.equals(getString(R.string.pay_now))) {
+        if (transactionStatus.getVisibility()==View.GONE) {
             // Start PayChargeActivity
             Intent intent = new Intent(getActivity(), PayChargeActivity.class);
             intent.putExtra("parseObjectId", transaction.getObjectId());

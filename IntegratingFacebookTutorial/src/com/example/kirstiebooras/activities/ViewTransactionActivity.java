@@ -86,7 +86,7 @@ public class ViewTransactionActivity extends Activity {
         TextView transactionAmount = (TextView) findViewById(R.id.transactionAmount);
         TextView transactionDescription = (TextView) findViewById(R.id.transactionDescription);
 
-        group.setText(String.format(getString(R.string.transaction_owes_you),
+        group.setText(String.format(getString(R.string.transaction_owe_you),
                 object.getString(Constants.TRANSACTION_GROUP_NAME)));
         transactionAmount.setText(totalAmount);
         transactionDescription.setText(String.format(getString(R.string.transaction_description),
@@ -121,7 +121,7 @@ public class ViewTransactionActivity extends Activity {
 
             if (datePaid.get(i).equals("")) {
                 // If they have not paid, display what they owe
-                member.setText(String.format(getString(R.string.transaction_owes_you),
+                member.setText(String.format(getString(R.string.transaction_owe_you),
                         displayNames.get(i)));
                 status.setText(mSplitAmount);
                 status.setTextColor(getResources().getColor(R.color.pink));
