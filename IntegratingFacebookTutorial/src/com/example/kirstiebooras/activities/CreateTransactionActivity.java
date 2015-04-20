@@ -54,8 +54,8 @@ public class CreateTransactionActivity extends Activity {
         ArrayList<ParseObject> groupsList = new ArrayList<ParseObject>();
         groupsList.addAll(parseTools.getLocalData(Constants.CLASSNAME_GROUP));
 
-        ArrayAdapter<ParseObject> mAdapter =
-                new GroupsSpinnerAdapter(getApplicationContext(), groupsList);
+        ArrayAdapter<ParseObject> mAdapter = new GroupsSpinnerAdapter(getApplicationContext(),
+                                                                      groupsList);
         mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(mAdapter);
 
@@ -90,15 +90,16 @@ public class CreateTransactionActivity extends Activity {
         // Check the form is complete
         if (description.equals("") || amount == null) {
             Toast.makeText(getApplicationContext(),
-                    getResources().getString(R.string.complete_form_toast), Toast.LENGTH_LONG).show();
+                           getResources().getString(R.string.complete_form_toast),
+                           Toast.LENGTH_LONG).show();
             return;
         }
 
         // Check for valid monetary input
         if (!validMonetaryInput(amount)) {
             Toast.makeText(getApplicationContext(),
-                    getResources().getString(R.string.invalid_amount_toast),
-                    Toast.LENGTH_LONG).show();
+                           getResources().getString(R.string.invalid_amount_toast),
+                           Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -107,16 +108,15 @@ public class CreateTransactionActivity extends Activity {
         // Get person owed info
         ParseUser personOwed = ParseUser.getCurrentUser();
         String personOwedEmail = personOwed.getEmail();
+        String personOwedName = personOwed.getString(Constants.USER_FULL_NAME);
 
         // Get group info
         ParseObject group = (ParseObject) mSpinner.getSelectedItem();
         String groupId = group.getObjectId();
 
-        // Create the object
-        mParseTools.createTransactionParseObject(groupId, personOwedEmail, description, totalAmount);
-
-        // Send emails to group members
-        // TODO sendEmails(personOwedName, groupName, description, splitAmount, (String[]) members.toArray());
+        // Create the object and sends emails
+        mParseTools.createTransactionParseObject(groupId, personOwedEmail, personOwedName,
+                                                 description, totalAmount);
 
         finish();
     }
@@ -140,19 +140,5 @@ public class CreateTransactionActivity extends Activity {
      */
     private boolean validMonetaryInput(String amount) {
         return amount.matches("^\\$?\\-?([1-9]{1}[0-9]{0,2}(\\,\\d{3})*(\\.\\d{0,2})?|[1-9]{1}\\d{0,}(\\.\\d{0,2})?|0(\\.\\d{0,2})?|(\\.\\d{1,2}))$|^\\-?\\$?([1-9]{1}\\d{0,2}(\\,\\d{3})*(\\.\\d{0,2})?|[1-9]{1}\\d{0,}(\\.\\d{0,2})?|0(\\.\\d{0,2})?|(\\.\\d{1,2}))$|^\\(\\$?([1-9]{1}\\d{0,2}(\\,\\d{3})*(\\.\\d{0,2})?|[1-9]{1}\\d{0,}(\\.\\d{0,2})?|0(\\.\\d{0,2})?|(\\.\\d{1,2}))\\)$");
-    }
-
-    /*
-     * Send email to every one splitting the transaction.
-     */
-    private void sendEmails(String fromName, String groupName, String chargeDescription,
-                            String amount, String[] members) {
-        HashMap<String, Object> map = new HashMap<String, Object>();
-        map.put("fromName", fromName);
-        map.put("groupName", groupName);
-        map.put("chargeDescription", chargeDescription);
-        map.put("amount", amount);
-        map.put("key", getString(R.string.MANDRILL_API_KEY));
-        mParseTools.sendNewTransactionEmails(map, members);
     }
 }

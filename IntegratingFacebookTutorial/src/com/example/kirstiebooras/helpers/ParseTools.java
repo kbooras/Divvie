@@ -173,25 +173,26 @@ public class ParseTools {
     /*
      * Create a Transaction object and save to the Parse server.
      */
-    public void createTransactionParseObject(String groupId, String personOwed, String descriptionTxt,
-                                              Double totalAmount) {
+    public void createTransactionParseObject(String groupId, final String personOwedEmail,
+                                             final String personOwedName, final String descriptionTxt,
+                                             Double totalAmount) {
         Log.d(TAG, "createTransactionParseObject");
-        ParseObject group = findLocalParseObjectById(Constants.CLASSNAME_GROUP, groupId);
+        final ParseObject group = findLocalParseObjectById(Constants.CLASSNAME_GROUP, groupId);
         if (group == null) {
             Log.wtf(TAG, "The group for the new transaction is not found on the device.");
             return;
         }
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings("unchecked") final
         ArrayList<String> members = (ArrayList<String>) group.get(Constants.GROUP_MEMBERS);
 
         String totalAmountString = String.format("%.2f", totalAmount);
-        String splitAmount = getSplitAmount(totalAmount, members.size());
+        final String splitAmount = getSplitAmount(totalAmount, members.size());
 
         ParseObject newTransaction = new ParseObject(Constants.CLASSNAME_TRANSACTION);
         newTransaction.put(Constants.TRANSACTION_GROUP_ID, groupId);
         newTransaction.put(Constants.TRANSACTION_GROUP_NAME, group.getString(Constants.GROUP_NAME));
         newTransaction.put(Constants.GROUP_MEMBERS, members);
-        newTransaction.put(Constants.TRANSACTION_PERSON_OWED, personOwed);
+        newTransaction.put(Constants.TRANSACTION_PERSON_OWED, personOwedEmail);
         newTransaction.put(Constants.TRANSACTION_DESCRIPTION, descriptionTxt);
         newTransaction.put(Constants.TRANSACTION_TOTAL_AMOUNT, totalAmountString);
         newTransaction.put(Constants.TRANSACTION_SPLIT_AMOUNT, splitAmount);
@@ -199,7 +200,7 @@ public class ParseTools {
         // Set date paid values. PersonOwed is set as paid on today's date.
         ArrayList<String> datePaid = new ArrayList<String>(members.size());
         for (String user : members) {
-            if (user.equals(personOwed)) {
+            if (user.equals(personOwedEmail)) {
                 Date date = new Date(System.currentTimeMillis());
                 String today = new SimpleDateFormat("M/d/yy").format(date);
                 datePaid.add(today);
@@ -219,6 +220,9 @@ public class ParseTools {
                 else {
                     Log.i(TAG, "Saved new transaction successfully!");
                     getParseData(Constants.CLASSNAME_TRANSACTION);
+                    sendNewTransactionEmails(personOwedName, personOwedEmail,
+                                             group.getString(Constants.GROUP_NAME),
+                                             descriptionTxt, splitAmount, members);
                 }
             }
         });
@@ -236,10 +240,22 @@ public class ParseTools {
     /*
      * Send notification email to every one splitting the transaction.
      */
-    public void sendNewTransactionEmails(HashMap<String, Object> map, String[] members) {
+    public void sendNewTransactionEmails(String fromName, String fromEmail, String groupName,
+                                         String chargeDescription, String amount,
+                                         ArrayList<String> members) {
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put("fromName", fromName);
+        map.put("groupName", groupName);
+        map.put("chargeDescription", chargeDescription);
+        map.put("amount", amount);
+        map.put("key", mContext.getString(R.string.MANDRILL_API_KEY));
+
         for(String email : members) {
+            if (email.equals(fromEmail)) {
+                // Do not email the person who created the transaction
+                continue;
+            }
             map.put("toEmail", email);
-            // TODO: move this loop to the cloud
             ParseCloud.callFunctionInBackground("sendChargeEmail", map, new FunctionCallback<Object>() {
                 @Override
                 public void done(Object o, ParseException e) {
@@ -248,6 +264,7 @@ public class ParseTools {
                     }
                 }
             });
+            map.remove("toEmail");
         }
     }
 
