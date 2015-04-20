@@ -54,7 +54,8 @@
     <string name="pay_person">Pay %1$s</string>
     <string name="pay_with_venmo">Pay with Venmo</string>
     <string name="person_owes_you">%1$s owes you %2$s</string>
-    <string name="person_paid_you">%1$s paid you on</string>
+    <string name="person_paid_you">%1$s paid you</string>
+    <string name="person_paid_you_on">%1$s paid you on</string>
     <string name="record">Record</string>
     <string name="record_cash_payment">Record cash payment</string>
     <string name="reenter_password">Re-enter password</string>

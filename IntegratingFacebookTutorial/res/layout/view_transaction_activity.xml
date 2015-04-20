@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="4dp"
             android:textSize="22sp"
-            android:textColor="@color/green"/>
+            android:textColor="@color/dark_grey"/>
 
     </LinearLayout>
 

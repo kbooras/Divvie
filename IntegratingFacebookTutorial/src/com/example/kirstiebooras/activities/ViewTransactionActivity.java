@@ -87,8 +87,14 @@ public class ViewTransactionActivity extends Activity {
         TextView transactionAmount = (TextView) findViewById(R.id.transactionAmount);
         TextView transactionDescription = (TextView) findViewById(R.id.transactionDescription);
 
-        String status = (complete) ? getString(R.string.transaction_paid_you)
-                : getString(R.string.transaction_owes_you);
+        String status;
+        if (complete) {
+            status = getString(R.string.transaction_paid_you);
+            transactionAmount.setTextColor(getResources().getColor(R.color.green))Made ;
+        }
+        else {
+            status = getString(R.string.transaction_owes_you);
+        }
         group.setText(String.format(status, object.getString(Constants.TRANSACTION_GROUP_NAME)));
         transactionAmount.setText(totalAmount);
         transactionDescription.setText(String.format(getString(R.string.transaction_description),
@@ -129,14 +135,14 @@ public class ViewTransactionActivity extends Activity {
                 status.setTextColor(getResources().getColor(R.color.pink));
             } else if (datePaid.get(i).charAt(0) == 'p') {
                 // Mark as pending
-                member.setText(String.format(getString(R.string.person_paid_you),
+                member.setText(String.format(getString(R.string.person_paid_you_on),
                         displayNames.get(i)));
                 status.setText(getString(R.string.transaction_pending));
                 status.setTextColor(getResources().getColor(R.color.dark_grey));
                 status.setTypeface(null, Typeface.ITALIC);
             } else {
                 // Otherwise, display the date paid
-                member.setText(String.format(getString(R.string.person_paid_you),
+                member.setText(String.format(getString(R.string.person_paid_you_on),
                         displayNames.get(i)));
                 status.setText(datePaid.get(i));
                 status.setTextColor(getResources().getColor(R.color.dark_grey));
