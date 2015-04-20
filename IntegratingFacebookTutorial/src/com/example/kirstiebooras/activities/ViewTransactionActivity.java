@@ -90,7 +90,7 @@ public class ViewTransactionActivity extends Activity {
         String status;
         if (complete) {
             status = getString(R.string.transaction_paid_you);
-            transactionAmount.setTextColor(getResources().getColor(R.color.green))Made ;
+            transactionAmount.setTextColor(getResources().getColor(R.color.green));
         }
         else {
             status = getString(R.string.transaction_owes_you);
