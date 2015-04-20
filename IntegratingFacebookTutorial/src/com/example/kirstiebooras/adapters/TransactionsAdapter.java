@@ -3,7 +3,6 @@ package com.example.kirstiebooras.adapters;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Typeface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,13 +84,12 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
             transactionGroup.setText(String.format(
                     mResources.getString(R.string.transaction_you_paid),
                     transaction.getString(Constants.TRANSACTION_GROUP_NAME)));
-            transactionAmount.setTextColor(mResources.getColor(R.color.green));
         } else {
             transactionGroup.setText(String.format(
                     mResources.getString(R.string.transaction_you_owe),
                     transaction.getString(Constants.TRANSACTION_GROUP_NAME)));
-            transactionAmount.setTextColor(mResources.getColor(R.color.pink));
         }
+        transactionAmount.setTextColor(mResources.getColor(R.color.pink));
         transactionAmount.setText(mSymbol +
                 transaction.getString(Constants.TRANSACTION_SPLIT_AMOUNT));
     }
@@ -105,7 +103,7 @@ public class TransactionsAdapter extends ArrayAdapter<ParseObject> {
             transactionAmount.setTextColor(mResources.getColor(R.color.green));
         } else {
             transactionGroup.setText(String.format(
-                    mResources.getString(R.string.transaction_owe_you),
+                    mResources.getString(R.string.transaction_owes_you),
                     transaction.getString(Constants.TRANSACTION_GROUP_NAME)));
             transactionAmount.setTextColor(mResources.getColor(R.color.dark_grey));
         }

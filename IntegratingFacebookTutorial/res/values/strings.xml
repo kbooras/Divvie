@@ -54,7 +54,7 @@
     <string name="pay_person">Pay %1$s</string>
     <string name="pay_with_venmo">Pay with Venmo</string>
     <string name="person_owes_you">%1$s owes you %2$s</string>
-    <string name="person_paid_you">%1$s paid you</string>
+    <string name="person_paid_you">%1$s paid you on</string>
     <string name="record">Record</string>
     <string name="record_cash_payment">Record cash payment</string>
     <string name="reenter_password">Re-enter password</string>
@@ -78,7 +78,7 @@
     <string name="transaction_amount_owed">%1$s%2$s owed</string>
     <string name="transaction_description">for %1$s</string>
     <string name="transaction_description_hint">Enter a description</string>
-    <string name="transaction_owe_you">%1$s owe you</string>
+    <string name="transaction_owes_you">%1$s owes you</string>
     <string name="transaction_paid_you">%1$s paid you</string>
     <string name="transaction_pending">Pending</string>
     <string name="transaction_pending_message">%1$s says they paid you for this transaction with

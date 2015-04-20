@@ -67,16 +67,17 @@ public class ViewTransactionActivity extends Activity {
         Intent intent = getIntent();
 
         mTransactionId = intent.getStringExtra("parseObjectId");
+        boolean complete = intent.getBooleanExtra("complete", false);
 
         ParseObject object = mParseTools.findLocalParseObjectById(Constants.CLASSNAME_TRANSACTION,
                 mTransactionId);
         if (object != null) {
-            setViewText(object);
+            setViewText(object, complete);
             displayMembers(object);
         }
     }
 
-    private void setViewText(ParseObject object) {
+    private void setViewText(ParseObject object, boolean complete) {
         Log.d(TAG, "setViewText");
         String symbol = Currency.getInstance(Locale.getDefault()).getSymbol();
         String totalAmount = symbol + object.getString(Constants.TRANSACTION_TOTAL_AMOUNT);
@@ -86,8 +87,9 @@ public class ViewTransactionActivity extends Activity {
         TextView transactionAmount = (TextView) findViewById(R.id.transactionAmount);
         TextView transactionDescription = (TextView) findViewById(R.id.transactionDescription);
 
-        group.setText(String.format(getString(R.string.transaction_owe_you),
-                object.getString(Constants.TRANSACTION_GROUP_NAME)));
+        String status = (complete) ? getString(R.string.transaction_paid_you)
+                : getString(R.string.transaction_owes_you);
+        group.setText(String.format(status, object.getString(Constants.TRANSACTION_GROUP_NAME)));
         transactionAmount.setText(totalAmount);
         transactionDescription.setText(String.format(getString(R.string.transaction_description),
                 mDescription));
@@ -121,7 +123,7 @@ public class ViewTransactionActivity extends Activity {
 
             if (datePaid.get(i).equals("")) {
                 // If they have not paid, display what they owe
-                member.setText(String.format(getString(R.string.transaction_owe_you),
+                member.setText(String.format(getString(R.string.transaction_owes_you),
                         displayNames.get(i)));
                 status.setText(mSplitAmount);
                 status.setTextColor(getResources().getColor(R.color.pink));

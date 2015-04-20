@@ -76,6 +76,9 @@ public class TransactionsFragment extends ListFragment {
             // If not paid or pending, display transaction
             Intent intent = new Intent(getActivity(), ViewTransactionActivity.class);
             intent.putExtra("parseObjectId", transaction.getObjectId());
+            if (status.equals(getString(R.string.complete))) {
+                intent.putExtra("complete", true);
+            }
             startActivity(intent);
         }
     }
