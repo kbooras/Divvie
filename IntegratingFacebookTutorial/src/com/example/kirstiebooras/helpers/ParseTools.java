@@ -391,9 +391,10 @@ public class ParseTools {
     /*
      * Create a Group object and save to the Parse server.
      */
-    public void createGroupParseObject(String groupName, ArrayList<String> memberEmails) {
+    public void createGroupParseObject(final String groupName, final String groupCreator,
+                                       final ArrayList<String> memberEmails) {
         ArrayList<String> memberDisplayNames = getMemberDisplayNames(memberEmails);
-        // Todo: Send invite emails to new users and notification email to existing users
+
         ParseObject newGroup = new ParseObject(Constants.CLASSNAME_GROUP);
         newGroup.put(Constants.GROUP_NAME, groupName);
         newGroup.put(Constants.GROUP_MEMBERS, memberEmails);
@@ -407,6 +408,7 @@ public class ParseTools {
                 else {
                     Log.i(TAG, "Saved new group successfully!");
                     getParseData(Constants.CLASSNAME_GROUP);
+                    inviteNewUsers(memberEmails, groupCreator, groupName);
                 }
             }
         });
@@ -432,9 +434,40 @@ public class ParseTools {
     }
 
     /*
+     * Send invite emails to new users who have been added to a group.
+     */
+    private void inviteNewUsers(ArrayList<String> groupMembers, String fromName, String groupName) {
+        Log.d(TAG, "inviteNewUsers");
+        ArrayList<String> noDivvieAccount = new ArrayList<String>();
+        for (String email : groupMembers) {
+            if (!userExists(email)) {
+                Log.d(TAG, "user does not exist");
+                noDivvieAccount.add(email);
+            }
+        }
+        sendInviteEmails(noDivvieAccount, fromName, groupName);
+    }
+
+    /*
+     * Determine if a user with the email exists.
+     */
+    private boolean userExists(String email) {
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereEqualTo(Constants.USER_EMAIL, email);
+        try {
+            query.getFirst();
+            return true;
+        }
+        catch (ParseException e) {
+            return false;
+        }
+    }
+
+    /*
      * Send email to person added to a group who does not yet have a Divvie account.
      */
     public void sendInviteEmails(ArrayList<String> noDivvieAccount, String fromName, String groupName) {
+        Log.d(TAG, "sendInviteEmails " + noDivvieAccount.size());
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("key", mContext.getString(R.string.MANDRILL_API_KEY));
         map.put("fromName", fromName);

@@ -17,6 +17,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.ScrollView;
 
 import com.example.kirstiebooras.DivvieApplication;
+import com.example.kirstiebooras.helpers.Constants;
 import com.example.kirstiebooras.helpers.ParseTools;
 import com.parse.ParseUser;
 import com.parse.integratingfacebooktutorial.R;
@@ -132,7 +133,8 @@ public class CreateGroupActivity extends Activity {
         }
         memberEmails.add(current.getEmail());
 
-        mParseTools.createGroupParseObject(groupNameTxt, memberEmails);
+        mParseTools.createGroupParseObject(groupNameTxt,
+                                           current.getString(Constants.USER_FULL_NAME), memberEmails);
 
         finish();
     }
